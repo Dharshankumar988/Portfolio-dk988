@@ -14,6 +14,13 @@ export async function GET() {
       .select("*")
       .limit(1) as { data: any[] | null };
     const profile = profiles && profiles.length > 0 ? profiles[0] : null;
+
+    // 1b. Fetch Admin trigger
+    const { data: admins } = await supabase
+      .from("Admin")
+      .select("secretTrigger")
+      .limit(1) as { data: any[] | null };
+    const adminTrigger = admins && admins.length > 0 ? admins[0].secretTrigger : null;
     
     // 2. Fetch Projects (ordered)
     const { data: projects } = await supabase
@@ -80,6 +87,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
+      adminTrigger,
       profile: mappedProfile,
       projects: (projects || []).map((p) => ({
         id: p.id,
@@ -149,6 +157,39 @@ export async function POST(request: Request) {
     const supabase = getSupabaseAdmin() as any;
 
     switch (action) {
+      case "save_admin_trigger": {
+        const { trigger } = data;
+        if (!trigger || typeof trigger !== "string" || !trigger.trim()) {
+          return NextResponse.json({ error: "Invalid trigger" }, { status: 400 });
+        }
+        
+        // Find existing admin or upsert
+        const { data: admins } = await supabase
+          .from("Admin")
+          .select("*")
+          .limit(1);
+          
+        if (admins && admins.length > 0) {
+          const { error } = await supabase
+            .from("Admin")
+            .update({ secretTrigger: trigger.trim(), updatedAt: new Date().toISOString() })
+            .eq("id", admins[0].id);
+          if (error) throw error;
+        } else {
+          const { error } = await supabase
+            .from("Admin")
+            .insert({
+              id: "default-admin",
+              username: "admin",
+              passwordHash: "$2b$10$O4eG0.XoH250b/vFsz0VjupUj2o8G1n6Y0hC4K9n1y6k/6P2V/8eW",
+              secretTrigger: trigger.trim(),
+              updatedAt: new Date().toISOString()
+            });
+          if (error) throw error;
+        }
+        break;
+      }
+
       case "save_profile": {
         const { tagline, bio, email, githubUrl, linkedinUrl, resumeUrl, avatarUrl, phone, careerGoals, education } = data;
         const payload: any = {

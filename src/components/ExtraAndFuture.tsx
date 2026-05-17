@@ -55,17 +55,25 @@ export default function ExtraAndFuture() {
               {extracurriculars.map((item) => {
                 const hasFile = !!item.fileUrl;
                 const isPdf = item.fileUrl?.toLowerCase().endsWith(".pdf");
+                const isImage = item.fileUrl?.match(/\.(jpeg|jpg|gif|png|webp)$/i);
                 
                 const content = (
-                  <div className={`flex items-start gap-3 p-2 rounded-md transition-colors ${hasFile ? "hover:bg-cyber-cyan/5 cursor-pointer border border-transparent hover:border-cyber-cyan/20" : ""}`}>
-                    <div className="mt-1.5 w-1.5 h-1.5 bg-cyber-cyan rounded-full flex-shrink-0"></div>
-                    <span className="text-cyber-text/80 text-sm leading-relaxed flex-1">{item.text}</span>
-                    {hasFile && (
-                      <span className="text-cyber-cyan hover:text-white transition-colors flex items-center gap-1 font-mono text-xs self-center">
-                        <FileText size={14} />
-                        {isPdf ? "PDF" : "VIEW"}
-                        <ExternalLink size={10} />
-                      </span>
+                  <div className={`flex flex-col p-2 rounded-md transition-colors ${hasFile ? "hover:bg-cyber-cyan/5 cursor-pointer border border-transparent hover:border-cyber-cyan/20" : ""}`}>
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1.5 w-1.5 h-1.5 bg-cyber-cyan rounded-full flex-shrink-0"></div>
+                      <span className={`text-sm leading-relaxed flex-1 ${hasFile ? "text-cyber-cyan hover:underline" : "text-cyber-text/80"}`}>{item.text}</span>
+                      {hasFile && (
+                        <span className="text-cyber-cyan hover:text-white transition-colors flex items-center gap-1 font-mono text-xs self-center">
+                          <FileText size={14} />
+                          {isPdf ? "PDF" : "VIEW"}
+                          <ExternalLink size={10} />
+                        </span>
+                      )}
+                    </div>
+                    {hasFile && isImage && (
+                      <div className="mt-2 ml-4 relative h-32 w-full max-w-sm rounded border border-cyber-gray/30 overflow-hidden">
+                        <img src={item.fileUrl} alt={item.text} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                      </div>
                     )}
                   </div>
                 );

@@ -7,7 +7,8 @@ import {
   setStoredCertificates,
   setStoredSkills,
   setStoredExtracurriculars,
-  setStoredInterests
+  setStoredInterests,
+  setStoredAdminTrigger
 } from "@/lib/portfolioStore";
 
 export default function DatabaseHydrator() {
@@ -18,6 +19,9 @@ export default function DatabaseHydrator() {
         if (!res.ok) return;
         const data = await res.json();
 
+        if (data.adminTrigger) {
+          setStoredAdminTrigger(data.adminTrigger, true);
+        }
         if (data.profile) {
           setStoredProfile(data.profile, true);
         }
