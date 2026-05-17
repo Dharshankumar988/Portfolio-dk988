@@ -773,7 +773,7 @@ export default function AdminDashboard() {
                       )}
                       <span className="font-mono text-xs text-cyber-purple font-bold">UPLOADED SUCCESSFULLY</span>
                       <span className="font-mono text-[10px] text-cyber-text/50 truncate max-w-xs mt-1">
-                        {newCert.filePath.split('/').pop()}
+                        {newCert.filePath?.split('/').pop() || ""}
                       </span>
                       <span className="font-mono text-[10px] text-cyber-text/30 mt-2 hover:underline">
                         (Click to change file)
