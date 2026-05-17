@@ -50,95 +50,21 @@ export type CertificateRecord = {
 export const defaultProjects: ProjectRecord[] = [];
 
 export const defaultProfile: ProfileContent = {
-  tagline: "Cybersecurity | Cloud | AI | Secure Systems",
-  bio: "Computer Science undergraduate with a keen interest in networking, cloud technologies, secure systems, and emerging AI technologies.",
+  tagline: "",
+  bio: "",
   email: "",
   githubUrl: "",
   linkedinUrl: "",
   resumeUrl: "",
   avatarUrl: "",
-  phone: "+91 98765 43210",
+  phone: "",
 };
 
-export const defaultExtracurriculars: ExtracurricularRecord[] = [
-  {
-    id: "cyber-defense-hackathon-2024",
-    text: "Participated in National Cyber Defense Hackathon 2024",
-  },
-  {
-    id: "university-tech-club",
-    text: "Core member of University Tech Club",
-  },
-  {
-    id: "ai-zero-trust-article",
-    text: "Published article on 'AI in Zero Trust Architecture'",
-  },
-  {
-    id: "web3-awareness-seminars",
-    text: "Volunteer for Web3 Awareness Seminars",
-  },
-];
+export const defaultExtracurriculars: ExtracurricularRecord[] = [];
 
-export const defaultInterests: InterestRecord[] = [
-  {
-    id: "aws-cloud-security",
-    name: "AWS Cloud Security",
-    logoUrl: "https://logo.clearbit.com/aws.amazon.com",
-    domain: "aws.amazon.com",
-  },
-  {
-    id: "kubernetes-secops",
-    name: "Kubernetes SecOps",
-    logoUrl: "https://logo.clearbit.com/kubernetes.io",
-    domain: "kubernetes.io",
-  },
-  {
-    id: "docker-security",
-    name: "Docker Security",
-    logoUrl: "https://logo.clearbit.com/docker.com",
-    domain: "docker.com",
-  },
-  {
-    id: "deep-learning",
-    name: "Deep Learning",
-    logoUrl: "https://logo.clearbit.com/tensorflow.org",
-    domain: "tensorflow.org",
-  },
-];
+export const defaultInterests: InterestRecord[] = [];
 
-export const defaultSkills: SkillRecord[] = [
-  // Security concepts
-  { id: "info-sec", name: "Information security (secure systems)", category: "Security concepts", logoUrl: "" },
-  { id: "crypto", name: "Cryptography", category: "Security concepts", logoUrl: "" },
-  { id: "network-fund", name: "Network fundamentals", category: "Security concepts", logoUrl: "" },
-  
-  // Tools
-  { id: "abuseipdb", name: "AbuseIPDB", category: "Tools", logoUrl: "" },
-  { id: "alienvault", name: "AlienVault OTX", category: "Tools", logoUrl: "" },
-  { id: "virustotal", name: "VirusTotal", category: "Tools", logoUrl: "" },
-  { id: "wireshark", name: "Wireshark", category: "Tools", logoUrl: "" },
-  { id: "nmap", name: "Nmap", category: "Tools", logoUrl: "" },
-  { id: "git", name: "Git", category: "Tools", logoUrl: "" },
-  { id: "vscode", name: "VS Code", category: "Tools", logoUrl: "" },
-  { id: "figma", name: "Figma", category: "Tools", logoUrl: "" },
-  
-  // Programming/Web
-  { id: "python", name: "Python", category: "Programming/Web", logoUrl: "" },
-  { id: "c-lang", name: "C", category: "Programming/Web", logoUrl: "" },
-  { id: "javascript", name: "JavaScript", category: "Programming/Web", logoUrl: "" },
-  { id: "fastapi", name: "FastAPI", category: "Programming/Web", logoUrl: "" },
-  { id: "nextjs", name: "Next.js", category: "Programming/Web", logoUrl: "" },
-  { id: "sql", name: "SQL", category: "Programming/Web", logoUrl: "" },
-  { id: "postgresql", name: "PostgreSQL", category: "Programming/Web", logoUrl: "" },
-  { id: "tailwindcss", name: "Tailwind CSS", category: "Programming/Web", logoUrl: "" },
-  
-  // Emerging Tech
-  { id: "blockchain", name: "Blockchain (Polygon)", category: "Emerging Tech", logoUrl: "" },
-  { id: "smart-contracts", name: "Smart Contracts", category: "Emerging Tech", logoUrl: "" },
-  { id: "ipfs", name: "IPFS", category: "Emerging Tech", logoUrl: "" },
-  { id: "gen-ai", name: "Generative AI", category: "Emerging Tech", logoUrl: "" },
-  { id: "ai-agents", name: "AI Agents", category: "Emerging Tech", logoUrl: "" },
-];
+export const defaultSkills: SkillRecord[] = [];
 
 export const defaultCertificates: CertificateRecord[] = [];
 const DEFAULT_ADMIN_TRIGGER = "dk160106";
