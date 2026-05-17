@@ -25,6 +25,7 @@ import {
   setStoredProfile,
   setStoredSkills,
   SkillRecord,
+  PORTFOLIO_UPDATE_EVENT,
 } from "@/lib/portfolioStore";
 
 const ADMIN_STARTUP = [
@@ -153,6 +154,28 @@ export default function AdminDashboard() {
     setInterestsList(getStoredInterests());
     setSkillsList(getStoredSkills().items);
     setAdminTriggerInput(getStoredAdminTrigger());
+  }, []);
+
+  // Re-sync form fields whenever DatabaseHydrator populates localStorage from Supabase
+  useEffect(() => {
+    const handler = () => {
+      setExistingProjects(getStoredProjects());
+      setExistingCerts(getStoredCertificates());
+      const profile = getStoredProfile();
+      setProfileTagline(profile.tagline);
+      setProfileBio(profile.bio);
+      setProfileEmail(profile.email);
+      setProfileGithubUrl(profile.githubUrl);
+      setProfileLinkedinUrl(profile.linkedinUrl);
+      setProfileResumeUrl(profile.resumeUrl);
+      setProfileAvatarUrl(profile.avatarUrl);
+      setProfilePhone(profile.phone || "");
+      setExtracurricularsList(getStoredExtracurriculars());
+      setInterestsList(getStoredInterests());
+      setSkillsList(getStoredSkills().items);
+    };
+    window.addEventListener(PORTFOLIO_UPDATE_EVENT, handler);
+    return () => window.removeEventListener(PORTFOLIO_UPDATE_EVENT, handler);
   }, []);
 
   const saveProfile = () => {
