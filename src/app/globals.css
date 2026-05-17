@@ -1,26 +1,85 @@
 @import "tailwindcss";
 
+@theme {
+  --color-cyber-black: #050505;
+  --color-cyber-dark: #0a0e17;
+  --color-cyber-neon: #39ff14;
+  --color-cyber-cyan: #00f0ff;
+  --color-cyber-purple: #b026ff;
+  --color-cyber-gray: #1a1f2e;
+  --color-cyber-text: #e2e8f0;
+  
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-roboto-mono);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #050505;
+  --foreground: #e2e8f0;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a1f2e;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00f0ff;
+}
+
+/* Utilities for glowing text/boxes */
+.glow-text-neon {
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.7);
+}
+.glow-text-cyan {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+}
+.glow-box-neon {
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+}
+.glow-box-cyan {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+}
+
+/* CRT Scanline Effect */
+.scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0) 50%,
+    rgba(0,0,0,0.2) 50%,
+    rgba(0,0,0,0.2)
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.3;
+}
+
+/* Colorized Cyber Icons */
+.cyber-icon-filter {
+  filter: brightness(0) saturate(100%) invert(71%) sepia(85%) saturate(3620%) hue-rotate(152deg) brightness(101%) contrast(107%);
+  transition: filter 0.3s ease;
+}
+
+.group\/item:hover .cyber-icon-filter {
+  filter: brightness(0) saturate(100%) invert(74%) sepia(96%) saturate(1455%) hue-rotate(67deg) brightness(108%) contrast(106%);
 }
