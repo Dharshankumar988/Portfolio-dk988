@@ -8,11 +8,11 @@ export async function GET() {
     const supabase = getSupabaseAdmin() as any;
 
     // 1. Fetch Profile
-    const { data: profile } = await supabase
+    const { data: profiles } = await supabase
       .from("Profile")
       .select("*")
-      .eq("id", "default")
-      .single() as { data: any | null };
+      .limit(1) as { data: any[] | null };
+    const profile = profiles && profiles.length > 0 ? profiles[0] : null;
     
     // 2. Fetch Projects (ordered)
     const { data: projects } = await supabase

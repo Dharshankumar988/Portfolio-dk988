@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { 
-  setStoredProfile, 
-  setStoredProjects, 
-  setStoredCertificates, 
-  setStoredSkills, 
-  setStoredExtracurriculars, 
-  setStoredInterests 
+import {
+  setStoredProfile,
+  setStoredProjects,
+  setStoredCertificates,
+  setStoredSkills,
+  setStoredExtracurriculars,
+  setStoredInterests
 } from "@/lib/portfolioStore";
 
 export default function DatabaseHydrator() {
@@ -17,7 +17,7 @@ export default function DatabaseHydrator() {
         const res = await fetch("/api/portfolio");
         if (!res.ok) return;
         const data = await res.json();
-        
+
         if (data.profile) {
           setStoredProfile(data.profile, true);
         }
@@ -40,7 +40,7 @@ export default function DatabaseHydrator() {
         console.error("Database hydration error:", err);
       }
     };
-    
+
     hydrate();
   }, []);
 
