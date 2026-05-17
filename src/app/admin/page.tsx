@@ -26,6 +26,7 @@ import {
   setStoredSkills,
   SkillRecord,
   PORTFOLIO_UPDATE_EVENT,
+  saveToDB,
 } from "@/lib/portfolioStore";
 
 const ADMIN_STARTUP = [
@@ -178,8 +179,8 @@ export default function AdminDashboard() {
     return () => window.removeEventListener(PORTFOLIO_UPDATE_EVENT, handler);
   }, []);
 
-  const saveProfile = () => {
-    setStoredProfile({
+  const saveProfile = async () => {
+    const profile = {
       tagline: profileTagline.trim(),
       bio: profileBio.trim(),
       email: profileEmail.trim(),
@@ -188,7 +189,12 @@ export default function AdminDashboard() {
       resumeUrl: profileResumeUrl.trim(),
       avatarUrl: profileAvatarUrl.trim(),
       phone: profilePhone.trim(),
-    });
+    };
+    // Save to localStorage
+    localStorage.setItem("portfolio.profile.v1", JSON.stringify(profile));
+    // Save to Supabase DB
+    const ok = await saveToDB("save_profile", profile);
+    if (ok) alert("✅ Profile saved successfully!");
   };
 
   const uploadFile = async (file: File, folder: "profile" | "projects" | "certs" | "skills") => {
@@ -551,7 +557,7 @@ export default function AdminDashboard() {
 
                 <div className="flex justify-end">
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       const title = newProject.title.trim();
                       if (!title) {
                         alert("Project title is required.");
@@ -574,7 +580,7 @@ export default function AdminDashboard() {
                       };
                       const updated = [newEntry, ...existingProjects];
                       setExistingProjects(updated);
-                      setStoredProjects(updated);
+                      localStorage.setItem("portfolio.projects.v1", JSON.stringify(updated));
                       setNewProject({
                         id: "",
                         title: "",
@@ -585,6 +591,8 @@ export default function AdminDashboard() {
                         liveUrl: "",
                         imageUrl: "",
                       });
+                      const ok = await saveToDB("save_projects", updated);
+                      if (ok) alert("✅ Project saved to database!");
                     }}
                     className="px-6 py-2 bg-cyber-cyan/20 text-cyber-cyan border border-cyber-cyan rounded hover:bg-cyber-cyan/40 font-mono text-sm transition-colors flex items-center gap-2"
                   >
@@ -812,7 +820,7 @@ export default function AdminDashboard() {
 
                 <div className="flex justify-end">
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       const name = newCert.name.trim();
                       if (!name) {
                         alert("Certificate name is required.");
@@ -834,7 +842,7 @@ export default function AdminDashboard() {
                       };
                       const updated = [newEntry, ...existingCerts];
                       setExistingCerts(updated);
-                      setStoredCertificates(updated);
+                      localStorage.setItem("portfolio.certificates.v1", JSON.stringify(updated));
                       setNewCert({
                         id: "",
                         name: "",
@@ -843,6 +851,8 @@ export default function AdminDashboard() {
                         fileUrl: "",
                         filePath: "",
                       });
+                      const ok = await saveToDB("save_certificates", updated);
+                      if (ok) alert("✅ Certificate saved to database!");
                     }}
                     className="px-6 py-2 bg-cyber-purple/20 text-cyber-purple border border-cyber-purple rounded hover:bg-cyber-purple/40 font-mono text-sm transition-colors flex items-center gap-2"
                   >
@@ -1210,7 +1220,7 @@ export default function AdminDashboard() {
 
                   <div className="flex items-end">
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         const nameTrimmed = skillInput.trim();
                         if (!nameTrimmed) {
                           alert("Please enter a skill name.");
@@ -1226,10 +1236,12 @@ export default function AdminDashboard() {
                         };
                         const updated = [...skillsList, newEntry];
                         setSkillsList(updated);
-                        setStoredSkills(updated);
+                        localStorage.setItem("portfolio.skills.v1", JSON.stringify(updated));
                         setSkillInput("");
                         setSkillLogoUrl("");
-                        alert("Skill added successfully!");
+                        const ok = await saveToDB("save_skills", updated);
+                        if (ok) alert("✅ Skill added and saved to database!");
+                        else alert("Skill added locally but database save failed — check the error above.");
                       }}
                       className="w-full py-3 bg-cyber-cyan/20 text-cyber-cyan border border-cyber-cyan rounded hover:bg-cyber-cyan/40 font-mono text-sm transition-colors flex items-center justify-center gap-2"
                     >

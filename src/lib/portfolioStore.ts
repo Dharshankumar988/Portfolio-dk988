@@ -239,7 +239,28 @@ export const getStoredProjects = (): ProjectRecord[] => {
   return normalized.length ? normalized : defaultProjects;
 };
 
-export const syncToDatabase = async (action: string, data: any): Promise<boolean> => {
+export const syncToDatabase = (action: string, data: any): void => {
+  if (typeof window === "undefined") return;
+  fetch("/api/portfolio", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action, data }),
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        console.error(`❌ DB sync failed [${action}]:`, errData.error || res.status);
+      } else {
+        console.log(`✅ DB synced [${action}]`);
+      }
+    })
+    .catch((err) => {
+      console.error(`❌ DB sync network error [${action}]:`, err.message);
+    });
+};
+
+// Awaitable version for admin panel saves — shows alert on failure
+export const saveToDB = async (action: string, data: any): Promise<boolean> => {
   if (typeof window === "undefined") return false;
   try {
     const res = await fetch("/api/portfolio", {
@@ -249,16 +270,14 @@ export const syncToDatabase = async (action: string, data: any): Promise<boolean
     });
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
-      const errMsg = errData.error || `Server returned ${res.status}`;
-      alert(`⚠️ Cloud Sync Warning: Changes saved locally, but failed to sync to Supabase database. \n\nReason: ${errMsg}\n\nPlease check if your environment variables are configured correctly!`);
-      throw new Error(errMsg);
+      const errMsg = errData.error || `Server error ${res.status}`;
+      alert(`⚠️ Save failed: ${errMsg}`);
+      return false;
     }
-    console.log(`✅ Database synced successfully for: ${action}`);
     return true;
   } catch (err: any) {
-    console.error(`DB sync network error for action: ${action}`, err);
-    alert(`⚠️ Cloud Sync Network Error: Failed to connect to backend for database sync.\n\nError: ${err.message}`);
-    throw err;
+    alert(`⚠️ Network error saving to database: ${err.message}`);
+    return false;
   }
 };
 
