@@ -101,7 +101,7 @@ export default function ContactTerminal() {
 
     if (lowerCmd === "contact --show") {
       const hasContact = Boolean(
-        profile.email || profile.githubUrl || profile.linkedinUrl || profile.resumeUrl
+        profile.email || profile.githubUrl || profile.linkedinUrl || profile.resumeUrl || profile.phone
       );
       response = (
         <div className="mt-2 space-y-2 text-cyber-cyan">
@@ -120,6 +120,11 @@ export default function ContactTerminal() {
               {profile.linkedinUrl ? (
                 <p>
                   LinkedIn: <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" className="hover:text-cyber-neon underline">{profile.linkedinUrl}</a>
+                </p>
+              ) : null}
+              {profile.phone ? (
+                <p>
+                  Phone: <span className="text-cyber-neon font-mono">{profile.phone}</span>
                 </p>
               ) : null}
               {profile.resumeUrl ? (

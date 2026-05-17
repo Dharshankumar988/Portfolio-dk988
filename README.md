@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Premium Cybersecurity & Developer Portfolio
 
-## Getting Started
+A cutting-edge, highly responsive professional developer and cybersecurity portfolio built with a state-of-the-art cyberpunk aesthetic, interactive console terminal, and secure dynamic management console.
 
-First, run the development server:
+## 🚀 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+*   **Interactive Command Terminal:** A fully functional terminal emulator supporting custom shell commands, system diagnostic tools, and custom secure routing.
+*   **Dynamic Skills dashboard:** A high-tech responsive skill categories tree with seamless SVG/transparent logo support.
+*   **Visual Certificate Vault:** Sleek card layout highlighting professional certifications with dynamic PDF/image quick viewers.
+*   **Projects Showcase:** An animated gallery showcasing active projects with repository and live deployment navigation.
+*   **Holographic Cyber UI:** Beautifully crafted layout leveraging rich Glassmorphism, smooth Framer Motion transitions, custom neon scanlines, and glowing CRT-style animations.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Technology Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+*   **Core Framework:** Next.js (App Router)
+*   **Styles & Theme:** Tailwind CSS & Vanilla CSS
+*   **Animations:** Framer Motion
+*   **Icons & Assets:** Lucide React & React Icons
+*   **Backend Integrations:** Supabase Storage (Serverless Storage Bucket) & Supabase Client API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 💻 Local Setup & Development
 
-## Learn More
+1.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+2.  **Configure Environment Variables:**
+    Create a `.env` file in the root directory and specify your serverless integration keys:
+    ```env
+    NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+    SUPABASE_SERVICE_ROLE_KEY=your_secret_supabase_service_role_key
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3.  **Run the local development server:**
+    ```bash
+    npm run dev
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4.  **Access the application:**
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
