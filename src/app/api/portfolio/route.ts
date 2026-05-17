@@ -45,8 +45,42 @@ export async function GET() {
       .select("*")
       .order("order", { ascending: true }) as { data: any[] | null };
 
+    let mappedProfile = null;
+    if (profile) {
+      let bio = profile.bio || "";
+      let phone = profile.phone || "";
+      let careerGoals = profile.careerGoals || "";
+      let education = profile.education || "";
+
+      // If fields are empty, try to decode from bio metadata fallback
+      if (bio.includes("\n\n[meta:")) {
+        const metaStart = bio.indexOf("\n\n[meta:");
+        const metaEnd = bio.indexOf("]", metaStart);
+        if (metaEnd > metaStart + 8) {
+          try {
+            const metaStr = bio.substring(metaStart + 8, metaEnd);
+            const parsed = JSON.parse(metaStr);
+            if (!phone && parsed.phone) phone = parsed.phone;
+            if (!careerGoals && parsed.careerGoals) careerGoals = parsed.careerGoals;
+            if (!education && parsed.education) education = parsed.education;
+            bio = bio.substring(0, metaStart); // Strip the meta block from user display
+          } catch (e) {
+            console.error("Failed to parse bio metadata fallback", e);
+          }
+        }
+      }
+
+      mappedProfile = {
+        ...profile,
+        bio,
+        phone,
+        careerGoals,
+        education,
+      };
+    }
+
     return NextResponse.json({
-      profile: profile || null,
+      profile: mappedProfile,
       projects: (projects || []).map((p) => ({
         id: p.id,
         title: p.title,
@@ -70,12 +104,26 @@ export async function GET() {
         category: s.category || "Programming/Web",
         logoUrl: s.icon || "",
       })),
-      extracurriculars: (extracurriculars || []).map((e) => ({
-        id: e.id,
-        text: e.text,
-        fileUrl: e.url || "",
-        filePath: e.url ? e.url.substring(e.url.indexOf("certs/")) : "",
-      })),
+      extracurriculars: (extracurriculars || []).map((e) => {
+        let text = e.text || "";
+        let fileUrl = e.url || "";
+        
+        // Try decoding URL from text if URL column is missing in DB
+        if (!fileUrl && text.startsWith("[attach:")) {
+          const closeBracketIdx = text.indexOf("]");
+          if (closeBracketIdx > 8) {
+            fileUrl = text.substring(8, closeBracketIdx);
+            text = text.substring(closeBracketIdx + 1);
+          }
+        }
+        
+        return {
+          id: e.id,
+          text,
+          fileUrl,
+          filePath: fileUrl ? fileUrl.substring(fileUrl.indexOf("certs/")) : "",
+        };
+      }),
       interests: (interests || []).map((i) => ({
         id: i.id,
         name: i.name,
@@ -126,19 +174,16 @@ export async function POST(request: Request) {
           });
 
         if (error) {
-          console.warn("⚠️ Full Profile upsert failed, retrying with graceful column fallback. Error:", error.message);
+          console.warn("⚠️ Full Profile upsert failed, retrying with graceful metadata encoding in bio. Error:", error.message);
           
-          // Fallback level 1: Try with phone only (exclude careerGoals, education)
+          const meta = { phone, careerGoals, education };
+          const encodedBio = `${bio || ""}\n\n[meta:${JSON.stringify(meta)}]`;
+          
           let retry = await supabase.from("Profile").upsert({
             ...payload,
-            phone: phone || "",
+            bio: encodedBio,
           });
-
-          if (retry.error) {
-            console.warn("⚠️ Profile upsert with phone failed, retrying with completely basic payload...", retry.error.message);
-            // Fallback level 2: Try basic fields only (exclude phone, careerGoals, education)
-            retry = await supabase.from("Profile").upsert(payload);
-          }
+          
           error = retry.error;
         }
 
@@ -227,9 +272,17 @@ export async function POST(request: Request) {
           let { error: insErr } = await supabase.from("Extracurricular").insert(formatted);
           
           if (insErr) {
-            console.warn("⚠️ Extracurricular insert failed with url, retrying fallback without url column. Error:", insErr.message);
-            // Fallback: omit the url column and retry insert
-            const fallbackFormatted = formatted.map(({ url, ...rest }: any) => rest);
+            console.warn("⚠️ Extracurricular insert failed with url, retrying fallback with encoded text column. Error:", insErr.message);
+            // Fallback: encode the fileUrl into the text field, e.g. [attach:https://...]Actual text
+            const fallbackFormatted = formatted.map(({ id, text, url, order, updatedAt }: any) => {
+              const encodedText = url ? `[attach:${url}]${text}` : text;
+              return {
+                id,
+                text: encodedText,
+                order,
+                updatedAt,
+              };
+            });
             const retry = await supabase.from("Extracurricular").insert(fallbackFormatted);
             insErr = retry.error;
           }

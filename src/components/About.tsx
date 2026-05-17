@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { User, Mail } from "lucide-react";
+import { User, Mail, Phone } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { defaultProfile, getStoredProfile, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
 
@@ -25,6 +25,7 @@ export default function About() {
     profile.email    && { label: "Email",    value: profile.email,      href: `mailto:${profile.email}`,   icon: Mail,    color: "text-cyber-cyan" },
     profile.githubUrl && { label: "GitHub",  value: "GitHub Profile",   href: profile.githubUrl,            icon: FaGithub,  color: "text-cyber-neon" },
     profile.linkedinUrl && { label: "LinkedIn", value: "LinkedIn Profile", href: profile.linkedinUrl,       icon: FaLinkedin, color: "text-cyber-purple" },
+    profile.phone && { label: "Phone", value: profile.phone, href: `tel:${profile.phone}`, icon: Phone, color: "text-cyber-neon" },
   ].filter(Boolean) as { label: string; value: string; href: string; icon: any; color: string }[];
 
   return (
