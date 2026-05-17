@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const BUCKET = "certificates";
 const ALLOWED_FOLDERS = new Set(["profile", "projects", "certs", "skills"]);

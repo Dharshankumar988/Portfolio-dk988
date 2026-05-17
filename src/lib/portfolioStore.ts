@@ -313,16 +313,26 @@ export const getStoredProjects = (): ProjectRecord[] => {
   return normalized.length ? normalized : defaultProjects;
 };
 
-const syncToDatabase = async (action: string, data: any) => {
-  if (typeof window === "undefined") return;
+export const syncToDatabase = async (action: string, data: any): Promise<boolean> => {
+  if (typeof window === "undefined") return false;
   try {
-    await fetch("/api/portfolio", {
+    const res = await fetch("/api/portfolio", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, data }),
     });
-  } catch (err) {
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      const errMsg = errData.error || `Server returned ${res.status}`;
+      alert(`⚠️ Cloud Sync Warning: Changes saved locally, but failed to sync to Supabase database. \n\nReason: ${errMsg}\n\nPlease check if your environment variables are configured correctly!`);
+      throw new Error(errMsg);
+    }
+    console.log(`✅ Database synced successfully for: ${action}`);
+    return true;
+  } catch (err: any) {
     console.error(`DB sync network error for action: ${action}`, err);
+    alert(`⚠️ Cloud Sync Network Error: Failed to connect to backend for database sync.\n\nError: ${err.message}`);
+    throw err;
   }
 };
 

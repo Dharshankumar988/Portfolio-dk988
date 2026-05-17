@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import AdminTrigger from "@/components/AdminTrigger";
+import DatabaseHydrator from "@/components/DatabaseHydrator";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,6 +30,7 @@ export default function RootLayout({
       className={`${inter.variable} ${robotoMono.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-cyber-black text-cyber-text selection:bg-cyber-neon selection:text-black">
+        <DatabaseHydrator />
         <div className="scanlines" />
         <AdminTrigger />
         {children}
