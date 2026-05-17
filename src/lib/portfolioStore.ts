@@ -17,11 +17,15 @@ export type ProfileContent = {
   resumeUrl: string;
   avatarUrl: string;
   phone?: string;
+  careerGoals?: string;
+  education?: string;
 };
 
 export type ExtracurricularRecord = {
   id: string;
   text: string;
+  fileUrl?: string;
+  filePath?: string;
 };
 
 export type InterestRecord = {
@@ -58,6 +62,8 @@ export const defaultProfile: ProfileContent = {
   resumeUrl: "",
   avatarUrl: "",
   phone: "",
+  careerGoals: "To build highly resilient, intelligent systems that leverage AI and Blockchain to solve complex security challenges in enterprise and healthcare environments.",
+  education: "B.E. Computer Science and Engineering\nFocus: Cybersecurity, Network Infrastructure, Machine Learning.",
 };
 
 export const defaultExtracurriculars: ExtracurricularRecord[] = [];
@@ -171,6 +177,8 @@ const normalizeExtracurriculars = (items: unknown[]): ExtracurricularRecord[] =>
     normalized.push({
       id: record.id || record.text.toLowerCase().replace(/\s+/g, "-"),
       text: record.text,
+      fileUrl: record.fileUrl || "",
+      filePath: record.filePath || "",
     });
   }
 
@@ -227,6 +235,8 @@ const normalizeProfile = (value: unknown): ProfileContent | null => {
     resumeUrl: typeof record.resumeUrl === "string" ? record.resumeUrl : "",
     avatarUrl: typeof record.avatarUrl === "string" ? record.avatarUrl : "",
     phone: typeof record.phone === "string" ? record.phone : defaultProfile.phone,
+    careerGoals: typeof record.careerGoals === "string" ? record.careerGoals : defaultProfile.careerGoals,
+    education: typeof record.education === "string" ? record.education : defaultProfile.education,
   };
 };
 

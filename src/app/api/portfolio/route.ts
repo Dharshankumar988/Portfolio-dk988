@@ -73,6 +73,8 @@ export async function GET() {
       extracurriculars: (extracurriculars || []).map((e) => ({
         id: e.id,
         text: e.text,
+        fileUrl: e.url || "",
+        filePath: e.url ? e.url.substring(e.url.indexOf("certs/")) : "",
       })),
       interests: (interests || []).map((i) => ({
         id: i.id,
@@ -100,21 +102,46 @@ export async function POST(request: Request) {
 
     switch (action) {
       case "save_profile": {
-        const { tagline, bio, email, githubUrl, linkedinUrl, resumeUrl, avatarUrl, phone } = data;
-        const { error } = await supabase
+        const { tagline, bio, email, githubUrl, linkedinUrl, resumeUrl, avatarUrl, phone, careerGoals, education } = data;
+        const payload: any = {
+          id: "default",
+          tagline: tagline || "",
+          bio: bio || "",
+          email: email || "",
+          githubUrl: githubUrl || "",
+          linkedinUrl: linkedinUrl || "",
+          resumeUrl: resumeUrl || "",
+          avatarUrl: avatarUrl || "",
+          updatedAt: new Date().toISOString(),
+        };
+
+        // Try upserting with all columns first
+        let { error } = await supabase
           .from("Profile")
           .upsert({
-            id: "default",
-            tagline,
-            bio,
-            email,
-            githubUrl,
-            linkedinUrl,
-            resumeUrl,
-            avatarUrl,
+            ...payload,
             phone: phone || "",
-            updatedAt: new Date().toISOString(),
+            careerGoals: careerGoals || "",
+            education: education || "",
           });
+
+        if (error) {
+          console.warn("⚠️ Full Profile upsert failed, retrying with graceful column fallback. Error:", error.message);
+          
+          // Fallback level 1: Try with phone only (exclude careerGoals, education)
+          let retry = await supabase.from("Profile").upsert({
+            ...payload,
+            phone: phone || "",
+          });
+
+          if (retry.error) {
+            console.warn("⚠️ Profile upsert with phone failed, retrying with completely basic payload...", retry.error.message);
+            // Fallback level 2: Try basic fields only (exclude phone, careerGoals, education)
+            retry = await supabase.from("Profile").upsert(payload);
+          }
+          error = retry.error;
+        }
+
         if (error) throw error;
         break;
       }
@@ -193,10 +220,20 @@ export async function POST(request: Request) {
           const formatted = extras.map((extra: any, idx: number) => ({
             id: extra.id,
             text: extra.text,
+            url: extra.fileUrl || null,
             order: idx,
             updatedAt: new Date().toISOString(),
           }));
-          const { error: insErr } = await supabase.from("Extracurricular").insert(formatted);
+          let { error: insErr } = await supabase.from("Extracurricular").insert(formatted);
+          
+          if (insErr) {
+            console.warn("⚠️ Extracurricular insert failed with url, retrying fallback without url column. Error:", insErr.message);
+            // Fallback: omit the url column and retry insert
+            const fallbackFormatted = formatted.map(({ url, ...rest }: any) => rest);
+            const retry = await supabase.from("Extracurricular").insert(fallbackFormatted);
+            insErr = retry.error;
+          }
+          
           if (insErr) throw insErr;
         }
         break;

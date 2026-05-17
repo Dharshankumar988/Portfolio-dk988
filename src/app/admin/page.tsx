@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FolderGit2, FileBadge, User, Settings, Database, Server, Upload, Plus, Lock, GraduationCap, Compass, Cpu } from "lucide-react";
+import { FolderGit2, FileBadge, User, Settings, Database, Server, Upload, Plus, Lock, GraduationCap, Compass, Cpu, FileText } from "lucide-react";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -57,6 +57,8 @@ export default function AdminDashboard() {
   const [profileResumeUrl, setProfileResumeUrl] = useState("");
   const [profileAvatarUrl, setProfileAvatarUrl] = useState("");
   const [profilePhone, setProfilePhone] = useState("");
+  const [profileCareerGoals, setProfileCareerGoals] = useState("");
+  const [profileEducation, setProfileEducation] = useState("");
   
   // Future Interests State
   const [interestInput, setInterestInput] = useState("");
@@ -74,6 +76,8 @@ export default function AdminDashboard() {
   // Extracurriculars State
   const [extracurricularInput, setExtracurricularInput] = useState("");
   const [extracurricularsList, setExtracurricularsList] = useState<ExtracurricularRecord[]>([]);
+  const [extracurricularFileUrl, setExtracurricularFileUrl] = useState("");
+  const [isUploadingExtraFile, setIsUploadingExtraFile] = useState(false);
 
   // Existing Projects and Certs State
   const [existingProjects, setExistingProjects] = useState<ProjectRecord[]>([]);
@@ -151,6 +155,8 @@ export default function AdminDashboard() {
     setProfileResumeUrl(profile.resumeUrl);
     setProfileAvatarUrl(profile.avatarUrl);
     setProfilePhone(profile.phone || "");
+    setProfileCareerGoals(profile.careerGoals || "");
+    setProfileEducation(profile.education || "");
     setExtracurricularsList(getStoredExtracurriculars());
     setInterestsList(getStoredInterests());
     setSkillsList(getStoredSkills().items);
@@ -171,6 +177,8 @@ export default function AdminDashboard() {
       setProfileResumeUrl(profile.resumeUrl);
       setProfileAvatarUrl(profile.avatarUrl);
       setProfilePhone(profile.phone || "");
+      setProfileCareerGoals(profile.careerGoals || "");
+      setProfileEducation(profile.education || "");
       setExtracurricularsList(getStoredExtracurriculars());
       setInterestsList(getStoredInterests());
       setSkillsList(getStoredSkills().items);
@@ -189,6 +197,8 @@ export default function AdminDashboard() {
       resumeUrl: profileResumeUrl.trim(),
       avatarUrl: profileAvatarUrl.trim(),
       phone: profilePhone.trim(),
+      careerGoals: profileCareerGoals.trim(),
+      education: profileEducation.trim(),
     };
     // Save to localStorage
     localStorage.setItem("portfolio.profile.v1", JSON.stringify(profile));
@@ -375,6 +385,38 @@ export default function AdminDashboard() {
                     className="px-6 py-2 bg-[#ff3366]/20 text-[#ff3366] border border-[#ff3366] rounded hover:bg-[#ff3366]/40 font-mono text-sm transition-colors"
                   >
                     SAVE BIO
+                  </button>
+                </div>
+
+                <h3 className="font-mono text-[#ff3366] mb-4 flex items-center gap-2 mt-8">UPDATE CAREER GOALS</h3>
+                <div className="space-y-4">
+                  <textarea
+                    value={profileCareerGoals}
+                    onChange={(e) => setProfileCareerGoals(e.target.value)}
+                    className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none h-24"
+                    placeholder="Enter your career goals..."
+                  />
+                  <button
+                    onClick={saveProfile}
+                    className="px-6 py-2 bg-[#ff3366]/20 text-[#ff3366] border border-[#ff3366] rounded hover:bg-[#ff3366]/40 font-mono text-sm transition-colors"
+                  >
+                    SAVE CAREER GOALS
+                  </button>
+                </div>
+
+                <h3 className="font-mono text-[#ff3366] mb-4 flex items-center gap-2 mt-8">UPDATE EDUCATION</h3>
+                <div className="space-y-4">
+                  <textarea
+                    value={profileEducation}
+                    onChange={(e) => setProfileEducation(e.target.value)}
+                    className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none h-24"
+                    placeholder="Enter your education details..."
+                  />
+                  <button
+                    onClick={saveProfile}
+                    className="px-6 py-2 bg-[#ff3366]/20 text-[#ff3366] border border-[#ff3366] rounded hover:bg-[#ff3366]/40 font-mono text-sm transition-colors"
+                  >
+                    SAVE EDUCATION
                   </button>
                 </div>
 
@@ -979,7 +1021,6 @@ export default function AdminDashboard() {
               </Reorder.Group>
             </motion.div>
           )}
-
           {activeTab === "extracurriculars" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <div className="flex justify-between items-center mb-6">
@@ -991,33 +1032,100 @@ export default function AdminDashboard() {
               
               <div className="bg-cyber-black border border-cyber-gray rounded-lg p-6 mb-8">
                 <h3 className="font-mono text-cyber-cyan mb-4 flex items-center gap-2"><Plus size={16}/> ADD ACTIVITY</h3>
-                <div className="flex gap-4 mb-4">
-                  <input
-                    type="text"
-                    value={extracurricularInput}
-                    onChange={(e) => setExtracurricularInput(e.target.value)}
-                    placeholder="e.g. Participated in Hackathon 2024"
-                    className="flex-1 bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-cyber-cyan outline-none"
-                  />
-                  <button
-                    onClick={() => {
-                      const text = extracurricularInput.trim();
-                      if (!text) return;
-                      const newEntry: ExtracurricularRecord = {
-                        id: typeof crypto !== "undefined" && "randomUUID" in crypto
-                          ? crypto.randomUUID()
-                          : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-                        text,
-                      };
-                      const updated = [...extracurricularsList, newEntry];
-                      setExtracurricularsList(updated);
-                      setStoredExtracurriculars(updated);
-                      setExtracurricularInput("");
-                    }}
-                    className="px-6 py-2 bg-cyber-cyan/20 text-cyber-cyan border border-cyber-cyan rounded hover:bg-cyber-cyan/40 font-mono text-sm transition-colors"
-                  >
-                    ADD
-                  </button>
+                <div className="space-y-4">
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      value={extracurricularInput}
+                      onChange={(e) => setExtracurricularInput(e.target.value)}
+                      placeholder="e.g. Participated in Hackathon 2024"
+                      className="flex-1 bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-cyber-cyan outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-mono text-cyber-text/50 mb-1">FILE ATTACHMENT URL (OPTIONAL)</label>
+                      <input
+                        type="text"
+                        value={extracurricularFileUrl}
+                        onChange={(e) => setExtracurricularFileUrl(e.target.value)}
+                        placeholder="https://... (or upload below)"
+                        className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-cyber-cyan outline-none"
+                      />
+                    </div>
+                    
+                    <div className="flex items-end">
+                      <label className="w-full border border-dashed border-cyber-gray hover:border-cyber-cyan bg-cyber-dark/50 rounded p-3 flex items-center justify-center text-cyber-text/50 hover:text-cyber-cyan transition-colors cursor-pointer text-sm font-mono relative overflow-hidden">
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="application/pdf, image/png, image/jpeg, image/webp"
+                          disabled={isUploadingExtraFile}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            try {
+                              setIsUploadingExtraFile(true);
+                              const { publicUrl } = await uploadFile(file, "certs");
+                              setExtracurricularFileUrl(publicUrl);
+                              alert("File uploaded successfully!");
+                            } catch (error) {
+                              const message = error instanceof Error ? error.message : "Upload failed";
+                              alert("Upload failed: " + message);
+                            } finally {
+                              setIsUploadingExtraFile(false);
+                            }
+                          }}
+                        />
+                        <Upload size={16} className="mr-2" />
+                        <span>{isUploadingExtraFile ? "UPLOADING..." : "UPLOAD PDF OR IMAGE"}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {extracurricularFileUrl && (
+                    <div className="flex justify-between items-center bg-cyber-dark border border-cyber-gray/50 px-4 py-2 rounded text-xs font-mono text-cyber-cyan">
+                      <span className="truncate max-w-md">Attachment: {extracurricularFileUrl}</span>
+                      <button
+                        type="button"
+                        onClick={() => setExtracurricularFileUrl("")}
+                        className="text-red-500 hover:text-red-400"
+                      >
+                        REMOVE
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      onClick={async () => {
+                        const text = extracurricularInput.trim();
+                        if (!text) return;
+                        const newEntry: ExtracurricularRecord = {
+                          id: typeof crypto !== "undefined" && "randomUUID" in crypto
+                            ? crypto.randomUUID()
+                            : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                          text,
+                          fileUrl: extracurricularFileUrl || undefined,
+                          filePath: extracurricularFileUrl ? extracurricularFileUrl.substring(extracurricularFileUrl.indexOf("certs/")) : undefined,
+                        };
+                        const updated = [...extracurricularsList, newEntry];
+                        setExtracurricularsList(updated);
+                        setStoredExtracurriculars(updated, true);
+                        
+                        const ok = await saveToDB("save_extracurriculars", updated);
+                        if (ok) {
+                          alert("✅ Activity added and synced to database!");
+                          setExtracurricularInput("");
+                          setExtracurricularFileUrl("");
+                        }
+                      }}
+                      className="px-6 py-2 bg-cyber-cyan/20 text-cyber-cyan border border-cyber-cyan rounded hover:bg-cyber-cyan/40 font-mono text-sm transition-colors"
+                    >
+                      ADD ACTIVITY
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -1025,12 +1133,31 @@ export default function AdminDashboard() {
               <div className="space-y-3">
                 {extracurricularsList.map((activity) => (
                   <div key={activity.id} className="flex justify-between items-center bg-cyber-black border border-cyber-gray p-4 rounded hover:border-cyber-cyan transition-colors">
-                    <span className="font-mono text-sm text-cyber-text">{activity.text}</span>
+                    <div className="flex flex-col">
+                      <span className="font-mono text-sm text-cyber-text">{activity.text}</span>
+                      {activity.fileUrl && (
+                        <a
+                          href={activity.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-mono text-xs text-cyber-cyan hover:underline mt-1 flex items-center gap-1"
+                        >
+                          <FileText size={12} />
+                          View Attachment
+                        </a>
+                      )}
+                    </div>
                     <button
-                      onClick={() => {
+                      onClick={async () => {
+                        if (!confirm("Are you sure you want to delete this activity?")) return;
                         const updated = extracurricularsList.filter((item) => item.id !== activity.id);
                         setExtracurricularsList(updated);
-                        setStoredExtracurriculars(updated);
+                        setStoredExtracurriculars(updated, true);
+                        
+                        const ok = await saveToDB("save_extracurriculars", updated);
+                        if (ok) {
+                          alert("✅ Activity deleted and synced to database!");
+                        }
                       }}
                       className="text-red-500 hover:text-red-400 font-mono text-xs border border-red-500/50 px-2 py-1 rounded"
                     >

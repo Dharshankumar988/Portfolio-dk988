@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Compass, GraduationCap } from "lucide-react";
+import { Compass, GraduationCap, FileText, ExternalLink } from "lucide-react";
 import {
   defaultExtracurriculars,
   defaultInterests,
@@ -52,12 +52,36 @@ export default function ExtraAndFuture() {
             </div>
             
             <ul className="space-y-4">
-              {extracurriculars.map((item) => (
-                <li key={item.id} className="flex items-start gap-3">
-                  <div className="mt-1.5 w-1.5 h-1.5 bg-cyber-cyan rounded-full flex-shrink-0"></div>
-                  <span className="text-cyber-text/80 text-sm leading-relaxed">{item.text}</span>
-                </li>
-              ))}
+              {extracurriculars.map((item) => {
+                const hasFile = !!item.fileUrl;
+                const isPdf = item.fileUrl?.toLowerCase().endsWith(".pdf");
+                
+                const content = (
+                  <div className={`flex items-start gap-3 p-2 rounded-md transition-colors ${hasFile ? "hover:bg-cyber-cyan/5 cursor-pointer border border-transparent hover:border-cyber-cyan/20" : ""}`}>
+                    <div className="mt-1.5 w-1.5 h-1.5 bg-cyber-cyan rounded-full flex-shrink-0"></div>
+                    <span className="text-cyber-text/80 text-sm leading-relaxed flex-1">{item.text}</span>
+                    {hasFile && (
+                      <span className="text-cyber-cyan hover:text-white transition-colors flex items-center gap-1 font-mono text-xs self-center">
+                        <FileText size={14} />
+                        {isPdf ? "PDF" : "VIEW"}
+                        <ExternalLink size={10} />
+                      </span>
+                    )}
+                  </div>
+                );
+
+                return (
+                  <li key={item.id}>
+                    {hasFile ? (
+                      <a href={item.fileUrl} target="_blank" rel="noopener noreferrer" className="block">
+                        {content}
+                      </a>
+                    ) : (
+                      content
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </motion.div>
 
