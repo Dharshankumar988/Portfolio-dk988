@@ -313,10 +313,24 @@ export const getStoredProjects = (): ProjectRecord[] => {
   return normalized.length ? normalized : defaultProjects;
 };
 
-export const setStoredProjects = (projects: ProjectRecord[]) => {
+const syncToDatabase = async (action: string, data: any) => {
+  if (typeof window === "undefined") return;
+  try {
+    await fetch("/api/portfolio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, data }),
+    });
+  } catch (err) {
+    console.error(`DB sync network error for action: ${action}`, err);
+  }
+};
+
+export const setStoredProjects = (projects: ProjectRecord[], skipSync = false) => {
   if (typeof window === "undefined") return;
   localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
   emitPortfolioUpdate();
+  if (!skipSync) syncToDatabase("save_projects", projects);
 };
 
 export const getStoredCertificates = (): CertificateRecord[] => {
@@ -325,10 +339,11 @@ export const getStoredCertificates = (): CertificateRecord[] => {
   return normalizeCertificates(parsed);
 };
 
-export const setStoredCertificates = (certs: CertificateRecord[]) => {
+export const setStoredCertificates = (certs: CertificateRecord[], skipSync = false) => {
   if (typeof window === "undefined") return;
   localStorage.setItem(CERTS_KEY, JSON.stringify(certs));
   emitPortfolioUpdate();
+  if (!skipSync) syncToDatabase("save_certificates", certs);
 };
 
 export const getStoredAdminTrigger = (): string => {
@@ -357,35 +372,39 @@ export const setStoredAdminTrigger = (trigger: string) => {
 export const getStoredProfile = (): ProfileContent =>
   readStoredObject<ProfileContent>(PROFILE_KEY, defaultProfile, normalizeProfile);
 
-export const setStoredProfile = (profile: ProfileContent) => {
+export const setStoredProfile = (profile: ProfileContent, skipSync = false) => {
   if (typeof window === "undefined") return;
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
   emitPortfolioUpdate();
+  if (!skipSync) syncToDatabase("save_profile", profile);
 };
 
 export const getStoredExtracurriculars = (): ExtracurricularRecord[] =>
   readStoredList(EXTRACURRICULARS_KEY, defaultExtracurriculars, normalizeExtracurriculars).items;
 
-export const setStoredExtracurriculars = (items: ExtracurricularRecord[]) => {
+export const setStoredExtracurriculars = (items: ExtracurricularRecord[], skipSync = false) => {
   if (typeof window === "undefined") return;
   localStorage.setItem(EXTRACURRICULARS_KEY, JSON.stringify(items));
   emitPortfolioUpdate();
+  if (!skipSync) syncToDatabase("save_extracurriculars", items);
 };
 
 export const getStoredInterests = (): InterestRecord[] =>
   readStoredList(INTERESTS_KEY, defaultInterests, normalizeInterests).items;
 
-export const setStoredInterests = (items: InterestRecord[]) => {
+export const setStoredInterests = (items: InterestRecord[], skipSync = false) => {
   if (typeof window === "undefined") return;
   localStorage.setItem(INTERESTS_KEY, JSON.stringify(items));
   emitPortfolioUpdate();
+  if (!skipSync) syncToDatabase("save_interests", items);
 };
 
 export const getStoredSkills = (): { items: SkillRecord[]; hasStored: boolean } =>
   readStoredList(SKILLS_KEY, defaultSkills, normalizeSkills);
 
-export const setStoredSkills = (items: SkillRecord[]) => {
+export const setStoredSkills = (items: SkillRecord[], skipSync = false) => {
   if (typeof window === "undefined") return;
   localStorage.setItem(SKILLS_KEY, JSON.stringify(items));
   emitPortfolioUpdate();
+  if (!skipSync) syncToDatabase("save_skills", items);
 };
