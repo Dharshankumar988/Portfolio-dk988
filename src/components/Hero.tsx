@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Terminal, Download, Mail } from "lucide-react";
+import { Terminal, Download, Mail, Phone } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { defaultProfile, getStoredProfile, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
 
 export default function Hero() {
   const [profile, setProfile] = useState<ProfileContent>(defaultProfile);
   const [avatarVisible, setAvatarVisible] = useState(true);
+  const [showPhonePopup, setShowPhonePopup] = useState(false);
 
   useEffect(() => {
     const handleUpdate = () => setProfile(getStoredProfile());
@@ -115,6 +116,16 @@ export default function Hero() {
                   <FaLinkedin size={20} />
                 </a>
               ) : null}
+
+              {profile.phone ? (
+                <button
+                  onClick={() => setShowPhonePopup(true)}
+                  className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded cursor-pointer"
+                  title="View phone number"
+                >
+                  <Phone size={20} />
+                </button>
+              ) : null}
             </div>
           </motion.div>
         </div>
@@ -142,6 +153,49 @@ export default function Hero() {
           </div>
         </motion.div>
       </div>
+
+      {showPhonePopup && (
+        <div className="fixed inset-0 bg-cyber-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-cyber-dark border-2 border-cyber-purple p-6 rounded-lg max-w-sm w-full relative shadow-[0_0_25px_rgba(176,38,255,0.25)]"
+          >
+            <div className="absolute top-0 right-0 p-2 text-xs font-mono opacity-20">SECURE_COMM_V1</div>
+            
+            <div className="flex items-center gap-3 mb-6">
+              <Phone className="text-cyber-purple animate-pulse" size={24} />
+              <h3 className="font-mono text-lg font-bold text-white tracking-wider">SECURE CONTACT</h3>
+            </div>
+            
+            <p className="font-mono text-xs text-cyber-text/50 mb-2">TELEPHONY ROUTING CHANNEL</p>
+            <div className="bg-cyber-black border border-cyber-gray p-4 rounded text-center mb-6 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-cyber-purple/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span className="font-mono text-xl text-cyber-purple font-bold tracking-wider relative z-10 drop-shadow-[0_0_8px_rgba(176,38,255,0.8)] selection:bg-cyber-purple selection:text-cyber-black">
+                {profile.phone}
+              </span>
+            </div>
+
+            <div className="flex gap-3">
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(profile.phone || "");
+                  alert("Phone number copied to clipboard!");
+                }}
+                className="flex-1 py-2 bg-cyber-purple/20 hover:bg-cyber-purple/30 text-cyber-purple border border-cyber-purple rounded font-mono text-xs transition-all uppercase cursor-pointer"
+              >
+                COPY NUMBER
+              </button>
+              <button 
+                onClick={() => setShowPhonePopup(false)}
+                className="px-4 py-2 bg-cyber-gray hover:bg-cyber-gray/80 text-white rounded font-mono text-xs transition-all cursor-pointer"
+              >
+                CLOSE
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 }

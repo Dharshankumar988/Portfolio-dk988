@@ -16,6 +16,7 @@ export type ProfileContent = {
   linkedinUrl: string;
   resumeUrl: string;
   avatarUrl: string;
+  phone?: string;
 };
 
 export type ExtracurricularRecord = {
@@ -56,6 +57,7 @@ export const defaultProfile: ProfileContent = {
   linkedinUrl: "",
   resumeUrl: "",
   avatarUrl: "",
+  phone: "+91 98765 43210",
 };
 
 export const defaultExtracurriculars: ExtracurricularRecord[] = [
@@ -298,6 +300,7 @@ const normalizeProfile = (value: unknown): ProfileContent | null => {
     linkedinUrl: typeof record.linkedinUrl === "string" ? record.linkedinUrl : "",
     resumeUrl: typeof record.resumeUrl === "string" ? record.resumeUrl : "",
     avatarUrl: typeof record.avatarUrl === "string" ? record.avatarUrl : "",
+    phone: typeof record.phone === "string" ? record.phone : defaultProfile.phone,
   };
 };
 

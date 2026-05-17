@@ -54,6 +54,7 @@ export default function AdminDashboard() {
   const [profileLinkedinUrl, setProfileLinkedinUrl] = useState("");
   const [profileResumeUrl, setProfileResumeUrl] = useState("");
   const [profileAvatarUrl, setProfileAvatarUrl] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
   
   // Future Interests State
   const [interestInput, setInterestInput] = useState("");
@@ -147,6 +148,7 @@ export default function AdminDashboard() {
     setProfileLinkedinUrl(profile.linkedinUrl);
     setProfileResumeUrl(profile.resumeUrl);
     setProfileAvatarUrl(profile.avatarUrl);
+    setProfilePhone(profile.phone || "");
     setExtracurricularsList(getStoredExtracurriculars());
     setInterestsList(getStoredInterests());
     setSkillsList(getStoredSkills().items);
@@ -162,6 +164,7 @@ export default function AdminDashboard() {
       linkedinUrl: profileLinkedinUrl.trim(),
       resumeUrl: profileResumeUrl.trim(),
       avatarUrl: profileAvatarUrl.trim(),
+      phone: profilePhone.trim(),
     });
   };
 
@@ -381,6 +384,13 @@ export default function AdminDashboard() {
                     placeholder="Profile Image URL"
                     value={profileAvatarUrl}
                     onChange={(e) => setProfileAvatarUrl(e.target.value)}
+                    className="bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Phone Number (e.g. +91 98765 43210)"
+                    value={profilePhone}
+                    onChange={(e) => setProfilePhone(e.target.value)}
                     className="bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
                   />
                 </div>
