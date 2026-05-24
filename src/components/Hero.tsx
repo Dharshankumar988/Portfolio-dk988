@@ -95,37 +95,39 @@ export default function Hero() {
                 </button>
               )}
 
-              {profile.githubUrl ? (
-                <a
-                  href={profile.githubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded"
-                >
-                  <FaGithub size={20} />
-                </a>
-              ) : null}
+              <div className="flex gap-4 items-center">
+                {profile.githubUrl ? (
+                  <a
+                    href={profile.githubUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded flex items-center justify-center"
+                  >
+                    <FaGithub size={20} />
+                  </a>
+                ) : null}
 
-              {profile.linkedinUrl ? (
-                <a
-                  href={profile.linkedinUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded"
-                >
-                  <FaLinkedin size={20} />
-                </a>
-              ) : null}
+                {profile.linkedinUrl ? (
+                  <a
+                    href={profile.linkedinUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded flex items-center justify-center"
+                  >
+                    <FaLinkedin size={20} />
+                  </a>
+                ) : null}
 
-              {profile.phone ? (
-                <button
-                  onClick={() => setShowPhonePopup(true)}
-                  className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded cursor-pointer"
-                  title="View phone number"
-                >
-                  <Phone size={20} />
-                </button>
-              ) : null}
+                {profile.phone ? (
+                  <button
+                    onClick={() => setShowPhonePopup(true)}
+                    className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded cursor-pointer flex items-center justify-center"
+                    title="View phone number"
+                  >
+                    <Phone size={20} />
+                  </button>
+                ) : null}
+              </div>
             </div>
           </motion.div>
         </div>

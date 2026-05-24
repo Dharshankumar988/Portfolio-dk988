@@ -1525,18 +1525,6 @@ export default function AdminDashboard() {
 
               <div className="flex justify-between items-center mb-4 border-b border-cyber-gray pb-2">
                 <h3 className="font-mono text-white">EXISTING SKILLS</h3>
-                <button
-                  onClick={() => {
-                    if (confirm("Are you sure you want to reset skills to the default template? This will replace your current custom skills list.")) {
-                      setSkillsList(defaultSkills);
-                      setStoredSkills(defaultSkills);
-                      alert("Skills reset to the default template successfully!");
-                    }
-                  }}
-                  className="px-3 py-1 bg-red-500/20 text-red-500 border border-red-500/50 rounded hover:bg-red-500/40 font-mono text-xs transition-colors"
-                >
-                  RESET TO DEFAULT TEMPLATE
-                </button>
               </div>
               <Reorder.Group axis="y" values={skillsList} onReorder={(newOrder) => {
                 setSkillsList(newOrder);
