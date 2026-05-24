@@ -80,7 +80,7 @@ export default function About() {
         >
           {/* Section heading */}
           <div className="flex items-center gap-3 mb-10">
-            <span className="text-cyber-cyan font-mono text-sm tracking-widest">01.</span>
+
             <h2 className="text-3xl font-bold text-white tracking-wider font-mono">About Me</h2>
             <div className="flex-1 h-px bg-cyber-gray/40 ml-4" />
           </div>
@@ -150,20 +150,24 @@ export default function About() {
               {/* Career Goals */}
               <div className="border-l-2 border-cyber-gray pl-6 relative">
                 <div className="absolute w-3 h-3 bg-cyber-neon rounded-full -left-[7px] top-2 shadow-[0_0_8px_rgba(57,255,20,0.8)]" />
-                <h3 className="text-xl font-bold text-white mb-3 font-mono tracking-wider">Career Goals</h3>
-                <p className="text-cyber-text/75 text-base leading-relaxed whitespace-pre-line font-sans">
-                  {profile.careerGoals || "To build highly resilient, intelligent systems that leverage AI and Blockchain to solve complex security challenges in enterprise and healthcare environments."}
-                </p>
+                <h3 className="text-xl font-bold text-cyber-neon mb-3 font-mono tracking-wider">Career Goals</h3>
+                {profile.careerGoals && (
+                  <p className="text-cyber-text/75 text-base leading-relaxed whitespace-pre-line font-sans">
+                    {profile.careerGoals}
+                  </p>
+                )}
                 {renderBeadsList(educationBeads.filter(b => b.parentId === "career-goals"))}
               </div>
               
               {/* Education */}
               <div className="border-l-2 border-cyber-gray pl-6 relative">
                 <div className="absolute w-3 h-3 bg-cyber-cyan rounded-full -left-[7px] top-2 shadow-[0_0_8px_rgba(0,243,255,0.8)]" />
-                <h3 className="text-xl font-bold text-white mb-3 font-mono tracking-wider">Education</h3>
-                <p className="text-cyber-text/75 text-base leading-relaxed whitespace-pre-line font-sans mb-6">
-                  {profile.education || "B.E. Computer Science and Engineering\nFocus: Cybersecurity, Network Infrastructure, Machine Learning."}
-                </p>
+                <h3 className="text-xl font-bold text-cyber-cyan mb-3 font-mono tracking-wider">Education</h3>
+                {profile.education && (
+                  <p className="text-cyber-text/75 text-base leading-relaxed whitespace-pre-line font-sans mb-6">
+                    {profile.education}
+                  </p>
+                )}
 
                 {/* Education Beads (Timeline) */}
                 {renderBeadsList(educationBeads.filter(b => b.parentId !== "career-goals"))}
