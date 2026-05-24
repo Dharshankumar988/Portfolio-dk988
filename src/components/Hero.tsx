@@ -152,7 +152,7 @@ export default function Hero() {
               <img
                 src={profile.avatarUrl}
                 alt="Profile"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-full aspect-square"
                 onError={() => setAvatarVisible(false)}
               />
             ) : (

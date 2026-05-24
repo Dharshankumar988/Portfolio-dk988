@@ -8,7 +8,8 @@ import {
   setStoredSkills,
   setStoredExtracurriculars,
   setStoredInterests,
-  setStoredAdminTrigger
+  setStoredAdminTrigger,
+  setStoredTerminalPassword
 } from "@/lib/portfolioStore";
 
 export default function DatabaseHydrator() {
@@ -21,6 +22,9 @@ export default function DatabaseHydrator() {
 
         if (data.adminTrigger) {
           setStoredAdminTrigger(data.adminTrigger, true);
+        }
+        if (data.terminalPassword) {
+          setStoredTerminalPassword(data.terminalPassword, true);
         }
         if (data.profile) {
           setStoredProfile(data.profile, true);

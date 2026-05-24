@@ -523,6 +523,8 @@ export default function AdminDashboard() {
                         className="flex-1 bg-cyber-dark border border-cyber-gray p-2 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
                       >
                         <option value="" disabled>Select Parent Bead</option>
+                        <option value="career-goals">Career Goals (Main Section)</option>
+                        <option value="education">Education (Main Section)</option>
                         {educationBeadsList.filter(b => !b.parentId).map(b => (
                           <option key={b.id} value={b.id}>{b.heading}</option>
                         ))}

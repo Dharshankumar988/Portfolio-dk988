@@ -394,12 +394,12 @@ export const getStoredTerminalPassword = (): string => {
   return DEFAULT_TERMINAL_PASSWORD;
 };
 
-export const setStoredTerminalPassword = (password: string) => {
+export const setStoredTerminalPassword = (password: string, skipSync = false) => {
   if (typeof window === "undefined") return;
   const trimmed = password.trim();
   if (!trimmed) return;
   localStorage.setItem(TERMINAL_PASSWORD_KEY, JSON.stringify(trimmed));
-  emitPortfolioUpdate();
+  if (!skipSync) emitPortfolioUpdate();
 };
 
 export const getStoredProfile = (): ProfileContent =>
