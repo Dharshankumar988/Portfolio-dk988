@@ -89,8 +89,8 @@ export const defaultInterests: InterestRecord[] = [];
 export const defaultSkills: SkillRecord[] = [];
 
 export const defaultCertificates: CertificateRecord[] = [];
-const DEFAULT_ADMIN_TRIGGER = "dk160106";
-const DEFAULT_TERMINAL_PASSWORD = "admin";
+const DEFAULT_ADMIN_TRIGGER = process.env.NEXT_PUBLIC_ADMIN_TRIGGER || "setup_required";
+const DEFAULT_TERMINAL_PASSWORD = process.env.NEXT_PUBLIC_TERMINAL_PASSWORD || "setup_required";
 
 export const defaultEducationBeads: EducationBeadRecord[] = [];
 

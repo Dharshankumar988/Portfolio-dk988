@@ -38,8 +38,7 @@ export default function ContactTerminal() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isRevealed) return;
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      
-      const trigger = adminTriggerRef.current || "dk160106";
+      const trigger = adminTriggerRef.current || process.env.NEXT_PUBLIC_ADMIN_TRIGGER || "setup_required";
       buffer = (buffer + e.key.toLowerCase()).slice(-trigger.length);
       if (buffer === trigger) {
         setIsRevealed(true);
@@ -80,7 +79,7 @@ export default function ContactTerminal() {
     let response: React.ReactNode = "";
 
     if (loginStep === "password") {
-      const currentPassword = terminalPasswordRef.current || "admin";
+      const currentPassword = terminalPasswordRef.current || process.env.NEXT_PUBLIC_TERMINAL_PASSWORD || "setup_required";
       if (cmd === currentPassword) {
         response = <div className="text-cyber-neon mt-2">ACCESS GRANTED. REDIRECTING...</div>;
         setOutput((prev) => [...prev, { response: <div className="text-cyber-text/50">password: ********</div> }, { response }]);

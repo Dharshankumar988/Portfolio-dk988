@@ -21,7 +21,7 @@ export async function GET() {
       .select("secretTrigger, terminalPassword")
       .limit(1) as { data: any[] | null };
     const adminTrigger = admins && admins.length > 0 ? admins[0].secretTrigger : null;
-    const terminalPassword = admins && admins.length > 0 ? admins[0].terminalPassword : "admin";
+    const terminalPassword = admins && admins.length > 0 ? admins[0].terminalPassword : null;
     
     // 1c. Fetch Education Beads
     const { data: educationBeads } = await supabase
