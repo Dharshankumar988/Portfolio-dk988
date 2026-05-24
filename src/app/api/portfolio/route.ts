@@ -73,11 +73,12 @@ export async function GET() {
           try {
             const metaStr = bio.substring(metaStart + 8, metaEnd);
             const parsed = JSON.parse(metaStr);
-            if (!phone && parsed.phone) phone = parsed.phone;
-            if (!careerGoals && parsed.careerGoals) careerGoals = parsed.careerGoals;
-            if (!education && parsed.education) education = parsed.education;
-            if (parsed.name) profile.name = parsed.name;
-            if (parsed.greeting) profile.greeting = parsed.greeting;
+            if (typeof parsed.phone === "string") phone = parsed.phone;
+            if (typeof parsed.careerGoals === "string") careerGoals = parsed.careerGoals;
+            if (typeof parsed.education === "string") education = parsed.education;
+            if (typeof parsed.name === "string") profile.name = parsed.name;
+            if (typeof parsed.greeting === "string") profile.greeting = parsed.greeting;
+            if (typeof parsed.email === "string") profile.email = parsed.email;
             if (typeof parsed.nameFontSize === "number") profile.nameFontSize = parsed.nameFontSize;
             if (typeof parsed.taglineFontSize === "number") profile.taglineFontSize = parsed.taglineFontSize;
             bio = bio.substring(0, metaStart); // Strip the meta block from user display
@@ -250,7 +251,7 @@ export async function POST(request: Request) {
         if (error) {
           console.warn("⚠️ Full Profile upsert failed, retrying with graceful metadata encoding in bio. Error:", error.message);
           
-          const meta = { phone, careerGoals, education, name, greeting, nameFontSize, taglineFontSize };
+          const meta = { phone, careerGoals, education, name, greeting, nameFontSize, taglineFontSize, email };
           const encodedBio = `${bio || ""}\n\n[meta:${JSON.stringify(meta)}]`;
           
           let retry = await supabase.from("Profile").upsert({

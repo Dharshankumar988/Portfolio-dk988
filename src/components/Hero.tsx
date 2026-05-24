@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Terminal, Download, Mail, Phone } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { defaultProfile, getStoredProfile, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
@@ -9,7 +9,16 @@ import { defaultProfile, getStoredProfile, PORTFOLIO_UPDATE_EVENT, ProfileConten
 export default function Hero() {
   const [profile, setProfile] = useState<ProfileContent>(defaultProfile);
   const [avatarVisible, setAvatarVisible] = useState(true);
-  const [showPhonePopup, setShowPhonePopup] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyPhone = () => {
+    if (profile.phone) {
+      navigator.clipboard.writeText(profile.phone);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   useEffect(() => {
     const handleUpdate = () => setProfile(getStoredProfile());
@@ -83,14 +92,14 @@ export default function Hero() {
                 </button>
               )}
 
-              {profile.email ? (
-                <a
-                  href={`mailto:${profile.email}`}
+              {profile.email || profile.githubUrl || profile.linkedinUrl || profile.phone ? (
+                <button
+                  onClick={() => setShowContactModal(true)}
                   className="flex items-center gap-2 px-6 py-3 border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan/10 hover:glow-box-cyan transition-all font-mono text-sm rounded"
                 >
                   <Mail size={18} />
                   Contact
-                </a>
+                </button>
               ) : (
                 <button
                   disabled
@@ -100,40 +109,6 @@ export default function Hero() {
                   Contact
                 </button>
               )}
-
-              <div className="flex gap-4 items-center">
-                {profile.githubUrl ? (
-                  <a
-                    href={profile.githubUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded flex items-center justify-center"
-                  >
-                    <FaGithub size={20} />
-                  </a>
-                ) : null}
-
-                {profile.linkedinUrl ? (
-                  <a
-                    href={profile.linkedinUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded flex items-center justify-center"
-                  >
-                    <FaLinkedin size={20} />
-                  </a>
-                ) : null}
-
-                {profile.phone ? (
-                  <button
-                    onClick={() => setShowPhonePopup(true)}
-                    className="p-3 border border-cyber-gray hover:border-cyber-purple hover:text-cyber-purple transition-colors rounded cursor-pointer flex items-center justify-center"
-                    title="View phone number"
-                  >
-                    <Phone size={20} />
-                  </button>
-                ) : null}
-              </div>
             </div>
           </motion.div>
         </div>
@@ -162,59 +137,64 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {showPhonePopup && (
-        <div className="fixed inset-0 bg-cyber-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-cyber-dark border-2 border-cyber-purple p-6 rounded-lg max-w-sm w-full relative shadow-[0_0_25px_rgba(176,38,255,0.25)]"
-          >
-            <div className="absolute top-0 right-0 p-2 text-xs font-mono opacity-20">SECURE_COMM_V1</div>
-            
-            <div className="flex items-center gap-3 mb-6">
-              <Phone className="text-cyber-purple animate-pulse" size={24} />
-              <h3 className="font-mono text-lg font-bold text-white tracking-wider">CONTACT</h3>
-            </div>
-            
-            <div className="bg-cyber-black border border-cyber-gray p-4 rounded text-center mb-4 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-cyber-purple/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <span className="font-mono text-xl text-cyber-purple font-bold tracking-wider relative z-10 drop-shadow-[0_0_8px_rgba(176,38,255,0.8)] selection:bg-cyber-purple selection:text-cyber-black">
-                {profile.phone}
-              </span>
-            </div>
-
-            {profile.email && (
-              <div className="bg-cyber-black border border-cyber-gray p-3 rounded text-center mb-6 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-cyber-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="flex items-center justify-center gap-2 relative z-10 text-cyber-text/80">
-                  <Mail size={16} className="text-cyber-cyan" />
-                  <span className="font-mono text-sm tracking-wide selection:bg-cyber-cyan selection:text-cyber-black truncate">
-                    {profile.email}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-3">
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(profile.phone || "");
-                  alert("Phone number copied to clipboard!");
-                }}
-                className="flex-1 py-2 bg-cyber-purple/20 hover:bg-cyber-purple/30 text-cyber-purple border border-cyber-purple rounded font-mono text-xs transition-all uppercase cursor-pointer"
+      <AnimatePresence>
+        {showContactModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-cyber-dark border border-cyber-cyan p-8 rounded-lg max-w-sm w-full shadow-[0_0_30px_rgba(0,243,255,0.15)] flex flex-col gap-4 relative"
+            >
+              <button
+                onClick={() => setShowContactModal(false)}
+                className="absolute top-4 right-4 text-cyber-gray hover:text-white transition-colors"
               >
-                COPY NUMBER
+                ✕
               </button>
+              <h3 className="text-xl font-bold font-mono text-cyber-cyan mb-2 border-b border-cyber-gray/50 pb-4">Contact Link</h3>
+              
+              {profile.email && (
+                <a href={`mailto:${profile.email}`} className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-cyan/50 hover:bg-cyber-cyan/5 transition-all rounded text-cyber-text group">
+                  <Mail className="text-cyber-cyan group-hover:scale-110 transition-transform shrink-0" size={24} />
+                  <span className="font-mono text-sm break-all">{profile.email}</span>
+                </a>
+              )}
+
+              {profile.githubUrl && (
+                <a href={profile.githubUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-purple/50 hover:bg-cyber-purple/5 transition-all rounded text-cyber-text group">
+                  <FaGithub className="text-cyber-purple group-hover:scale-110 transition-transform shrink-0" size={24} />
+                  <span className="font-mono text-sm break-all">GitHub Profile</span>
+                </a>
+              )}
+
+              {profile.linkedinUrl && (
+                <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-blue/50 hover:bg-[#0A66C2]/10 transition-all rounded text-cyber-text group">
+                  <FaLinkedin className="text-[#0A66C2] group-hover:scale-110 transition-transform shrink-0" size={24} />
+                  <span className="font-mono text-sm break-all">LinkedIn Profile</span>
+                </a>
+              )}
+
+              {profile.phone && (
+                <button onClick={handleCopyPhone} className="flex items-center justify-between p-3 border border-cyber-gray hover:border-cyber-neon/50 hover:bg-cyber-neon/5 transition-all rounded text-cyber-text group w-full text-left">
+                  <div className="flex items-center gap-4">
+                    <Phone className="text-cyber-neon group-hover:scale-110 transition-transform shrink-0" size={24} />
+                    <span className="font-mono text-sm">{profile.phone}</span>
+                  </div>
+                  <span className="text-xs font-mono text-cyber-neon shrink-0 ml-2">{copied ? "Copied!" : "Copy"}</span>
+                </button>
+              )}
+
               <button 
-                onClick={() => setShowPhonePopup(false)}
-                className="px-4 py-2 bg-cyber-gray hover:bg-cyber-gray/80 text-white rounded font-mono text-xs transition-all cursor-pointer"
+                onClick={() => setShowContactModal(false)}
+                className="mt-4 px-4 py-2 bg-cyber-gray/20 hover:bg-cyber-gray/40 text-white font-mono text-sm rounded transition-colors"
               >
-                CLOSE
+                Close
               </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
