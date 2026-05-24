@@ -57,8 +57,8 @@ export default function AdminDashboard() {
   // Profile State
   const [profileName, setProfileName] = useState("");
   const [profileGreeting, setProfileGreeting] = useState("");
-  const [profileNameFontSize, setProfileNameFontSize] = useState("text-5xl md:text-7xl");
-  const [profileTaglineFontSize, setProfileTaglineFontSize] = useState("text-xl md:text-2xl");
+  const [profileNameFontSize, setProfileNameFontSize] = useState<number>(5);
+  const [profileTaglineFontSize, setProfileTaglineFontSize] = useState<number>(3);
   const [profileTagline, setProfileTagline] = useState("");
   const [profileBio, setProfileBio] = useState("");
   const [profileEmail, setProfileEmail] = useState("");
@@ -75,6 +75,7 @@ export default function AdminDashboard() {
   const [newBeadHeading, setNewBeadHeading] = useState("");
   const [newBeadContent, setNewBeadContent] = useState("");
   const [newBeadColor, setNewBeadColor] = useState("text-cyber-cyan");
+  const [newBeadParentId, setNewBeadParentId] = useState("");
   
   // Future Interests State
   const [interestInput, setInterestInput] = useState("");
@@ -220,8 +221,8 @@ export default function AdminDashboard() {
     const profile = {
       name: profileName.trim(),
       greeting: profileGreeting.trim(),
-      nameFontSize: profileNameFontSize.trim(),
-      taglineFontSize: profileTaglineFontSize.trim(),
+      nameFontSize: profileNameFontSize,
+      taglineFontSize: profileTaglineFontSize,
       tagline: profileTagline.trim(),
       bio: profileBio.trim(),
       email: profileEmail.trim(),
@@ -407,20 +408,20 @@ export default function AdminDashboard() {
                     className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
                   />
                   <div className="grid grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="Name Font Size (Tailwind classes)"
-                      value={profileNameFontSize}
-                      onChange={(e) => setProfileNameFontSize(e.target.value)}
-                      className="bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Tagline Font Size (Tailwind classes)"
-                      value={profileTaglineFontSize}
-                      onChange={(e) => setProfileTaglineFontSize(e.target.value)}
-                      className="bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
-                    />
+                    <div className="flex items-center justify-between bg-cyber-dark border border-cyber-gray p-2 rounded">
+                      <span className="text-white font-mono text-sm px-2">Name Size: {profileNameFontSize}</span>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => setProfileNameFontSize(Math.max(1, profileNameFontSize - 1))} className="w-8 h-8 flex items-center justify-center bg-cyber-gray/30 hover:bg-[#ff3366]/20 text-white hover:text-[#ff3366] rounded font-bold transition-colors">-</button>
+                        <button onClick={() => setProfileNameFontSize(Math.min(20, profileNameFontSize + 1))} className="w-8 h-8 flex items-center justify-center bg-cyber-gray/30 hover:bg-[#ff3366]/20 text-white hover:text-[#ff3366] rounded font-bold transition-colors">+</button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between bg-cyber-dark border border-cyber-gray p-2 rounded">
+                      <span className="text-white font-mono text-sm px-2">Tagline Size: {profileTaglineFontSize}</span>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => setProfileTaglineFontSize(Math.max(1, profileTaglineFontSize - 1))} className="w-8 h-8 flex items-center justify-center bg-cyber-gray/30 hover:bg-[#ff3366]/20 text-white hover:text-[#ff3366] rounded font-bold transition-colors">-</button>
+                        <button onClick={() => setProfileTaglineFontSize(Math.min(20, profileTaglineFontSize + 1))} className="w-8 h-8 flex items-center justify-center bg-cyber-gray/30 hover:bg-[#ff3366]/20 text-white hover:text-[#ff3366] rounded font-bold transition-colors">+</button>
+                      </div>
+                    </div>
                   </div>
                   <input
                     type="text"
@@ -484,7 +485,7 @@ export default function AdminDashboard() {
                   </button>
                 </div>
 
-                <h3 className="font-mono text-[#ff3366] mb-4 flex items-center gap-2 mt-8">EDUCATION TIMELINE BEADS</h3>
+                <h3 className="font-mono text-[#ff3366] mb-4 flex items-center gap-2 mt-8">TIMELINE BEADS</h3>
                 <div className="space-y-4 mb-8">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                     <input
@@ -504,6 +505,31 @@ export default function AdminDashboard() {
                       <option value="text-cyber-purple">Purple</option>
                       <option value="text-[#ff3366]">Red</option>
                     </select>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer text-white font-mono text-sm">
+                      <input 
+                        type="checkbox" 
+                        checked={newBeadParentId !== ""}
+                        onChange={(e) => setNewBeadParentId(e.target.checked ? "select" : "")}
+                        className="accent-[#ff3366] w-4 h-4 cursor-pointer"
+                      />
+                      Is Sub Bead?
+                    </label>
+                    {newBeadParentId !== "" && (
+                      <select
+                        value={newBeadParentId === "select" ? "" : newBeadParentId}
+                        onChange={(e) => setNewBeadParentId(e.target.value)}
+                        className="flex-1 bg-cyber-dark border border-cyber-gray p-2 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
+                      >
+                        <option value="" disabled>Select Parent Bead</option>
+                        {educationBeadsList.filter(b => !b.parentId).map(b => (
+                          <option key={b.id} value={b.id}>{b.heading}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <button
                       onClick={async () => {
                         if (!newBeadHeading.trim()) return;
@@ -514,14 +540,16 @@ export default function AdminDashboard() {
                           heading: newBeadHeading.trim(),
                           content: newBeadContent.trim(),
                           color: newBeadColor,
+                          parentId: newBeadParentId && newBeadParentId !== "select" ? newBeadParentId : null,
                         };
                         const updated = [...educationBeadsList, newEntry];
                         setEducationBeadsList(updated);
                         setStoredEducationBeads(updated, true);
                         setNewBeadHeading("");
                         setNewBeadContent("");
+                        setNewBeadParentId("");
                         const ok = await saveToDB("save_education_beads", updated);
-                        if (ok) alert("✅ Education bead added!");
+                        if (ok) alert("✅ Bead added!");
                       }}
                       className="px-6 py-2 bg-[#ff3366]/20 text-[#ff3366] border border-[#ff3366] rounded hover:bg-[#ff3366]/40 font-mono text-sm transition-colors h-[46px]"
                     >
@@ -542,7 +570,7 @@ export default function AdminDashboard() {
                       saveToDB("save_education_beads", newOrder);
                     }} className="space-y-2">
                       {educationBeadsList.map((bead) => (
-                        <Reorder.Item key={bead.id} value={bead} className="flex justify-between items-center bg-cyber-black border border-cyber-gray p-3 rounded cursor-grab active:cursor-grabbing hover:border-[#ff3366] transition-colors">
+                        <Reorder.Item key={bead.id} value={bead} className={`flex justify-between items-center bg-cyber-black border ${bead.parentId ? 'border-l-[#ff3366] border-l-4 ml-8' : 'border-cyber-gray'} p-3 rounded cursor-grab active:cursor-grabbing hover:border-[#ff3366] transition-colors`}>
                           <div className="flex flex-col">
                             <span className={`font-mono text-sm font-bold ${bead.color}`}>{bead.heading}</span>
                             <span className="font-mono text-xs text-cyber-text/60 truncate max-w-xs">{bead.content}</span>

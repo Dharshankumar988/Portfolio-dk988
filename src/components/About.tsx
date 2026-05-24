@@ -129,7 +129,7 @@ export default function About() {
 
                 {/* Education Beads (Timeline) */}
                 {educationBeads.length > 0 && (
-                  <div className="space-y-6 mt-6">
+                  <div className="space-y-4 mt-6">
                     {educationBeads.map((bead) => {
                       // Extract color classes
                       const dotColor = bead.color || "text-cyber-cyan";
@@ -141,14 +141,20 @@ export default function About() {
                         : dotColor === "text-cyber-purple"
                         ? "shadow-[0_0_8px_rgba(189,0,255,0.8)]"
                         : "shadow-[0_0_8px_rgba(255,51,102,0.8)]";
+                        
+                      const isSubBead = !!bead.parentId;
+                      const containerClass = isSubBead ? "relative ml-6 border-l border-cyber-gray/40 pl-5 pt-2" : "relative pl-6 pt-4";
+                      const dotClass = isSubBead ? `absolute w-1.5 h-1.5 ${bgColorClass} rounded-full -left-[23.5px] top-3 ${shadowClass}` : `absolute w-2 h-2 ${bgColorClass} rounded-full -left-[29px] top-5 ${shadowClass}`;
+                      const headingSize = isSubBead ? "text-xs" : "text-sm";
+                      const textSize = isSubBead ? "text-xs" : "text-sm";
 
                       return (
-                        <div key={bead.id} className="relative pl-6">
-                          <div className={`absolute w-2 h-2 ${bgColorClass} rounded-full -left-[29px] top-2 ${shadowClass}`} />
-                          <h4 className={`text-sm font-bold font-mono ${dotColor} mb-1 tracking-wide`}>
+                        <div key={bead.id} className={containerClass}>
+                          <div className={dotClass} />
+                          <h4 className={`${headingSize} font-bold font-mono ${dotColor} mb-1 tracking-wide`}>
                             {bead.heading}
                           </h4>
-                          <p className="text-cyber-text/60 text-sm leading-relaxed whitespace-pre-line font-sans">
+                          <p className={`text-cyber-text/60 ${textSize} leading-relaxed whitespace-pre-line font-sans`}>
                             {bead.content}
                           </p>
                         </div>

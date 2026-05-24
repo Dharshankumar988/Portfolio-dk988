@@ -49,10 +49,16 @@ export default function Hero() {
             <p className="text-sm md:text-base font-mono text-cyber-text/70 tracking-widest">
               {profile.greeting}
             </p>
-            <h1 className={`${profile.nameFontSize} font-bold tracking-tighter text-white glow-text-cyan`}>
+            <h1 
+              className="font-bold tracking-tighter text-white glow-text-cyan"
+              style={{ fontSize: `${(profile.nameFontSize || 5) * 0.5 + 1}rem`, lineHeight: 1.1 }}
+            >
               {profile.name}
             </h1>
-            <h2 className={`${profile.taglineFontSize} text-cyber-text/80 font-mono`}>
+            <h2 
+              className="text-cyber-text/80 font-mono"
+              style={{ fontSize: `${(profile.taglineFontSize || 3) * 0.2 + 0.8}rem`, lineHeight: 1.2 }}
+            >
               {profile.tagline}
             </h2>
             

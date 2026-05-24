@@ -11,8 +11,8 @@ export type ProjectRecord = {
 export type ProfileContent = {
   name: string;
   greeting: string;
-  nameFontSize: string;
-  taglineFontSize: string;
+  nameFontSize: number;
+  taglineFontSize: number;
   tagline: string;
   bio: string;
   email: string;
@@ -60,6 +60,7 @@ export type EducationBeadRecord = {
   heading: string;
   content: string;
   color: string;
+  parentId?: string | null;
 };
 
 export const defaultProjects: ProjectRecord[] = [];
@@ -67,8 +68,8 @@ export const defaultProjects: ProjectRecord[] = [];
 export const defaultProfile: ProfileContent = {
   name: "",
   greeting: "",
-  nameFontSize: "text-5xl md:text-7xl",
-  taglineFontSize: "text-xl md:text-2xl",
+  nameFontSize: 5,
+  taglineFontSize: 3,
   tagline: "",
   bio: "",
   email: "",
@@ -256,6 +257,7 @@ const normalizeEducationBeads = (items: unknown[]): EducationBeadRecord[] => {
       heading: record.heading,
       content: record.content || "",
       color: record.color || "text-cyber-cyan",
+      parentId: record.parentId || null,
     });
   }
 
@@ -268,8 +270,8 @@ const normalizeProfile = (value: unknown): ProfileContent | null => {
   return {
     name: typeof record.name === "string" ? record.name : defaultProfile.name,
     greeting: typeof record.greeting === "string" ? record.greeting : defaultProfile.greeting,
-    nameFontSize: typeof record.nameFontSize === "string" ? record.nameFontSize : defaultProfile.nameFontSize,
-    taglineFontSize: typeof record.taglineFontSize === "string" ? record.taglineFontSize : defaultProfile.taglineFontSize,
+    nameFontSize: typeof record.nameFontSize === "number" ? record.nameFontSize : defaultProfile.nameFontSize,
+    taglineFontSize: typeof record.taglineFontSize === "number" ? record.taglineFontSize : defaultProfile.taglineFontSize,
     tagline: typeof record.tagline === "string" ? record.tagline : defaultProfile.tagline,
     bio: typeof record.bio === "string" ? record.bio : defaultProfile.bio,
     email: typeof record.email === "string" ? record.email : "",

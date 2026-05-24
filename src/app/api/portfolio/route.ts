@@ -66,7 +66,6 @@ export async function GET() {
       let careerGoals = profile.careerGoals || "";
       let education = profile.education || "";
 
-      // If fields are empty, try to decode from bio metadata fallback
       if (bio.includes("\n\n[meta:")) {
         const metaStart = bio.indexOf("\n\n[meta:");
         const metaEnd = bio.indexOf("]", metaStart);
@@ -77,6 +76,10 @@ export async function GET() {
             if (!phone && parsed.phone) phone = parsed.phone;
             if (!careerGoals && parsed.careerGoals) careerGoals = parsed.careerGoals;
             if (!education && parsed.education) education = parsed.education;
+            if (parsed.name) profile.name = parsed.name;
+            if (parsed.greeting) profile.greeting = parsed.greeting;
+            if (typeof parsed.nameFontSize === "number") profile.nameFontSize = parsed.nameFontSize;
+            if (typeof parsed.taglineFontSize === "number") profile.taglineFontSize = parsed.taglineFontSize;
             bio = bio.substring(0, metaStart); // Strip the meta block from user display
           } catch (e) {
             console.error("Failed to parse bio metadata fallback", e);
@@ -97,12 +100,24 @@ export async function GET() {
       adminTrigger,
       terminalPassword,
       profile: mappedProfile,
-      educationBeads: (educationBeads || []).map((b) => ({
-        id: b.id,
-        heading: b.heading,
-        content: b.content,
-        color: b.color,
-      })),
+      educationBeads: (educationBeads || []).map((b) => {
+        let content = b.content || "";
+        let parentId = null;
+        if (content.startsWith("[parent:")) {
+          const closeBracketIdx = content.indexOf("]");
+          if (closeBracketIdx > 8) {
+            parentId = content.substring(8, closeBracketIdx);
+            content = content.substring(closeBracketIdx + 1);
+          }
+        }
+        return {
+          id: b.id,
+          heading: b.heading,
+          content,
+          color: b.color,
+          parentId,
+        };
+      }),
       projects: (projects || []).map((p) => ({
         id: p.id,
         title: p.title,
@@ -209,7 +224,7 @@ export async function POST(request: Request) {
       }
 
       case "save_profile": {
-        const { tagline, bio, email, githubUrl, linkedinUrl, resumeUrl, avatarUrl, phone, careerGoals, education } = data;
+        const { tagline, bio, email, githubUrl, linkedinUrl, resumeUrl, avatarUrl, phone, careerGoals, education, name, greeting, nameFontSize, taglineFontSize } = data;
         const payload: any = {
           id: "default",
           tagline: tagline || "",
@@ -235,7 +250,7 @@ export async function POST(request: Request) {
         if (error) {
           console.warn("⚠️ Full Profile upsert failed, retrying with graceful metadata encoding in bio. Error:", error.message);
           
-          const meta = { phone, careerGoals, education };
+          const meta = { phone, careerGoals, education, name, greeting, nameFontSize, taglineFontSize };
           const encodedBio = `${bio || ""}\n\n[meta:${JSON.stringify(meta)}]`;
           
           let retry = await supabase.from("Profile").upsert({
@@ -380,7 +395,7 @@ export async function POST(request: Request) {
           const formatted = beads.map((bead: any, idx: number) => ({
             id: bead.id,
             heading: bead.heading,
-            content: bead.content,
+            content: bead.parentId ? `[parent:${bead.parentId}]${bead.content}` : bead.content,
             color: bead.color,
             order: idx,
             updatedAt: new Date().toISOString(),

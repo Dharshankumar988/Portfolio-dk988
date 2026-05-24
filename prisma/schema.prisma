@@ -17,15 +17,19 @@ model Admin {
 }
 
 model Profile {
-  id          String   @id @default("default")
-  tagline     String
-  bio         String
-  email       String
-  githubUrl   String
-  linkedinUrl String
-  resumeUrl   String
-  avatarUrl   String
-  phone       String   @default("")
+  id              String   @id @default("default")
+  name            String   @default("")
+  greeting        String   @default("")
+  nameFontSize    Int      @default(5)
+  taglineFontSize Int      @default(3)
+  tagline         String
+  bio             String
+  email           String
+  githubUrl       String
+  linkedinUrl     String
+  resumeUrl       String
+  avatarUrl       String
+  phone           String   @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -90,6 +94,9 @@ model EducationBead {
   content     String
   color       String
   order       Int      @default(0)
+  parentId    String?
+  parent      EducationBead?  @relation("BeadToBead", fields: [parentId], references: [id], onDelete: Cascade)
+  children    EducationBead[] @relation("BeadToBead")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
