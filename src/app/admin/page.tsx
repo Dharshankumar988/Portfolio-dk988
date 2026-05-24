@@ -55,6 +55,10 @@ export default function AdminDashboard() {
   const [terminalPasswordInput, setTerminalPasswordInput] = useState("");
 
   // Profile State
+  const [profileName, setProfileName] = useState("");
+  const [profileGreeting, setProfileGreeting] = useState("");
+  const [profileNameFontSize, setProfileNameFontSize] = useState("text-5xl md:text-7xl");
+  const [profileTaglineFontSize, setProfileTaglineFontSize] = useState("text-xl md:text-2xl");
   const [profileTagline, setProfileTagline] = useState("");
   const [profileBio, setProfileBio] = useState("");
   const [profileEmail, setProfileEmail] = useState("");
@@ -159,6 +163,10 @@ export default function AdminDashboard() {
     setExistingProjects(getStoredProjects());
     setExistingCerts(getStoredCertificates());
     const profile = getStoredProfile();
+    setProfileName(profile.name);
+    setProfileGreeting(profile.greeting);
+    setProfileNameFontSize(profile.nameFontSize);
+    setProfileTaglineFontSize(profile.taglineFontSize);
     setProfileTagline(profile.tagline);
     setProfileBio(profile.bio);
     setProfileEmail(profile.email);
@@ -183,6 +191,10 @@ export default function AdminDashboard() {
       setExistingProjects(getStoredProjects());
       setExistingCerts(getStoredCertificates());
       const profile = getStoredProfile();
+      setProfileName(profile.name);
+      setProfileGreeting(profile.greeting);
+      setProfileNameFontSize(profile.nameFontSize);
+      setProfileTaglineFontSize(profile.taglineFontSize);
       setProfileTagline(profile.tagline);
       setProfileBio(profile.bio);
       setProfileEmail(profile.email);
@@ -206,6 +218,10 @@ export default function AdminDashboard() {
 
   const saveProfile = async () => {
     const profile = {
+      name: profileName.trim(),
+      greeting: profileGreeting.trim(),
+      nameFontSize: profileNameFontSize.trim(),
+      taglineFontSize: profileTaglineFontSize.trim(),
       tagline: profileTagline.trim(),
       bio: profileBio.trim(),
       email: profileEmail.trim(),
@@ -374,10 +390,41 @@ export default function AdminDashboard() {
               </div>
               
               <div className="bg-cyber-black border border-cyber-gray rounded-lg p-6 mb-8 relative">
-                <h3 className="font-mono text-[#ff3366] mb-4 flex items-center gap-2">UPDATE TAGLINE</h3>
+                <h3 className="font-mono text-[#ff3366] mb-4 flex items-center gap-2">HERO SECTION SETTINGS</h3>
                 <div className="space-y-4 mb-6">
                   <input
                     type="text"
+                    placeholder="Name"
+                    value={profileName}
+                    onChange={(e) => setProfileName(e.target.value)}
+                    className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Greeting"
+                    value={profileGreeting}
+                    onChange={(e) => setProfileGreeting(e.target.value)}
+                    className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Name Font Size (Tailwind classes)"
+                      value={profileNameFontSize}
+                      onChange={(e) => setProfileNameFontSize(e.target.value)}
+                      className="bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Tagline Font Size (Tailwind classes)"
+                      value={profileTaglineFontSize}
+                      onChange={(e) => setProfileTaglineFontSize(e.target.value)}
+                      className="bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Tagline"
                     value={profileTagline}
                     onChange={(e) => setProfileTagline(e.target.value)}
                     className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
@@ -386,7 +433,7 @@ export default function AdminDashboard() {
                     onClick={saveProfile}
                     className="px-6 py-2 bg-[#ff3366]/20 text-[#ff3366] border border-[#ff3366] rounded hover:bg-[#ff3366]/40 font-mono text-sm transition-colors"
                   >
-                    SAVE TAGLINE
+                    SAVE HERO SETTINGS
                   </button>
                 </div>
 

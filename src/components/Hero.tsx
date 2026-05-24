@@ -47,12 +47,12 @@ export default function Hero() {
             className="space-y-6"
           >
             <p className="text-sm md:text-base font-mono text-cyber-text/70 tracking-widest">
-              Welcome to Dharshan's portfolio
+              {profile.greeting}
             </p>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white glow-text-cyan">
-              DHARSHAN KUMAR B
+            <h1 className={`${profile.nameFontSize} font-bold tracking-tighter text-white glow-text-cyan`}>
+              {profile.name}
             </h1>
-            <h2 className="text-xl md:text-2xl text-cyber-text/80 font-mono">
+            <h2 className={`${profile.taglineFontSize} text-cyber-text/80 font-mono`}>
               {profile.tagline}
             </h2>
             

@@ -9,6 +9,10 @@ export type ProjectRecord = {
 };
 
 export type ProfileContent = {
+  name: string;
+  greeting: string;
+  nameFontSize: string;
+  taglineFontSize: string;
   tagline: string;
   bio: string;
   email: string;
@@ -61,6 +65,10 @@ export type EducationBeadRecord = {
 export const defaultProjects: ProjectRecord[] = [];
 
 export const defaultProfile: ProfileContent = {
+  name: "",
+  greeting: "",
+  nameFontSize: "text-5xl md:text-7xl",
+  taglineFontSize: "text-xl md:text-2xl",
   tagline: "",
   bio: "",
   email: "",
@@ -69,8 +77,8 @@ export const defaultProfile: ProfileContent = {
   resumeUrl: "",
   avatarUrl: "",
   phone: "",
-  careerGoals: "To build highly resilient, intelligent systems that leverage AI and Blockchain to solve complex security challenges in enterprise and healthcare environments.",
-  education: "B.E. Computer Science and Engineering\nFocus: Cybersecurity, Network Infrastructure, Machine Learning.",
+  careerGoals: "",
+  education: "",
 };
 
 export const defaultExtracurriculars: ExtracurricularRecord[] = [];
@@ -258,6 +266,10 @@ const normalizeProfile = (value: unknown): ProfileContent | null => {
   if (!value || typeof value !== "object") return null;
   const record = value as Partial<ProfileContent>;
   return {
+    name: typeof record.name === "string" ? record.name : defaultProfile.name,
+    greeting: typeof record.greeting === "string" ? record.greeting : defaultProfile.greeting,
+    nameFontSize: typeof record.nameFontSize === "string" ? record.nameFontSize : defaultProfile.nameFontSize,
+    taglineFontSize: typeof record.taglineFontSize === "string" ? record.taglineFontSize : defaultProfile.taglineFontSize,
     tagline: typeof record.tagline === "string" ? record.tagline : defaultProfile.tagline,
     bio: typeof record.bio === "string" ? record.bio : defaultProfile.bio,
     email: typeof record.email === "string" ? record.email : "",
@@ -357,7 +369,7 @@ export const getStoredAdminTrigger = (): string => {
   return DEFAULT_ADMIN_TRIGGER;
 };
 
-export const setStoredAdminTrigger = (trigger: string) => {
+export const setStoredAdminTrigger = (trigger: string, skipSync = false) => {
   if (typeof window === "undefined") return;
   const trimmed = trigger.trim();
   if (!trimmed) return;
