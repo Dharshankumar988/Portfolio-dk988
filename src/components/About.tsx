@@ -4,13 +4,17 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { User, Mail, Phone } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { defaultProfile, getStoredProfile, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
+import { defaultProfile, getStoredProfile, getStoredEducationBeads, EducationBeadRecord, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
 
 export default function About() {
   const [profile, setProfile] = useState<ProfileContent>(defaultProfile);
+  const [educationBeads, setEducationBeads] = useState<EducationBeadRecord[]>([]);
 
   useEffect(() => {
-    const handleUpdate = () => setProfile(getStoredProfile());
+    const handleUpdate = () => {
+      setProfile(getStoredProfile());
+      setEducationBeads(getStoredEducationBeads());
+    };
     handleUpdate();
     window.addEventListener(PORTFOLIO_UPDATE_EVENT, handleUpdate);
     window.addEventListener("storage", handleUpdate);
@@ -119,9 +123,39 @@ export default function About() {
               <div className="border-l-2 border-cyber-gray pl-6 relative">
                 <div className="absolute w-3 h-3 bg-cyber-cyan rounded-full -left-[7px] top-2 shadow-[0_0_8px_rgba(0,243,255,0.8)]" />
                 <h3 className="text-xl font-bold text-white mb-3 font-mono tracking-wider">Education</h3>
-                <p className="text-cyber-text/75 text-base leading-relaxed whitespace-pre-line font-sans">
+                <p className="text-cyber-text/75 text-base leading-relaxed whitespace-pre-line font-sans mb-6">
                   {profile.education || "B.E. Computer Science and Engineering\nFocus: Cybersecurity, Network Infrastructure, Machine Learning."}
                 </p>
+
+                {/* Education Beads (Timeline) */}
+                {educationBeads.length > 0 && (
+                  <div className="space-y-6 mt-6">
+                    {educationBeads.map((bead) => {
+                      // Extract color classes
+                      const dotColor = bead.color || "text-cyber-cyan";
+                      const bgColorClass = dotColor.replace('text-', 'bg-');
+                      const shadowClass = dotColor === "text-cyber-cyan" 
+                        ? "shadow-[0_0_8px_rgba(0,243,255,0.8)]" 
+                        : dotColor === "text-cyber-neon" 
+                        ? "shadow-[0_0_8px_rgba(57,255,20,0.8)]"
+                        : dotColor === "text-cyber-purple"
+                        ? "shadow-[0_0_8px_rgba(189,0,255,0.8)]"
+                        : "shadow-[0_0_8px_rgba(255,51,102,0.8)]";
+
+                      return (
+                        <div key={bead.id} className="relative pl-6">
+                          <div className={`absolute w-2 h-2 ${bgColorClass} rounded-full -left-[29px] top-2 ${shadowClass}`} />
+                          <h4 className={`text-sm font-bold font-mono ${dotColor} mb-1 tracking-wide`}>
+                            {bead.heading}
+                          </h4>
+                          <p className="text-cyber-text/60 text-sm leading-relaxed whitespace-pre-line font-sans">
+                            {bead.content}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
             </div>

@@ -15,16 +15,21 @@ import {
   getStoredProjects,
   getStoredProfile,
   getStoredSkills,
+  getStoredTerminalPassword,
+  getStoredEducationBeads,
   InterestRecord,
   ProjectRecord,
   setStoredCertificates,
   setStoredExtracurriculars,
   setStoredInterests,
   setStoredAdminTrigger,
+  setStoredTerminalPassword,
   setStoredProjects,
   setStoredProfile,
   setStoredSkills,
+  setStoredEducationBeads,
   SkillRecord,
+  EducationBeadRecord,
   PORTFOLIO_UPDATE_EVENT,
   saveToDB,
 } from "@/lib/portfolioStore";
@@ -47,6 +52,7 @@ export default function AdminDashboard() {
   const [bootComplete, setBootComplete] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminTriggerInput, setAdminTriggerInput] = useState("");
+  const [terminalPasswordInput, setTerminalPasswordInput] = useState("");
 
   // Profile State
   const [profileTagline, setProfileTagline] = useState("");
@@ -59,6 +65,12 @@ export default function AdminDashboard() {
   const [profilePhone, setProfilePhone] = useState("");
   const [profileCareerGoals, setProfileCareerGoals] = useState("");
   const [profileEducation, setProfileEducation] = useState("");
+  
+  // Education Beads State
+  const [educationBeadsList, setEducationBeadsList] = useState<EducationBeadRecord[]>([]);
+  const [newBeadHeading, setNewBeadHeading] = useState("");
+  const [newBeadContent, setNewBeadContent] = useState("");
+  const [newBeadColor, setNewBeadColor] = useState("text-cyber-cyan");
   
   // Future Interests State
   const [interestInput, setInterestInput] = useState("");
@@ -160,7 +172,9 @@ export default function AdminDashboard() {
     setExtracurricularsList(getStoredExtracurriculars());
     setInterestsList(getStoredInterests());
     setSkillsList(getStoredSkills().items);
+    setEducationBeadsList(getStoredEducationBeads());
     setAdminTriggerInput(getStoredAdminTrigger());
+    setTerminalPasswordInput(getStoredTerminalPassword());
   }, []);
 
   // Re-sync form fields whenever DatabaseHydrator populates localStorage from Supabase
@@ -182,6 +196,9 @@ export default function AdminDashboard() {
       setExtracurricularsList(getStoredExtracurriculars());
       setInterestsList(getStoredInterests());
       setSkillsList(getStoredSkills().items);
+      setEducationBeadsList(getStoredEducationBeads());
+      setAdminTriggerInput(getStoredAdminTrigger());
+      setTerminalPasswordInput(getStoredTerminalPassword());
     };
     window.addEventListener(PORTFOLIO_UPDATE_EVENT, handler);
     return () => window.removeEventListener(PORTFOLIO_UPDATE_EVENT, handler);
@@ -418,6 +435,86 @@ export default function AdminDashboard() {
                   >
                     SAVE EDUCATION
                   </button>
+                </div>
+
+                <h3 className="font-mono text-[#ff3366] mb-4 flex items-center gap-2 mt-8">EDUCATION TIMELINE BEADS</h3>
+                <div className="space-y-4 mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Bead Heading (e.g. 2024 - B.Tech)"
+                      value={newBeadHeading}
+                      onChange={(e) => setNewBeadHeading(e.target.value)}
+                      className="bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
+                    />
+                    <select
+                      value={newBeadColor}
+                      onChange={(e) => setNewBeadColor(e.target.value)}
+                      className="bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
+                    >
+                      <option value="text-cyber-cyan">Cyan</option>
+                      <option value="text-cyber-neon">Neon Green</option>
+                      <option value="text-cyber-purple">Purple</option>
+                      <option value="text-[#ff3366]">Red</option>
+                    </select>
+                    <button
+                      onClick={async () => {
+                        if (!newBeadHeading.trim()) return;
+                        const newEntry: EducationBeadRecord = {
+                          id: typeof crypto !== "undefined" && "randomUUID" in crypto
+                            ? crypto.randomUUID()
+                            : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                          heading: newBeadHeading.trim(),
+                          content: newBeadContent.trim(),
+                          color: newBeadColor,
+                        };
+                        const updated = [...educationBeadsList, newEntry];
+                        setEducationBeadsList(updated);
+                        setStoredEducationBeads(updated, true);
+                        setNewBeadHeading("");
+                        setNewBeadContent("");
+                        const ok = await saveToDB("save_education_beads", updated);
+                        if (ok) alert("✅ Education bead added!");
+                      }}
+                      className="px-6 py-2 bg-[#ff3366]/20 text-[#ff3366] border border-[#ff3366] rounded hover:bg-[#ff3366]/40 font-mono text-sm transition-colors h-[46px]"
+                    >
+                      ADD BEAD
+                    </button>
+                  </div>
+                  <textarea
+                    placeholder="Bead Content Description"
+                    value={newBeadContent}
+                    onChange={(e) => setNewBeadContent(e.target.value)}
+                    className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none h-20"
+                  />
+                  
+                  <div className="mt-4 space-y-2">
+                    <Reorder.Group axis="y" values={educationBeadsList} onReorder={(newOrder) => {
+                      setEducationBeadsList(newOrder);
+                      setStoredEducationBeads(newOrder, true);
+                      saveToDB("save_education_beads", newOrder);
+                    }} className="space-y-2">
+                      {educationBeadsList.map((bead) => (
+                        <Reorder.Item key={bead.id} value={bead} className="flex justify-between items-center bg-cyber-black border border-cyber-gray p-3 rounded cursor-grab active:cursor-grabbing hover:border-[#ff3366] transition-colors">
+                          <div className="flex flex-col">
+                            <span className={`font-mono text-sm font-bold ${bead.color}`}>{bead.heading}</span>
+                            <span className="font-mono text-xs text-cyber-text/60 truncate max-w-xs">{bead.content}</span>
+                          </div>
+                          <button
+                            onClick={async () => {
+                              const updated = educationBeadsList.filter(b => b.id !== bead.id);
+                              setEducationBeadsList(updated);
+                              setStoredEducationBeads(updated, true);
+                              await saveToDB("save_education_beads", updated);
+                            }}
+                            className="text-red-500 hover:text-red-400 font-mono text-xs border border-red-500/50 px-2 py-1 rounded transition-colors"
+                          >
+                            DELETE
+                          </button>
+                        </Reorder.Item>
+                      ))}
+                    </Reorder.Group>
+                  </div>
                 </div>
 
                 <h3 className="font-mono text-[#ff3366] mb-4 flex items-center gap-2 mt-10">CONTACT & LINKS</h3>
@@ -1442,7 +1539,7 @@ export default function AdminDashboard() {
                   <Settings size={120} className="animate-[spin_20s_linear_infinite]" />
                 </div>
                 
-                <div className="space-y-2 relative z-10">
+                <div className="space-y-2 relative z-10 mb-4">
                   <label className="font-mono text-sm text-cyber-text/70 block">
                     CHANGE ADMIN LOGIN TRIGGER
                   </label>
@@ -1454,18 +1551,36 @@ export default function AdminDashboard() {
                     className="w-full bg-cyber-dark border border-cyber-gray focus:border-red-500 rounded p-3 text-white font-mono outline-none"
                   />
                 </div>
+
+                <div className="space-y-2 relative z-10">
+                  <label className="font-mono text-sm text-cyber-text/70 block">
+                    TERMINAL REDIRECTION PASSWORD
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="New terminal password"
+                    value={terminalPasswordInput}
+                    onChange={(e) => setTerminalPasswordInput(e.target.value)}
+                    className="w-full bg-cyber-dark border border-cyber-gray focus:border-red-500 rounded p-3 text-white font-mono outline-none"
+                  />
+                </div>
                 
                 <div className="mt-8 pt-4 border-t border-red-500/20 relative z-10">
                   <button
-                    onClick={() => {
-                      const trimmed = adminTriggerInput.trim();
-                      if (!trimmed) return;
-                      setStoredAdminTrigger(trimmed);
-                      alert("Admin login trigger updated.");
+                    onClick={async () => {
+                      const triggerTrimmed = adminTriggerInput.trim();
+                      const passwordTrimmed = terminalPasswordInput.trim();
+                      if (!triggerTrimmed || !passwordTrimmed) return;
+                      
+                      setStoredAdminTrigger(triggerTrimmed);
+                      setStoredTerminalPassword(passwordTrimmed);
+                      
+                      const ok = await saveToDB("save_admin_settings", { trigger: triggerTrimmed, terminalPassword: passwordTrimmed });
+                      if (ok) alert("✅ Security credentials updated successfully!");
                     }}
                     className="w-full px-6 py-3 bg-red-500/20 text-red-500 border border-red-500 hover:bg-red-500 hover:text-black rounded font-mono font-bold transition-colors"
                   >
-                    UPDATE LOGIN TRIGGER
+                    UPDATE SECURITY CREDENTIALS
                   </button>
                 </div>
               </div>

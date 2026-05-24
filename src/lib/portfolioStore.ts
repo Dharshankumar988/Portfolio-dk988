@@ -51,6 +51,13 @@ export type CertificateRecord = {
   filePath?: string;
 };
 
+export type EducationBeadRecord = {
+  id: string;
+  heading: string;
+  content: string;
+  color: string;
+};
+
 export const defaultProjects: ProjectRecord[] = [];
 
 export const defaultProfile: ProfileContent = {
@@ -74,6 +81,9 @@ export const defaultSkills: SkillRecord[] = [];
 
 export const defaultCertificates: CertificateRecord[] = [];
 const DEFAULT_ADMIN_TRIGGER = "dk160106";
+const DEFAULT_TERMINAL_PASSWORD = "admin";
+
+export const defaultEducationBeads: EducationBeadRecord[] = [];
 
 const PROJECTS_KEY = "portfolio.projects.v1";
 const CERTS_KEY = "portfolio.certificates.v1";
@@ -82,6 +92,8 @@ const EXTRACURRICULARS_KEY = "portfolio.extracurriculars.v1";
 const INTERESTS_KEY = "portfolio.interests.v1";
 const SKILLS_KEY = "portfolio.skills.v1";
 const ADMIN_TRIGGER_KEY = "portfolio.adminTrigger.v1";
+const TERMINAL_PASSWORD_KEY = "portfolio.terminalPassword.v1";
+const EDUCATION_BEADS_KEY = "portfolio.educationBeads.v1";
 export const PORTFOLIO_UPDATE_EVENT = "portfolio:updated";
 
 const readArray = <T,>(raw: string | null, fallback: T[]): T[] => {
@@ -223,6 +235,25 @@ const normalizeSkills = (items: unknown[]): SkillRecord[] => {
   return normalized;
 };
 
+const normalizeEducationBeads = (items: unknown[]): EducationBeadRecord[] => {
+  if (!items.length) return [];
+  const normalized: EducationBeadRecord[] = [];
+
+  for (const item of items) {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Partial<EducationBeadRecord>;
+    if (typeof record.heading !== "string") return [];
+    normalized.push({
+      id: record.id || record.heading.toLowerCase().replace(/\s+/g, "-"),
+      heading: record.heading,
+      content: record.content || "",
+      color: record.color || "text-cyber-cyan",
+    });
+  }
+
+  return normalized;
+};
+
 const normalizeProfile = (value: unknown): ProfileContent | null => {
   if (!value || typeof value !== "object") return null;
   const record = value as Partial<ProfileContent>;
@@ -334,6 +365,29 @@ export const setStoredAdminTrigger = (trigger: string) => {
   emitPortfolioUpdate();
 };
 
+export const getStoredTerminalPassword = (): string => {
+  if (typeof window === "undefined") return DEFAULT_TERMINAL_PASSWORD;
+  const raw = localStorage.getItem(TERMINAL_PASSWORD_KEY);
+  if (!raw) return DEFAULT_TERMINAL_PASSWORD;
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed === "string" && parsed.trim()) {
+      return parsed.trim();
+    }
+  } catch {
+    if (raw.trim()) return raw.trim();
+  }
+  return DEFAULT_TERMINAL_PASSWORD;
+};
+
+export const setStoredTerminalPassword = (password: string) => {
+  if (typeof window === "undefined") return;
+  const trimmed = password.trim();
+  if (!trimmed) return;
+  localStorage.setItem(TERMINAL_PASSWORD_KEY, JSON.stringify(trimmed));
+  emitPortfolioUpdate();
+};
+
 export const getStoredProfile = (): ProfileContent =>
   readStoredObject<ProfileContent>(PROFILE_KEY, defaultProfile, normalizeProfile);
 
@@ -372,4 +426,14 @@ export const setStoredSkills = (items: SkillRecord[], skipSync = false) => {
   localStorage.setItem(SKILLS_KEY, JSON.stringify(items));
   emitPortfolioUpdate();
   if (!skipSync) syncToDatabase("save_skills", items);
+};
+
+export const getStoredEducationBeads = (): EducationBeadRecord[] =>
+  readStoredList(EDUCATION_BEADS_KEY, defaultEducationBeads, normalizeEducationBeads).items;
+
+export const setStoredEducationBeads = (items: EducationBeadRecord[], skipSync = false) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(EDUCATION_BEADS_KEY, JSON.stringify(items));
+  emitPortfolioUpdate();
+  if (!skipSync) syncToDatabase("save_education_beads", items);
 };

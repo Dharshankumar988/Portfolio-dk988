@@ -15,13 +15,20 @@ export async function GET() {
       .limit(1) as { data: any[] | null };
     const profile = profiles && profiles.length > 0 ? profiles[0] : null;
 
-    // 1b. Fetch Admin trigger
+    // 1b. Fetch Admin trigger and terminal password
     const { data: admins } = await supabase
       .from("Admin")
-      .select("secretTrigger")
+      .select("secretTrigger, terminalPassword")
       .limit(1) as { data: any[] | null };
     const adminTrigger = admins && admins.length > 0 ? admins[0].secretTrigger : null;
+    const terminalPassword = admins && admins.length > 0 ? admins[0].terminalPassword : "admin";
     
+    // 1c. Fetch Education Beads
+    const { data: educationBeads } = await supabase
+      .from("EducationBead")
+      .select("*")
+      .order("order", { ascending: true }) as { data: any[] | null };
+
     // 2. Fetch Projects (ordered)
     const { data: projects } = await supabase
       .from("Project")
@@ -88,7 +95,14 @@ export async function GET() {
 
     return NextResponse.json({
       adminTrigger,
+      terminalPassword,
       profile: mappedProfile,
+      educationBeads: (educationBeads || []).map((b) => ({
+        id: b.id,
+        heading: b.heading,
+        content: b.content,
+        color: b.color,
+      })),
       projects: (projects || []).map((p) => ({
         id: p.id,
         title: p.title,
@@ -157,10 +171,13 @@ export async function POST(request: Request) {
     const supabase = getSupabaseAdmin() as any;
 
     switch (action) {
-      case "save_admin_trigger": {
-        const { trigger } = data;
+      case "save_admin_settings": {
+        const { trigger, terminalPassword } = data;
         if (!trigger || typeof trigger !== "string" || !trigger.trim()) {
           return NextResponse.json({ error: "Invalid trigger" }, { status: 400 });
+        }
+        if (!terminalPassword || typeof terminalPassword !== "string" || !terminalPassword.trim()) {
+          return NextResponse.json({ error: "Invalid terminal password" }, { status: 400 });
         }
         
         // Find existing admin or upsert
@@ -172,7 +189,7 @@ export async function POST(request: Request) {
         if (admins && admins.length > 0) {
           const { error } = await supabase
             .from("Admin")
-            .update({ secretTrigger: trigger.trim(), updatedAt: new Date().toISOString() })
+            .update({ secretTrigger: trigger.trim(), terminalPassword: terminalPassword.trim(), updatedAt: new Date().toISOString() })
             .eq("id", admins[0].id);
           if (error) throw error;
         } else {
@@ -183,6 +200,7 @@ export async function POST(request: Request) {
               username: "admin",
               passwordHash: "$2b$10$O4eG0.XoH250b/vFsz0VjupUj2o8G1n6Y0hC4K9n1y6k/6P2V/8eW",
               secretTrigger: trigger.trim(),
+              terminalPassword: terminalPassword.trim(),
               updatedAt: new Date().toISOString()
             });
           if (error) throw error;
@@ -348,6 +366,26 @@ export async function POST(request: Request) {
             updatedAt: new Date().toISOString(),
           }));
           const { error: insErr } = await supabase.from("Interest").insert(formatted);
+          if (insErr) throw insErr;
+        }
+        break;
+      }
+
+      case "save_education_beads": {
+        const beads = data || [];
+        const { error: delErr } = await supabase.from("EducationBead").delete().neq("id", "");
+        if (delErr) throw delErr;
+
+        if (beads.length > 0) {
+          const formatted = beads.map((bead: any, idx: number) => ({
+            id: bead.id,
+            heading: bead.heading,
+            content: bead.content,
+            color: bead.color,
+            order: idx,
+            updatedAt: new Date().toISOString(),
+          }));
+          const { error: insErr } = await supabase.from("EducationBead").insert(formatted);
           if (insErr) throw insErr;
         }
         break;

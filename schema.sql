@@ -19,6 +19,7 @@ CREATE TABLE "Admin" (
   "username" TEXT NOT NULL,
   "passwordHash" TEXT NOT NULL,
   "secretTrigger" TEXT NOT NULL,
+  "terminalPassword" TEXT NOT NULL DEFAULT 'admin',
   "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -112,6 +113,19 @@ CREATE TABLE "Interest" (
   CONSTRAINT "Interest_pkey" PRIMARY KEY ("id")
 );
 
+-- 9. CREATE EDUCATIONBEAD TABLE
+CREATE TABLE "EducationBead" (
+  "id" TEXT NOT NULL,
+  "heading" TEXT NOT NULL,
+  "content" TEXT NOT NULL,
+  "color" TEXT NOT NULL,
+  "order" INTEGER NOT NULL DEFAULT 0,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT "EducationBead_pkey" PRIMARY KEY ("id")
+);
+
 
 -- =========================================================================
 -- SEED DATA PRE-POPULATION
@@ -119,11 +133,12 @@ CREATE TABLE "Interest" (
 
 -- Seed default Admin credentials
 -- Username: admin | Secret Trigger: dk160106
-INSERT INTO "Admin" ("id", "username", "passwordHash", "secretTrigger") VALUES (
+INSERT INTO "Admin" ("id", "username", "passwordHash", "secretTrigger", "terminalPassword") VALUES (
   'default-admin',
   'admin',
   '$2b$10$O4eG0.XoH250b/vFsz0VjupUj2o8G1n6Y0hC4K9n1y6k/6P2V/8eW', -- hashed password for 'dk160106'
-  'dk160106'
+  'dk160106',
+  'admin'
 );
 
 -- Seed default Profile summary

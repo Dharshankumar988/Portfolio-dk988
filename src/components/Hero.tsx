@@ -165,16 +165,27 @@ export default function Hero() {
             
             <div className="flex items-center gap-3 mb-6">
               <Phone className="text-cyber-purple animate-pulse" size={24} />
-              <h3 className="font-mono text-lg font-bold text-white tracking-wider">SECURE CONTACT</h3>
+              <h3 className="font-mono text-lg font-bold text-white tracking-wider">CONTACT</h3>
             </div>
             
-            <p className="font-mono text-xs text-cyber-text/50 mb-2">TELEPHONY ROUTING CHANNEL</p>
-            <div className="bg-cyber-black border border-cyber-gray p-4 rounded text-center mb-6 relative overflow-hidden group">
+            <div className="bg-cyber-black border border-cyber-gray p-4 rounded text-center mb-4 relative overflow-hidden group">
               <div className="absolute inset-0 bg-cyber-purple/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <span className="font-mono text-xl text-cyber-purple font-bold tracking-wider relative z-10 drop-shadow-[0_0_8px_rgba(176,38,255,0.8)] selection:bg-cyber-purple selection:text-cyber-black">
                 {profile.phone}
               </span>
             </div>
+
+            {profile.email && (
+              <div className="bg-cyber-black border border-cyber-gray p-3 rounded text-center mb-6 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-cyber-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="flex items-center justify-center gap-2 relative z-10 text-cyber-text/80">
+                  <Mail size={16} className="text-cyber-cyan" />
+                  <span className="font-mono text-sm tracking-wide selection:bg-cyber-cyan selection:text-cyber-black truncate">
+                    {profile.email}
+                  </span>
+                </div>
+              </div>
+            )}
 
             <div className="flex gap-3">
               <button 

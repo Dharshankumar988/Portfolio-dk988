@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { defaultProfile, getStoredAdminTrigger, getStoredProfile, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
+import { defaultProfile, getStoredAdminTrigger, getStoredProfile, getStoredTerminalPassword, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
 
 export default function ContactTerminal() {
   const [input, setInput] = useState("");
@@ -14,11 +14,13 @@ export default function ContactTerminal() {
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
   const adminTriggerRef = useRef<string>("");
+  const terminalPasswordRef = useRef<string>("admin");
   const router = useRouter();
 
   useEffect(() => {
     const syncTrigger = () => {
       adminTriggerRef.current = getStoredAdminTrigger();
+      terminalPasswordRef.current = getStoredTerminalPassword();
     };
     syncTrigger();
     window.addEventListener(PORTFOLIO_UPDATE_EVENT, syncTrigger);
@@ -78,7 +80,8 @@ export default function ContactTerminal() {
     let response: React.ReactNode = "";
 
     if (loginStep === "password") {
-      if (cmd === "admin") {
+      const currentPassword = terminalPasswordRef.current || "admin";
+      if (cmd === currentPassword) {
         response = <div className="text-cyber-neon mt-2">ACCESS GRANTED. REDIRECTING...</div>;
         setOutput((prev) => [...prev, { response: <div className="text-cyber-text/50">password: ********</div> }, { response }]);
         setInput("");
