@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Unlock, AlertTriangle } from "lucide-react";
-import { getStoredAdminTrigger, setStoredAdminTrigger } from "@/lib/portfolioStore";
+import { getStoredAdminTrigger, setStoredAdminTrigger, getStoredTerminalPassword, setStoredTerminalPassword, saveToDB } from "@/lib/portfolioStore";
 
 const MASTER_OVERRIDE_CODE = "shrav1410";
 
 export default function AdminTrigger() {
   const [isTriggered, setIsTriggered] = useState(false);
   const [newTrigger, setNewTrigger] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [authStatus, setAuthStatus] = useState<"idle" | "updating" | "success">("idle");
 
   useEffect(() => {
@@ -34,23 +35,31 @@ export default function AdminTrigger() {
   useEffect(() => {
     if (isTriggered) {
       setNewTrigger(getStoredAdminTrigger());
+      setNewPassword(getStoredTerminalPassword());
     }
   }, [isTriggered]);
 
-  const handleUpdate = (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTrigger.trim()) return;
+    if (!newTrigger.trim() || !newPassword.trim()) return;
     setAuthStatus("updating");
     
-    setTimeout(() => {
-      setStoredAdminTrigger(newTrigger);
+    setStoredAdminTrigger(newTrigger, true);
+    setStoredTerminalPassword(newPassword, true);
+    
+    const ok = await saveToDB("save_admin_settings", { trigger: newTrigger, terminalPassword: newPassword });
+    
+    if (ok) {
       setAuthStatus("success");
       setTimeout(() => {
         setIsTriggered(false);
         setAuthStatus("idle");
         setNewTrigger("");
+        setNewPassword("");
       }, 2000);
-    }, 1500);
+    } else {
+      setAuthStatus("idle");
+    }
   };
 
   return (
@@ -76,7 +85,7 @@ export default function AdminTrigger() {
             
             <div className="font-mono text-sm space-y-2 mb-8">
               <p className="text-cyber-text">CRITICAL ACCESS GRANTED.</p>
-              <p className="text-[#ff3366]">UPDATE ADMIN LOGIN TRIGGER BELOW.</p>
+              <p className="text-[#ff3366]">UPDATE ADMIN CREDENTIALS BELOW.</p>
             </div>
             
             {authStatus === "success" ? (
@@ -97,16 +106,28 @@ export default function AdminTrigger() {
                     type="password"
                     value={newTrigger}
                     onChange={(e) => setNewTrigger(e.target.value)}
-                    placeholder="ENTER NEW TRIGGER"
+                    placeholder="ENTER NEW ADMIN TRIGGER"
                     className="w-full bg-black/50 border border-cyber-gray focus:border-[#ff3366] rounded p-3 pl-10 font-mono text-white outline-none transition-colors"
                     disabled={authStatus === "updating"}
                     autoFocus
                   />
                 </div>
+
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-cyber-gray" size={20} />
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="ENTER NEW LOGIN PASSWORD"
+                    className="w-full bg-black/50 border border-cyber-gray focus:border-[#ff3366] rounded p-3 pl-10 font-mono text-white outline-none transition-colors"
+                    disabled={authStatus === "updating"}
+                  />
+                </div>
                 
                 <button
                   type="submit"
-                  disabled={authStatus === "updating" || !newTrigger}
+                  disabled={authStatus === "updating" || !newTrigger || !newPassword}
                   className="w-full py-3 bg-[#ff3366]/10 hover:bg-[#ff3366]/20 text-[#ff3366] border border-[#ff3366] rounded font-mono font-bold tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {authStatus === "updating" ? (
