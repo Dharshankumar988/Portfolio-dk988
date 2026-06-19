@@ -25,18 +25,23 @@ const BeadNode = ({ bead, allBeads, level = 0, onFileClick }: { bead: EducationB
   const children = allBeads.filter(b => b.parentId === bead.id);
 
   return (
-    <div className={`relative space-y-2 mt-4 ${level > 0 ? "ml-6" : ""}`}>
-      {level > 0 && (
-        <div className="absolute -left-6 top-2.5 w-6 h-px bg-cyber-gray/40" />
-      )}
-      <div className={`relative ${level === 0 ? "pl-2" : "pl-6"}`}>
-        <div className={`absolute ${level === 0 ? "-left-[21px]" : "left-0"} top-1.5 w-2 h-2 rounded-full ${dotClass} ${level > 0 ? "scale-75" : ""}`} />
+    <div className="relative space-y-2 mt-4">
+      {/* Horizontal connector from the parent's vertical line */}
+      <div className="absolute -left-[17px] top-[11px] w-[17px] h-px bg-cyber-gray/40" />
+      
+      {/* Container for dot and content */}
+      <div className="relative pl-5">
+        {/* The dot */}
+        <div className={`absolute left-0 top-1.5 w-2 h-2 rounded-full ${dotClass} ${level > 0 ? "scale-90 opacity-80" : ""}`} />
+        
         <p className={`font-medium ${level > 0 ? "text-sm" : "text-base"} ${textClass}`}>
           {bead.heading}
         </p>
+        
         {bead.content && (
           <p className="text-cyber-text/50 text-xs leading-relaxed mt-1">{bead.content}</p>
         )}
+        
         {bead.fileUrl && (
           <button
             onClick={() => onFileClick(bead.fileUrl!)}
@@ -46,8 +51,9 @@ const BeadNode = ({ bead, allBeads, level = 0, onFileClick }: { bead: EducationB
           </button>
         )}
       </div>
+
       {children.length > 0 && (
-        <div className="relative border-l border-cyber-gray/20 ml-1 pl-1">
+        <div className="relative border-l border-cyber-gray/30 ml-[3px] pl-[17px] mt-2">
           {children.map(child => (
             <BeadNode key={child.id} bead={child} allBeads={allBeads} level={level + 1} onFileClick={onFileClick} />
           ))}
