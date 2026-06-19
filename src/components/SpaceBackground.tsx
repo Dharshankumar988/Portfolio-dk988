@@ -3,57 +3,33 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const SPACE_IMAGES = [
-  "/bg/1.jpg",
-  "/bg/2.jpg",
-  "/bg/3.jpg",
-];
-
 export default function SpaceBackground() {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isClient, setIsClient] = useState(false);
-  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    const startIdx = Math.floor(Math.random() * SPACE_IMAGES.length);
-    setCurrentIndex(startIdx);
     setIsClient(true);
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % SPACE_IMAGES.length);
-    }, 20000);
-    return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#02050a]">
       {/* Strong CSS Fallback in case images fail or load slowly */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(60,20,100,0.4)_0%,transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(10,50,90,0.5)_0%,transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(120,40,200,0.4)_0%,transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(40,100,200,0.5)_0%,transparent_60%)]" />
 
-      {isClient && SPACE_IMAGES.map((src, i) => {
-        if (failedImages.has(i)) return null;
-
-        return (
-          <motion.div
-            key={src}
-            initial={false}
-            animate={{
-              opacity: i === currentIndex ? 0.25 : 0, // Very subtle
-              scale: i === currentIndex ? 1 : 1.05,
-            }}
-            transition={{ duration: 6, ease: "easeInOut" }}
-            className="absolute inset-0 mix-blend-screen"
-          >
-            <img 
-              src={src}
-              alt="Deep Space"
-              className="w-full h-full object-cover animate-[panSpace_60s_linear_infinite]"
-              onError={() => setFailedImages((prev) => new Set(prev).add(i))}
-            />
-          </motion.div>
-        );
-      })}
+      {isClient && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.3 }}
+          transition={{ duration: 4, ease: "easeInOut" }}
+          className="absolute inset-0 mix-blend-screen"
+        >
+          <img 
+            src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=2560&auto=format&fit=crop"
+            alt="Deep Space"
+            className="w-full h-full object-cover animate-[panSpace_60s_linear_infinite]"
+          />
+        </motion.div>
+      )}
       
       {/* Dark gradient overlay to ensure text is always readable */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyber-black/40 to-cyber-black/80" />
