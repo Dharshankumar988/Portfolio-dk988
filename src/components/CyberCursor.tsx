@@ -47,10 +47,10 @@ export default function CyberCursor() {
       <div
         ref={dotRef}
         className="fixed top-0 left-0 z-[9999] pointer-events-none will-change-transform"
-        style={{ marginLeft: "-2px", marginTop: "-2px" }}
+        style={{ marginLeft: "-3px", marginTop: "-3px" }}
       >
         <div
-          className={`w-1 h-1 rounded-full transition-colors duration-100 ${
+          className={`w-1.5 h-1.5 rounded-full transition-colors duration-100 ${
             hovering ? "bg-cyber-cyan shadow-[0_0_4px_rgba(0,240,255,1)]" : "bg-cyber-neon shadow-[0_0_4px_rgba(57,255,20,0.9)]"
           }`}
         />
@@ -60,10 +60,10 @@ export default function CyberCursor() {
       <div
         ref={ringRef}
         className="fixed top-0 left-0 z-[9998] pointer-events-none will-change-transform"
-        style={{ marginLeft: "-10px", marginTop: "-10px" }}
+        style={{ marginLeft: "-14px", marginTop: "-14px" }}
       >
         <div
-          className={`w-5 h-5 rounded-full border transition-colors duration-200 ${
+          className={`w-7 h-7 rounded-full border transition-colors duration-200 ${
             hovering ? "border-cyber-cyan/50" : "border-cyber-neon/25"
           }`}
         />

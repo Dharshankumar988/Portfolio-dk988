@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LINKS = [
-  { id: "hero",         label: "~/home" },
+  { id: "hero",         label: "home" },
   { id: "about",        label: "about" },
   { id: "skills",       label: "skills" },
   { id: "projects",     label: "projects" },

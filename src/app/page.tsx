@@ -11,6 +11,7 @@ import StartupAnimation from "@/components/StartupAnimation";
 export default function Home() {
   return (
     <main className="relative bg-cyber-black min-h-screen overflow-hidden">
+      <div className="absolute inset-0 bg-grid pointer-events-none" />
       <StartupAnimation />
       <BackgroundParticles />
       <section id="hero">

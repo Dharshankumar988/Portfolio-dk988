@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Roboto_Mono } from "next/font/google";
+import { Inter, Roboto_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import AdminTrigger from "@/components/AdminTrigger";
 import DatabaseHydrator from "@/components/DatabaseHydrator";
@@ -16,6 +16,11 @@ const robotoMono = Roboto_Mono({
   subsets: ["latin"],
 });
 
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Dharshan Security Framework | Cybersecurity Portfolio",
   description: "Personal command center and portfolio for Dharshan Kumar B. Cybersecurity, Cloud, AI, and Secure Systems.",
@@ -29,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${robotoMono.variable} h-full antialiased dark`}
+      className={`${inter.variable} ${robotoMono.variable} ${spaceGrotesk.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-cyber-black text-cyber-text selection:bg-cyber-neon selection:text-black">
         <DatabaseHydrator />
