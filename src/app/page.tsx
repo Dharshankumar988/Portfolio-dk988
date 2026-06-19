@@ -14,9 +14,9 @@ export default function Home() {
       <div className="absolute inset-0 bg-grid pointer-events-none" />
       
       {/* Subtle deep space background */}
-      <div className="fixed inset-0 pointer-events-none z-0 mix-blend-screen opacity-30">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(40,20,80,0.5)_0%,transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(10,40,60,0.6)_0%,transparent_50%)]" />
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-80">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(60,30,120,0.4)_0%,transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(20,80,120,0.4)_0%,transparent_60%)]" />
       </div>
 
       <StartupAnimation />

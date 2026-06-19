@@ -76,7 +76,7 @@ export default function Hero() {
           >
             {/* Name — clean gradient style */}
             <h1
-              className="font-bold tracking-tight leading-none"
+              className="font-mono font-bold tracking-tight leading-none"
               style={{
                 fontSize: `${(profile.nameFontSize || 5) * 0.5 + 1}rem`,
                 lineHeight: 1.05,
