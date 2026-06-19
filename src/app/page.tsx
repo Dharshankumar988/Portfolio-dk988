@@ -8,16 +8,12 @@ import ExtraAndFuture from "@/components/ExtraAndFuture";
 import ContactTerminal from "@/components/ContactTerminal";
 import StartupAnimation from "@/components/StartupAnimation";
 
+import SpaceBackground from "@/components/SpaceBackground";
+
 export default function Home() {
   return (
     <main className="relative bg-cyber-black min-h-screen overflow-hidden">
-      <div className="absolute inset-0 bg-grid pointer-events-none" />
-      
-      {/* Subtle deep space background */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-80">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(60,30,120,0.4)_0%,transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(20,80,120,0.4)_0%,transparent_60%)]" />
-      </div>
+      <SpaceBackground />
 
       <StartupAnimation />
       <BackgroundParticles />
