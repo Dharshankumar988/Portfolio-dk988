@@ -40,10 +40,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes panSpace {
-  0% { transform: scale(1.1) translate(0%, 0%); }
-  33% { transform: scale(1.12) translate(-2%, 2%); }
-  66% { transform: scale(1.08) translate(1%, -1%); }
-  100% { transform: scale(1.1) translate(0%, 0%); }
+  0% { transform: scale(1.15) translate(0%, 0%); }
+  33% { transform: scale(1.15) translate(-1%, 1%); }
+  66% { transform: scale(1.15) translate(1%, -1%); }
+  100% { transform: scale(1.15) translate(0%, 0%); }
 }
 
 /* Scrollbar styling */

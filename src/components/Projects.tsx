@@ -194,13 +194,12 @@ export default function Projects() {
 
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, x: -16 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="flex items-center gap-4 mb-14"
         >
           <h2 className="text-3xl md:text-4xl font-mono font-bold text-cyber-neon glow-text-neon uppercase tracking-widest">Projects_</h2>
-          <div className="flex-1 h-px bg-cyber-gray/40 max-w-xs" />
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-6">

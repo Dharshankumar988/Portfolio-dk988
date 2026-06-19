@@ -11,12 +11,15 @@ const SPACE_IMAGES = [
 ];
 
 export default function SpaceBackground() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   useEffect(() => {
+    const startIdx = Math.floor(Math.random() * SPACE_IMAGES.length);
+    setCurrentIndex(startIdx);
+
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % SPACE_IMAGES.length);
+      setCurrentIndex((prev) => (prev !== null ? (prev + 1) % SPACE_IMAGES.length : startIdx));
     }, 20000);
     return () => clearInterval(interval);
   }, []);
