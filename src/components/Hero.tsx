@@ -76,8 +76,9 @@ export default function Hero() {
           >
             {/* Name — clean gradient style */}
             <h1
-              className="font-display font-bold tracking-tighter leading-none"
+              className="font-bold tracking-tighter leading-none"
               style={{
+                fontFamily: "var(--font-orbitron), sans-serif",
                 fontSize: `${(profile.nameFontSize || 5) * 0.5 + 1}rem`,
                 lineHeight: 1.05,
                 background: "linear-gradient(135deg, #ffffff 40%, #00f0ff 100%)",
