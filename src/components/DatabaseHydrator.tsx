@@ -8,6 +8,7 @@ import {
   setStoredSkills,
   setStoredExtracurriculars,
   setStoredInterests,
+  setStoredEducationBeads,
   setStoredAdminTrigger,
   setStoredTerminalPassword
 } from "@/lib/portfolioStore";
@@ -40,6 +41,9 @@ export default function DatabaseHydrator() {
         }
         if (data.extracurriculars && data.extracurriculars.length > 0) {
           setStoredExtracurriculars(data.extracurriculars, true);
+        }
+        if (data.educationBeads && data.educationBeads.length > 0) {
+          setStoredEducationBeads(data.educationBeads, true);
         }
         if (data.interests && data.interests.length > 0) {
           setStoredInterests(data.interests, true);
