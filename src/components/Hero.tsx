@@ -96,14 +96,7 @@ export default function Hero() {
               {profile.tagline}
             </h2>
 
-            {/* Status badge */}
-            <div className="flex items-center gap-2 pt-1">
-              <span className="relative flex h-2 w-2">
-                <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-cyber-neon opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyber-neon" />
-              </span>
-              <span className="font-mono text-xs text-cyber-neon/70 tracking-widest">AVAILABLE FOR OPPORTUNITIES</span>
-            </div>
+
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 pt-4">

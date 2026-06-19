@@ -21,8 +21,8 @@ function ParticleField() {
       <Points ref={ref} positions={sphere as Float32Array} stride={3} frustumCulled={false}>
         <PointMaterial
           transparent
-          color="#39ff14"
-          size={0.005}
+          color="#ffffff"
+          size={0.003}
           sizeAttenuation={true}
           depthWrite={false}
         />

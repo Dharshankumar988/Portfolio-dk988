@@ -47,11 +47,11 @@ h1, h2, h3, h4, h5, h6 {
   background: #050505;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #39ff14, #00f0ff);
+  background: #1a1f2e;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00f0ff;
+  background: #2a3040;
 }
 
 /* Utilities for glowing text/boxes */

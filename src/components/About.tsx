@@ -63,9 +63,17 @@ export default function About() {
               <div className="bg-[#080c14] border border-cyber-gray/50 rounded-xl p-8 space-y-6">
                 {/* Bio */}
                 {profile.bio ? (
-                  <p className="text-cyber-text/75 leading-relaxed text-base border-l-2 border-cyber-neon/30 pl-5">
-                    {profile.bio}
-                  </p>
+                  <div className="bg-[#0a0e17] rounded-lg border border-cyber-gray/40 overflow-hidden shadow-sm">
+                    <div className="flex items-center gap-2 px-4 py-2.5 border-b border-cyber-gray/30 bg-[#0d1117]">
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+                      <span className="ml-2 font-mono text-[10px] text-cyber-text/40">user.bio</span>
+                    </div>
+                    <div className="p-5 font-mono text-[13px] leading-relaxed text-[#c9d1d9] whitespace-pre-wrap">
+                      {profile.bio}
+                    </div>
+                  </div>
                 ) : (
                   <p className="text-cyber-text/25 text-sm italic">Bio not set — add via Admin panel.</p>
                 )}
