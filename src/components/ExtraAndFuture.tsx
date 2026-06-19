@@ -32,7 +32,7 @@ export default function ExtraAndFuture() {
   }, []);
 
   return (
-    <section className="relative py-24 px-6 md:px-24 z-10 bg-cyber-black/50">
+    <section className="relative py-24 px-6 md:px-24 z-10">
       <div className="w-full max-w-6xl mx-auto">
         
         {/* Section header */}
