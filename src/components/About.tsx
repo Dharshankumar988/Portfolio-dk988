@@ -4,11 +4,31 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { User, Mail, Phone } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { defaultProfile, getStoredProfile, getStoredEducationBeads, EducationBeadRecord, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
+import {
+  defaultProfile,
+  getStoredProfile,
+  getStoredEducationBeads,
+  EducationBeadRecord,
+  PORTFOLIO_UPDATE_EVENT,
+  ProfileContent,
+} from "@/lib/portfolioStore";
+
+// Live clock for the "uptime" field
+function useLiveClock() {
+  const [time, setTime] = useState("");
+  useEffect(() => {
+    const update = () => setTime(new Date().toLocaleTimeString("en-US", { hour12: false }));
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
 
 export default function About() {
   const [profile, setProfile] = useState<ProfileContent>(defaultProfile);
   const [educationBeads, setEducationBeads] = useState<EducationBeadRecord[]>([]);
+  const time = useLiveClock();
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -24,44 +44,31 @@ export default function About() {
     };
   }, []);
 
-  // Build detail chips only from real DB data
   const details = [
-    profile.email    && { label: "Email",    value: profile.email,      href: `mailto:${profile.email}`,   icon: Mail,    color: "text-cyber-cyan" },
-    profile.githubUrl && { label: "GitHub",  value: "GitHub Profile",   href: profile.githubUrl,            icon: FaGithub,  color: "text-cyber-neon" },
-    profile.linkedinUrl && { label: "LinkedIn", value: "LinkedIn Profile", href: profile.linkedinUrl,       icon: FaLinkedin, color: "text-cyber-purple" },
+    profile.email && { label: "Email", value: profile.email, href: `mailto:${profile.email}`, icon: Mail, color: "text-cyber-cyan" },
+    profile.githubUrl && { label: "GitHub", value: "GitHub", href: profile.githubUrl, icon: FaGithub, color: "text-cyber-neon" },
+    profile.linkedinUrl && { label: "LinkedIn", value: "LinkedIn", href: profile.linkedinUrl, icon: FaLinkedin, color: "text-cyber-purple" },
     profile.phone && { label: "Phone", value: profile.phone, href: `tel:${profile.phone}`, icon: Phone, color: "text-cyber-neon" },
   ].filter(Boolean) as { label: string; value: string; href: string; icon: any; color: string }[];
 
-  const renderBeadsList = (beadsToRender: EducationBeadRecord[]) => {
-    if (!beadsToRender || beadsToRender.length === 0) return null;
+  const renderBeadsList = (beads: EducationBeadRecord[]) => {
+    if (!beads?.length) return null;
     return (
-      <div className="space-y-4 mt-6">
-        {beadsToRender.map((bead) => {
+      <div className="space-y-4 mt-5">
+        {beads.map((bead) => {
           const dotColor = bead.color || "text-cyber-cyan";
-          const bgColorClass = dotColor.replace('text-', 'bg-');
-          const shadowClass = dotColor === "text-cyber-cyan" 
-            ? "shadow-[0_0_8px_rgba(0,243,255,0.8)]" 
-            : dotColor === "text-cyber-neon" 
-            ? "shadow-[0_0_8px_rgba(57,255,20,0.8)]"
-            : dotColor === "text-cyber-purple"
-            ? "shadow-[0_0_8px_rgba(189,0,255,0.8)]"
-            : "shadow-[0_0_8px_rgba(255,51,102,0.8)]";
-            
-          const isSubBead = !!bead.parentId;
-          const containerClass = isSubBead ? "relative ml-6 border-l border-cyber-gray/40 pl-5 pt-2" : "relative pl-6 pt-4";
-          const dotClass = isSubBead ? `absolute w-1.5 h-1.5 ${bgColorClass} rounded-full -left-[23.5px] top-3 ${shadowClass}` : `absolute w-2 h-2 ${bgColorClass} rounded-full -left-[29px] top-5 ${shadowClass}`;
-          const headingSize = isSubBead ? "text-xs" : "text-sm";
-          const textSize = isSubBead ? "text-xs" : "text-sm";
-
+          const bgColorClass = dotColor.replace("text-", "bg-");
+          const shadowClass =
+            dotColor === "text-cyber-cyan" ? "shadow-[0_0_6px_rgba(0,243,255,0.7)]"
+            : dotColor === "text-cyber-neon" ? "shadow-[0_0_6px_rgba(57,255,20,0.7)]"
+            : dotColor === "text-cyber-purple" ? "shadow-[0_0_6px_rgba(176,38,255,0.7)]"
+            : "shadow-[0_0_6px_rgba(255,51,102,0.7)]";
+          const isSub = !!bead.parentId;
           return (
-            <div key={bead.id} className={containerClass}>
-              <div className={dotClass} />
-              <h4 className={`${headingSize} font-bold font-mono ${dotColor} mb-1 tracking-wide`}>
-                {bead.heading}
-              </h4>
-              <p className={`text-cyber-text/60 ${textSize} leading-relaxed whitespace-pre-line font-sans`}>
-                {bead.content}
-              </p>
+            <div key={bead.id} className={isSub ? "relative ml-5 border-l border-cyber-gray/30 pl-5 pt-1" : "relative pl-5 pt-3"}>
+              <div className={`absolute w-1.5 h-1.5 ${bgColorClass} rounded-full ${isSub ? "-left-[22px] top-2.5" : "-left-[26px] top-4"} ${shadowClass}`} />
+              <h4 className={`text-xs font-bold font-mono ${dotColor} mb-0.5 tracking-wide`}>{bead.heading}</h4>
+              <p className="text-cyber-text/55 text-xs leading-relaxed whitespace-pre-line">{bead.content}</p>
             </div>
           );
         })}
@@ -70,111 +77,161 @@ export default function About() {
   };
 
   return (
-    <section className="relative py-24 px-6 md:px-24 z-10 flex items-center" id="about">
+    <section className="relative py-24 px-6 md:px-24 z-10" id="about">
       <div className="w-full max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7 }}
         >
-          {/* Section heading */}
-          <div className="flex items-center gap-3 mb-10">
-
-            <h2 className="text-3xl font-bold text-white tracking-wider font-mono">About Me</h2>
-            <div className="flex-1 h-px bg-cyber-gray/40 ml-4" />
+          {/* Section header */}
+          <div className="flex items-center gap-3 mb-3">
+            <span className="font-mono text-cyber-text/30 text-sm">00</span>
+            <div className="h-px w-8 bg-cyber-text/20" />
+            <span className="font-mono text-xs text-cyber-text/30 tracking-widest">PROFILE</span>
           </div>
+          <h2 className="text-3xl md:text-4xl font-bold font-mono text-white tracking-tight mb-14">
+            About<span className="text-cyber-text/40">_</span>
+          </h2>
 
-          {/* Grid Layout showing Profile Card on the left, Goals & Education on the right */}
-          <div className="grid md:grid-cols-12 gap-12 items-center">
-            
-            {/* Left Card - Col span 7 */}
-            <div className="md:col-span-7 relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyber-neon to-cyber-cyan rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-700" />
-              <div className="relative bg-cyber-dark border border-cyber-gray p-8 md:p-10 rounded-xl space-y-8">
+          <div className="grid md:grid-cols-12 gap-10 items-start">
 
-                {/* Header row */}
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-cyber-neon/10 border border-cyber-neon/30 rounded-lg">
-                    <User className="text-cyber-neon" size={28} />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-white font-mono tracking-wide">Profile</h3>
-                    <p className="text-cyber-text/50 font-mono text-xs tracking-widest mt-0.5">DHARSHAN KUMAR B</p>
+            {/* Left column */}
+            <div className="md:col-span-7 space-y-5">
+
+              {/* Profile card */}
+              <div className="relative bg-[#080c14] border border-cyber-gray/50 rounded-lg overflow-hidden">
+                {/* top bar */}
+                <div className="flex items-center gap-3 px-5 py-3 bg-cyber-gray/20 border-b border-cyber-gray/40">
+                  <User size={14} className="text-cyber-neon/60" />
+                  <span className="font-mono text-xs text-cyber-text/40">profile.json</span>
+                  <div className="ml-auto flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-red-500/50" />
+                    <span className="w-2 h-2 rounded-full bg-yellow-500/50" />
+                    <span className="w-2 h-2 rounded-full bg-green-500/50" />
                   </div>
                 </div>
 
-                {/* Bio — only shown if set in DB */}
-                {profile.bio ? (
-                  <p className="text-cyber-text/80 leading-relaxed text-lg font-sans border-l-2 border-cyber-neon/40 pl-5 whitespace-pre-wrap">
-                    {profile.bio}
-                  </p>
-                ) : (
-                  <p className="text-cyber-text/30 leading-relaxed text-base font-mono italic">
-                    — Bio not set yet. Add it via the Admin panel. —
-                  </p>
-                )}
-
-                {/* Tagline badge */}
-                {profile.tagline && (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyber-cyan/5 border border-cyber-cyan/30 rounded-full">
-                    <span className="w-2 h-2 rounded-full bg-cyber-cyan animate-pulse" />
-                    <span className="font-mono text-sm text-cyber-cyan tracking-wide">{profile.tagline}</span>
+                {/* JSON-style bio */}
+                <div className="p-6 font-mono text-sm">
+                  <div className="text-cyber-gray/50 mb-2">{"{"}</div>
+                  <div className="pl-5 space-y-2">
+                    <div>
+                      <span className="text-cyber-purple/70">&quot;name&quot;</span>
+                      <span className="text-cyber-text/40">: </span>
+                      <span className="text-cyber-cyan/80">&quot;{profile.name || "—"}&quot;</span>
+                      <span className="text-cyber-text/40">,</span>
+                    </div>
+                    {profile.tagline && (
+                      <div>
+                        <span className="text-cyber-purple/70">&quot;role&quot;</span>
+                        <span className="text-cyber-text/40">: </span>
+                        <span className="text-cyber-neon/70">&quot;{profile.tagline}&quot;</span>
+                        <span className="text-cyber-text/40">,</span>
+                      </div>
+                    )}
+                    {profile.bio && (
+                      <div>
+                        <span className="text-cyber-purple/70">&quot;bio&quot;</span>
+                        <span className="text-cyber-text/40">: </span>
+                        <span className="text-cyber-text/70 leading-relaxed whitespace-pre-wrap">&quot;{profile.bio}&quot;</span>
+                        <span className="text-cyber-text/40">,</span>
+                      </div>
+                    )}
+                    {details.length > 0 && (
+                      <div>
+                        <span className="text-cyber-purple/70">&quot;links&quot;</span>
+                        <span className="text-cyber-text/40">: [</span>
+                        <div className="pl-5 space-y-1 py-1">
+                          {details.map(({ label, value, href, icon: Icon, color }) => (
+                            <div key={label}>
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noreferrer"
+                                className={`${color} hover:underline transition-all inline-flex items-center gap-1.5 text-xs`}
+                              >
+                                <Icon size={11} />
+                                {value}
+                              </a>
+                            </div>
+                          ))}
+                        </div>
+                        <span className="text-cyber-text/40">]</span>
+                      </div>
+                    )}
+                    {!profile.bio && details.length === 0 && (
+                      <div className="text-cyber-text/20 italic text-xs">// No data — add via admin panel</div>
+                    )}
                   </div>
-                )}
+                  <div className="text-cyber-gray/50 mt-2">{"}"}</div>
+                </div>
+              </div>
 
-                {/* Contact detail chips — only rendered for real DB values */}
-                {details.length > 0 && (
-                  <div className="flex flex-wrap gap-3 pt-2">
-                    {details.map(({ label, value, href, icon: Icon, color }) => (
-                      <a
-                        key={label}
-                        href={href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={`flex items-center gap-2 px-4 py-2 bg-cyber-black/60 border border-cyber-gray rounded-lg hover:border-cyber-cyan/60 transition-colors font-mono text-sm ${color}`}
-                      >
-                        <Icon size={15} />
-                        {value}
-                      </a>
-                    ))}
+              {/* System stats mini panel */}
+              <div className="bg-[#080c14] border border-cyber-gray/40 rounded-lg px-5 py-4 font-mono text-xs">
+                <div className="flex items-center gap-2 mb-3 text-cyber-text/30">
+                  <span className="text-cyber-neon/50">$</span>
+                  <span>sys --status</span>
+                  <span className="ml-auto text-cyber-text/20">{time}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-cyber-text/40">
+                  <div className="flex justify-between">
+                    <span className="text-cyber-text/25">status</span>
+                    <span className="text-cyber-neon">active</span>
                   </div>
-                )}
-
+                  <div className="flex justify-between">
+                    <span className="text-cyber-text/25">mode</span>
+                    <span className="text-cyber-cyan">learning</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-cyber-text/25">projects</span>
+                    <span className="text-cyber-text/60">building</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-cyber-text/25">collab</span>
+                    <span className="text-cyber-text/60">open</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Right Side - Career & Education - Col span 5 */}
-            <div className="md:col-span-5 space-y-10 pl-2">
-              
+            {/* Right column */}
+            <div className="md:col-span-5 space-y-8">
+
               {/* Career Goals */}
-              <div className="border-l-2 border-cyber-gray pl-6 relative">
-                <div className="absolute w-3 h-3 bg-cyber-neon rounded-full -left-[7px] top-2 shadow-[0_0_8px_rgba(57,255,20,0.8)]" />
-                <h3 className="text-xl font-bold text-cyber-neon mb-3 font-mono tracking-wider">Career Goals</h3>
-                {profile.careerGoals && (
-                  <p className="text-cyber-text/75 text-base leading-relaxed whitespace-pre-line font-sans">
+              <div className="border-l-2 border-cyber-gray/40 pl-6 relative">
+                <div className="absolute w-3 h-3 bg-cyber-neon rounded-full -left-[7px] top-1.5 shadow-[0_0_8px_rgba(57,255,20,0.8)]" />
+                <h3 className="text-base font-bold text-cyber-neon font-mono tracking-widest mb-3">
+                  CAREER_GOALS
+                </h3>
+                {profile.careerGoals ? (
+                  <p className="text-cyber-text/65 text-sm leading-relaxed whitespace-pre-line">
                     {profile.careerGoals}
                   </p>
+                ) : (
+                  <p className="text-cyber-text/20 text-xs italic font-mono">// not set</p>
                 )}
-                {renderBeadsList(educationBeads.filter(b => b.parentId === "career-goals"))}
+                {renderBeadsList(educationBeads.filter((b) => b.parentId === "career-goals"))}
               </div>
-              
+
               {/* Education */}
-              <div className="border-l-2 border-cyber-gray pl-6 relative">
-                <div className="absolute w-3 h-3 bg-cyber-cyan rounded-full -left-[7px] top-2 shadow-[0_0_8px_rgba(0,243,255,0.8)]" />
-                <h3 className="text-xl font-bold text-cyber-cyan mb-3 font-mono tracking-wider">Education</h3>
-                {profile.education && (
-                  <p className="text-cyber-text/75 text-base leading-relaxed whitespace-pre-line font-sans mb-6">
+              <div className="border-l-2 border-cyber-gray/40 pl-6 relative">
+                <div className="absolute w-3 h-3 bg-cyber-cyan rounded-full -left-[7px] top-1.5 shadow-[0_0_8px_rgba(0,243,255,0.8)]" />
+                <h3 className="text-base font-bold text-cyber-cyan font-mono tracking-widest mb-3">
+                  EDUCATION
+                </h3>
+                {profile.education ? (
+                  <p className="text-cyber-text/65 text-sm leading-relaxed whitespace-pre-line mb-4">
                     {profile.education}
                   </p>
+                ) : (
+                  <p className="text-cyber-text/20 text-xs italic font-mono mb-4">// not set</p>
                 )}
-
-                {/* Education Beads (Timeline) */}
-                {renderBeadsList(educationBeads.filter(b => b.parentId !== "career-goals"))}
+                {renderBeadsList(educationBeads.filter((b) => b.parentId !== "career-goals"))}
               </div>
-
             </div>
-
           </div>
         </motion.div>
       </div>

@@ -13,12 +13,23 @@ export default function Home() {
     <main className="relative bg-cyber-black min-h-screen overflow-hidden">
       <StartupAnimation />
       <BackgroundParticles />
-      <Hero />
+      <section id="hero">
+        <Hero />
+      </section>
+      {/* About has id="about" internally */}
       <About />
-      <Skills />
-      <Projects />
-      <Certificates />
-      <ExtraAndFuture />
+      <section id="skills">
+        <Skills />
+      </section>
+      <section id="projects">
+        <Projects />
+      </section>
+      <section id="certificates">
+        <Certificates />
+      </section>
+      <section id="extra">
+        <ExtraAndFuture />
+      </section>
       <ContactTerminal />
     </main>
   );

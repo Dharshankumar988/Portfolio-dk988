@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { Award, ExternalLink, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   CertificateRecord,
@@ -11,13 +10,105 @@ import {
   PORTFOLIO_UPDATE_EVENT,
 } from "@/lib/portfolioStore";
 
-const normalizeCertName = (fileName: string) => {
-  const withoutExt = fileName.replace(/\.[^/.]+$/, "");
-  const withoutPrefix = withoutExt.includes("_")
-    ? withoutExt.split("_").slice(1).join("_")
-    : withoutExt;
-  return withoutPrefix.replace(/[-_]+/g, " ").trim();
-};
+function CertCard({ cert, idx }: { cert: CertificateRecord; idx: number }) {
+  const [hovered, setHovered] = useState(false);
+  const hasLink = !!(cert.fileUrl || cert.imageUrl);
+
+  const inner = (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.94 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay: idx * 0.07, duration: 0.45 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative bg-[#080c14] border border-cyber-gray/50 rounded-lg p-6 overflow-hidden flex flex-col gap-4 h-full"
+      style={{
+        boxShadow: hovered
+          ? "0 0 24px rgba(176,38,255,0.12), 0 0 0 1px rgba(176,38,255,0.2)"
+          : "none",
+        transition: "box-shadow 0.3s ease",
+      }}
+    >
+      {/* Background image on hover */}
+      {cert.imageUrl && (
+        <div
+          className="absolute inset-0 transition-opacity duration-500 pointer-events-none"
+          style={{ opacity: hovered ? 0.08 : 0 }}
+        >
+          <img
+            src={cert.imageUrl}
+            alt={cert.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#080c14]/50 to-[#080c14]" />
+        </div>
+      )}
+
+      {/* Top row */}
+      <div className="relative flex items-start justify-between gap-2">
+        <div className="p-2.5 bg-cyber-purple/10 border border-cyber-purple/20 rounded-lg">
+          <Award size={20} className="text-cyber-purple" />
+        </div>
+        {hasLink && (
+          <span
+            className={`flex items-center gap-1 font-mono text-[10px] px-2 py-1 rounded border transition-all duration-300 ${
+              hovered
+                ? "text-cyber-neon border-cyber-neon/40 bg-cyber-neon/5"
+                : "text-cyber-text/25 border-cyber-gray/40"
+            }`}
+          >
+            <ExternalLink size={9} />
+            OPEN
+          </span>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="relative flex-1">
+        <h3 className={`font-mono text-sm font-bold leading-snug mb-2 transition-colors duration-300 ${hovered ? "text-cyber-neon" : "text-white"}`}>
+          {cert.name}
+        </h3>
+        <div className="flex items-center gap-2">
+          <ShieldCheck size={11} className="text-cyber-purple/50" />
+          <span className="font-mono text-[10px] text-cyber-text/35 tracking-wide uppercase">
+            {cert.issuer}
+          </span>
+        </div>
+      </div>
+
+      {/* Bottom tag */}
+      <div className="relative flex items-center gap-2">
+        <span className="h-px flex-1 bg-cyber-gray/30" />
+        <span className="font-mono text-[9px] text-cyber-purple/40 tracking-widest">VERIFIED</span>
+        <span className="h-px flex-1 bg-cyber-gray/30" />
+      </div>
+
+      {/* Corner accent */}
+      <div
+        className="absolute top-0 right-0 w-10 h-10 pointer-events-none transition-opacity duration-300"
+        style={{
+          background: "linear-gradient(225deg, rgba(176,38,255,0.15) 0%, transparent 60%)",
+          opacity: hovered ? 1 : 0.4,
+        }}
+      />
+    </motion.div>
+  );
+
+  if (hasLink) {
+    return (
+      <a
+        href={cert.fileUrl || cert.imageUrl || undefined}
+        target="_blank"
+        rel="noreferrer"
+        className="block h-full"
+      >
+        {inner}
+      </a>
+    );
+  }
+  return <div className="h-full">{inner}</div>;
+}
 
 export default function Certificates() {
   const [certs, setCerts] = useState<CertificateRecord[]>(defaultCertificates);
@@ -28,10 +119,8 @@ export default function Certificates() {
       setCerts(stored.length > 0 ? stored : defaultCertificates);
     };
     handleUpdate();
-
     window.addEventListener(PORTFOLIO_UPDATE_EVENT, handleUpdate);
     window.addEventListener("storage", handleUpdate);
-
     return () => {
       window.removeEventListener(PORTFOLIO_UPDATE_EVENT, handleUpdate);
       window.removeEventListener("storage", handleUpdate);
@@ -41,60 +130,31 @@ export default function Certificates() {
   return (
     <section className="relative py-24 px-6 md:px-24 z-10">
       <div className="w-full max-w-6xl mx-auto">
+
+        {/* Section header */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="mb-16"
+          className="mb-14"
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-mono text-white mb-2 flex items-center gap-4">
-            Certificate_Vault
+          <div className="flex items-center gap-3 mb-3">
+            <span className="font-mono text-cyber-purple/60 text-sm">03</span>
+            <div className="h-px w-8 bg-cyber-purple/30" />
+            <span className="font-mono text-xs text-cyber-text/30 tracking-widest">CREDENTIALS</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold font-mono text-white tracking-tight">
+            Certificates<span className="text-cyber-purple">_</span>
           </h2>
-          <div className="h-1 w-24 bg-gradient-to-r from-cyber-purple to-transparent"></div>
+          <p className="font-mono text-xs text-cyber-text/30 mt-2">
+            <span className="text-cyber-purple/40">$</span> verify --all certs/{" "}
+            <span className="text-cyber-text/20">—— {certs.length} validated</span>
+          </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {certs.map((cert, idx) => (
-            <motion.a
-              key={cert.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              href={cert.fileUrl || cert.imageUrl || undefined}
-              target={cert.fileUrl || cert.imageUrl ? "_blank" : undefined}
-              rel={cert.fileUrl || cert.imageUrl ? "noreferrer" : undefined}
-              className="group relative bg-cyber-dark border border-cyber-gray p-6 rounded-lg overflow-hidden cursor-pointer hover:border-cyber-purple transition-colors h-48 flex flex-col justify-between"
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-500 z-0">
-                {cert.imageUrl ? (
-                  <img
-                    src={cert.imageUrl}
-                    alt={cert.name}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-cyber-gray/40 to-cyber-dark" />
-                )}
-                <div className="absolute inset-0 bg-cyber-dark/40 backdrop-blur-[2px]"></div>
-              </div>
-
-              <div className="relative z-10 flex justify-between items-start mb-4">
-                <Award className="text-cyber-purple group-hover:animate-pulse transition-colors" size={32} />
-                <span className="text-xs font-mono px-2 py-1 bg-cyber-gray text-cyber-purple rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  VERIFIED
-                </span>
-              </div>
-              
-              <div className="relative z-10">
-                <h3 className="text-white font-bold text-lg leading-tight mb-1 group-hover:text-cyber-neon transition-colors">
-                  {cert.name}
-                </h3>
-                <div className="font-mono text-sm text-cyber-text/50">
-                  ISSUER: {cert.issuer}
-                </div>
-              </div>
-            </motion.a>
+            <CertCard key={cert.id} cert={cert} idx={idx} />
           ))}
         </div>
       </div>

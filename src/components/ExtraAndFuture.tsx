@@ -35,6 +35,23 @@ export default function ExtraAndFuture() {
     <section className="relative py-24 px-6 md:px-24 z-10 bg-cyber-black/50">
       <div className="w-full max-w-6xl mx-auto">
         
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="mb-14"
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <span className="font-mono text-cyber-cyan/50 text-sm">04</span>
+            <div className="h-px w-8 bg-cyber-cyan/30" />
+            <span className="font-mono text-xs text-cyber-text/30 tracking-widest">ACTIVITIES</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold font-mono text-white tracking-tight">
+            Extra<span className="text-cyber-cyan">_</span>
+          </h2>
+        </motion.div>
+
         <div className="grid md:grid-cols-2 gap-8">
           
           {/* Extracurriculars */}
@@ -42,7 +59,7 @@ export default function ExtraAndFuture() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-cyber-dark border border-cyber-gray p-8 rounded-lg relative overflow-hidden group hover:border-cyber-cyan transition-colors"
+            className="bg-[#080c14] border border-cyber-gray/50 p-8 rounded-lg relative overflow-hidden group hover:border-cyber-cyan/50 transition-colors"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-cyber-cyan/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
             
@@ -98,7 +115,7 @@ export default function ExtraAndFuture() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-cyber-dark border border-cyber-gray p-8 rounded-lg relative overflow-hidden group hover:border-[#ff3366] transition-colors"
+            className="bg-[#080c14] border border-cyber-gray/50 p-8 rounded-lg relative overflow-hidden group hover:border-[#ff6b35]/40 transition-colors"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff3366]/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
             

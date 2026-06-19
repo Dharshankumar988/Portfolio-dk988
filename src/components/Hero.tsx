@@ -1,10 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Terminal, Download, Mail, Phone } from "lucide-react";
+import { Terminal, Download, Mail, Phone, ChevronDown } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { defaultProfile, getStoredProfile, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
+
+function useTypewriter(text: string, speed = 45) {
+  const [displayed, setDisplayed] = useState("");
+
+  useEffect(() => {
+    setDisplayed("");
+    if (!text) return;
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) clearInterval(id);
+    }, speed);
+    return () => clearInterval(id);
+  }, [text, speed]);
+
+  return displayed;
+}
 
 export default function Hero() {
   const [profile, setProfile] = useState<ProfileContent>(defaultProfile);
@@ -35,59 +53,73 @@ export default function Hero() {
     setAvatarVisible(true);
   }, [profile.avatarUrl]);
 
+  const typedGreeting = useTypewriter(profile.greeting || "", 50);
+
   return (
     <section className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-24 z-10">
-      <div className="w-full max-w-4xl mx-auto flex flex-col-reverse md:flex-row items-center gap-12">
+      {/* Hex grid background layer */}
+      <div className="absolute inset-0 hex-pattern pointer-events-none" />
+
+      <div className="w-full max-w-5xl mx-auto flex flex-col-reverse md:flex-row items-center gap-16">
         <div className="flex-1 space-y-8">
           
-          <div className="font-mono text-sm md:text-base text-cyber-neon h-8 flex items-center">
-            <span className="text-cyber-cyan mr-2">{'>'}</span>
-            <motion.div
-              animate={{ opacity: [1, 0] }}
-              transition={{ repeat: Infinity, duration: 0.8 }}
-              className="inline-block w-3 h-5 bg-cyber-neon align-middle"
-            />
+          {/* Typewriter greeting line */}
+          <div className="font-mono text-sm md:text-base text-cyber-neon h-8 flex items-center gap-1">
+            <span className="text-cyber-cyan opacity-70">▸</span>
+            <span className="ml-1">{typedGreeting}</span>
+            <span className="cursor-blink text-cyber-neon ml-0.5">_</span>
           </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="space-y-5"
           >
-            <p className="text-sm md:text-base font-mono text-cyber-text/70 tracking-widest">
-              {profile.greeting}
-            </p>
-            <h1 
-              className="font-bold tracking-tighter text-white glow-text-cyan"
+            {/* Name with glitch effect */}
+            <h1
+              className="font-bold tracking-tighter text-white glitch-text"
               style={{ fontSize: `${(profile.nameFontSize || 5) * 0.5 + 1}rem`, lineHeight: 1.1 }}
             >
               {profile.name}
             </h1>
-            <h2 
-              className="text-cyber-text/80 font-mono"
+
+            {/* Tagline with gradient */}
+            <h2
+              className="font-mono text-cyber-text/80 tracking-wide"
               style={{ fontSize: `${(profile.taglineFontSize || 3) * 0.2 + 0.8}rem`, lineHeight: 1.2 }}
             >
+              <span className="text-cyber-cyan/50">// </span>
               {profile.tagline}
             </h2>
-            
+
+            {/* Status badge */}
+            <div className="flex items-center gap-2 pt-1">
+              <span className="relative flex h-2 w-2">
+                <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-cyber-neon opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyber-neon" />
+              </span>
+              <span className="font-mono text-xs text-cyber-neon/70 tracking-widest">AVAILABLE FOR OPPORTUNITIES</span>
+            </div>
+
+            {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 pt-4">
               {profile.resumeUrl ? (
                 <a
                   href={profile.resumeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 bg-cyber-neon/10 border border-cyber-neon text-cyber-neon hover:bg-cyber-neon/20 hover:glow-box-neon transition-all font-mono text-sm rounded"
+                  className="flex items-center gap-2 px-6 py-3 bg-cyber-neon/10 border border-cyber-neon text-cyber-neon hover:bg-cyber-neon hover:text-black transition-all font-mono text-sm rounded cyber-corner neon-border-hover group"
                 >
-                  <Download size={18} />
+                  <Download size={16} className="group-hover:animate-bounce" />
                   Download Resume
                 </a>
               ) : (
                 <button
                   disabled
-                  className="flex items-center gap-2 px-6 py-3 bg-cyber-neon/5 border border-cyber-neon/40 text-cyber-neon/50 font-mono text-sm rounded cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-3 bg-cyber-neon/5 border border-cyber-neon/30 text-cyber-neon/40 font-mono text-sm rounded cursor-not-allowed"
                 >
-                  <Download size={18} />
+                  <Download size={16} />
                   Download Resume
                 </button>
               )}
@@ -95,82 +127,112 @@ export default function Hero() {
               {profile.email || profile.githubUrl || profile.linkedinUrl || profile.phone ? (
                 <button
                   onClick={() => setShowContactModal(true)}
-                  className="flex items-center gap-2 px-6 py-3 border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan/10 hover:glow-box-cyan transition-all font-mono text-sm rounded"
+                  className="flex items-center gap-2 px-6 py-3 border border-cyber-cyan/60 text-cyber-cyan hover:bg-cyber-cyan/10 hover:border-cyber-cyan transition-all font-mono text-sm rounded glow-box-cyan"
                 >
-                  <Mail size={18} />
+                  <Mail size={16} />
                   Contact
                 </button>
               ) : (
                 <button
                   disabled
-                  className="flex items-center gap-2 px-6 py-3 border border-cyber-cyan/40 text-cyber-cyan/50 font-mono text-sm rounded cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-3 border border-cyber-cyan/30 text-cyber-cyan/40 font-mono text-sm rounded cursor-not-allowed"
                 >
-                  <Mail size={18} />
+                  <Mail size={16} />
                   Contact
                 </button>
               )}
             </div>
           </motion.div>
         </div>
-        
+
+        {/* Avatar */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="w-56 h-56 md:w-80 md:h-80 relative group"
+          className="w-56 h-56 md:w-80 md:h-80 relative group float-animation"
         >
-          <div className="absolute inset-0 bg-cyber-neon rounded-full opacity-20 group-hover:opacity-40 blur-xl transition-opacity duration-500" />
-          <div className="absolute inset-2 border-2 border-cyber-neon/50 rounded-full animate-[spin_10s_linear_infinite]" />
-          <div className="absolute inset-4 border border-cyber-cyan/50 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
-          <div className="absolute inset-8 bg-cyber-gray rounded-full overflow-hidden border border-cyber-gray z-10 flex items-center justify-center">
+          {/* Outer glow ring */}
+          <div className="absolute inset-0 bg-cyber-neon rounded-full opacity-10 group-hover:opacity-25 blur-2xl transition-opacity duration-700" />
+          {/* Spinning rings */}
+          <div className="absolute inset-1 border-2 border-cyber-neon/40 rounded-full animate-[spin_12s_linear_infinite]">
+            {/* Notch on ring */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyber-neon rounded-full shadow-[0_0_8px_rgba(57,255,20,1)]" />
+          </div>
+          <div className="absolute inset-5 border border-cyber-cyan/30 rounded-full animate-[spin_20s_linear_infinite_reverse]">
+            <div className="absolute bottom-0 right-0 w-2 h-2 bg-cyber-cyan rounded-full shadow-[0_0_6px_rgba(0,240,255,1)]" />
+          </div>
+          <div className="absolute inset-8 border border-cyber-purple/20 rounded-full animate-[spin_30s_linear_infinite]" />
+          
+          {/* Avatar image */}
+          <div className="absolute inset-10 bg-cyber-gray rounded-full overflow-hidden border border-cyber-gray/60 z-10 flex items-center justify-center scan-animate">
             {profile.avatarUrl && avatarVisible ? (
               <img
                 src={profile.avatarUrl}
                 alt="Profile"
-                className="w-full h-full object-cover rounded-full aspect-square"
+                className="w-full h-full object-cover rounded-full aspect-square group-hover:scale-105 transition-transform duration-500"
                 onError={() => setAvatarVisible(false)}
               />
             ) : (
               <Terminal size={48} className="text-cyber-neon/50" />
             )}
           </div>
+
+          {/* Corner decorations */}
+          <div className="absolute top-4 right-4 font-mono text-[10px] text-cyber-neon/50 tracking-wider">SYS.OK</div>
+          <div className="absolute bottom-4 left-4 font-mono text-[10px] text-cyber-cyan/50 tracking-wider">ID:001</div>
         </motion.div>
       </div>
 
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
+        animate={{ y: [0, 6, 0] }}
+        transition={{ repeat: Infinity, duration: 2 }}
+        onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
+      >
+        <span className="font-mono text-[10px] text-cyber-text/30 tracking-[0.3em]">SCROLL</span>
+        <ChevronDown size={16} className="text-cyber-cyan/40" />
+      </motion.div>
+
+      {/* Contact Modal */}
       <AnimatePresence>
         {showContactModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm">
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-cyber-dark border border-cyber-cyan p-8 rounded-lg max-w-sm w-full shadow-[0_0_30px_rgba(0,243,255,0.15)] flex flex-col gap-4 relative"
+              initial={{ scale: 0.92, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 20 }}
+              className="bg-cyber-dark border border-cyber-cyan/60 p-8 rounded-lg max-w-sm w-full shadow-[0_0_40px_rgba(0,240,255,0.12)] flex flex-col gap-4 relative cyber-corner"
             >
               <button
                 onClick={() => setShowContactModal(false)}
-                className="absolute top-4 right-4 text-cyber-gray hover:text-white transition-colors"
+                className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center text-cyber-text/40 hover:text-white hover:bg-cyber-gray rounded transition-colors font-mono text-sm"
               >
                 ✕
               </button>
-              <h3 className="text-xl font-bold font-mono text-cyber-cyan mb-2 border-b border-cyber-gray/50 pb-4">Contact Link</h3>
+              <div className="mb-2">
+                <h3 className="text-xl font-bold font-mono text-cyber-cyan tracking-wider">CONTACT_LINKS</h3>
+                <div className="h-px bg-gradient-to-r from-cyber-cyan/60 to-transparent mt-3" />
+              </div>
               
               {profile.email && (
                 <a href={`mailto:${profile.email}`} className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-cyan/50 hover:bg-cyber-cyan/5 transition-all rounded text-cyber-text group">
-                  <Mail className="text-cyber-cyan group-hover:scale-110 transition-transform shrink-0" size={24} />
+                  <Mail className="text-cyber-cyan group-hover:scale-110 transition-transform shrink-0" size={22} />
                   <span className="font-mono text-sm break-all">{profile.email}</span>
                 </a>
               )}
 
               {profile.githubUrl && (
                 <a href={profile.githubUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-purple/50 hover:bg-cyber-purple/5 transition-all rounded text-cyber-text group">
-                  <FaGithub className="text-cyber-purple group-hover:scale-110 transition-transform shrink-0" size={24} />
+                  <FaGithub className="text-cyber-purple group-hover:scale-110 transition-transform shrink-0" size={22} />
                   <span className="font-mono text-sm break-all">GitHub Profile</span>
                 </a>
               )}
 
               {profile.linkedinUrl && (
-                <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-blue/50 hover:bg-[#0A66C2]/10 transition-all rounded text-cyber-text group">
-                  <FaLinkedin className="text-[#0A66C2] group-hover:scale-110 transition-transform shrink-0" size={24} />
+                <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10 transition-all rounded text-cyber-text group">
+                  <FaLinkedin className="text-[#0A66C2] group-hover:scale-110 transition-transform shrink-0" size={22} />
                   <span className="font-mono text-sm break-all">LinkedIn Profile</span>
                 </a>
               )}
@@ -178,16 +240,16 @@ export default function Hero() {
               {profile.phone && (
                 <button onClick={handleCopyPhone} className="flex items-center justify-between p-3 border border-cyber-gray hover:border-cyber-neon/50 hover:bg-cyber-neon/5 transition-all rounded text-cyber-text group w-full text-left">
                   <div className="flex items-center gap-4">
-                    <Phone className="text-cyber-neon group-hover:scale-110 transition-transform shrink-0" size={24} />
+                    <Phone className="text-cyber-neon group-hover:scale-110 transition-transform shrink-0" size={22} />
                     <span className="font-mono text-sm">{profile.phone}</span>
                   </div>
-                  <span className="text-xs font-mono text-cyber-neon shrink-0 ml-2">{copied ? "Copied!" : "Copy"}</span>
+                  <span className="text-xs font-mono text-cyber-neon shrink-0 ml-2">{copied ? "✓ Copied" : "Copy"}</span>
                 </button>
               )}
 
-              <button 
+              <button
                 onClick={() => setShowContactModal(false)}
-                className="mt-4 px-4 py-2 bg-cyber-gray/20 hover:bg-cyber-gray/40 text-white font-mono text-sm rounded transition-colors"
+                className="mt-2 px-4 py-2 bg-cyber-gray/20 hover:bg-cyber-gray/50 text-white/70 hover:text-white font-mono text-sm rounded transition-all border border-transparent hover:border-cyber-gray/40"
               >
                 Close
               </button>

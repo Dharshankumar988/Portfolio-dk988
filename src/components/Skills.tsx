@@ -1,69 +1,248 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Wrench, Code, Cpu, Shield, Bug, Terminal } from "lucide-react";
-import { 
-  FaPython, FaJs, FaNetworkWired, 
-  FaDatabase, FaFigma, FaGithub, FaRobot, FaShieldAlt
+import {
+  FaPython, FaJs, FaNetworkWired,
+  FaDatabase, FaFigma, FaGithub, FaRobot, FaShieldAlt,
 } from "react-icons/fa";
-import { 
-  SiWireshark, SiPostgresql, SiNextdotjs, SiFastapi, 
-  SiIpfs, SiGnuprivacyguard, SiSolidity, SiTailwindcss, SiPolygon
+import {
+  SiWireshark, SiPostgresql, SiNextdotjs, SiFastapi,
+  SiIpfs, SiGnuprivacyguard, SiSolidity, SiTailwindcss, SiPolygon,
 } from "react-icons/si";
 import { getStoredSkills, PORTFOLIO_UPDATE_EVENT, SkillRecord } from "@/lib/portfolioStore";
 
-const categories = [
+const CATEGORIES = [
   {
-    title: "Security concepts",
-    icon: <Lock className="text-cyber-neon" />,
     key: "Security concepts",
+    dir: "~/skills/security/",
+    color: "text-cyber-neon",
+    borderColor: "border-cyber-neon/30",
+    glowColor: "rgba(57,255,20,0.15)",
+    icon: Lock,
+    perm: "drwxr-x---",
+    owner: "dharshan",
+    group: "cyber",
   },
   {
-    title: "Tools",
-    icon: <Wrench className="text-cyber-cyan" />,
     key: "Tools",
+    dir: "~/skills/tools/",
+    color: "text-cyber-cyan",
+    borderColor: "border-cyber-cyan/30",
+    glowColor: "rgba(0,240,255,0.15)",
+    icon: Wrench,
+    perm: "drwxr-x---",
+    owner: "dharshan",
+    group: "ops",
   },
   {
-    title: "Programming/Web",
-    icon: <Code className="text-cyber-purple" />,
     key: "Programming/Web",
+    dir: "~/skills/dev/",
+    color: "text-cyber-purple",
+    borderColor: "border-cyber-purple/30",
+    glowColor: "rgba(176,38,255,0.15)",
+    icon: Code,
+    perm: "drwxr-x---",
+    owner: "dharshan",
+    group: "dev",
   },
   {
-    title: "Emerging Tech",
-    icon: <Cpu className="text-[#ff3366]" />,
     key: "Emerging Tech",
+    dir: "~/skills/emerging/",
+    color: "text-[#ff6b35]",
+    borderColor: "border-[#ff6b35]/30",
+    glowColor: "rgba(255,107,53,0.15)",
+    icon: Cpu,
+    perm: "drwxr-x---",
+    owner: "dharshan",
+    group: "r&d",
   },
 ];
 
 const getSkillIcon = (name: string) => {
-  const norm = name.toLowerCase();
-  if (norm.includes("information security")) return <Lock className="w-4 h-4" />;
-  if (norm.includes("cryptography")) return <SiGnuprivacyguard className="w-4 h-4" />;
-  if (norm.includes("network fundamentals") || norm.includes("networking")) return <FaNetworkWired className="w-4 h-4" />;
-  if (norm.includes("abuseipdb")) return <FaShieldAlt className="w-4 h-4" />;
-  if (norm.includes("alienvault")) return <Shield className="w-4 h-4" />;
-  if (norm.includes("virustotal")) return <Bug className="w-4 h-4" />;
-  if (norm.includes("wireshark")) return <SiWireshark className="w-4 h-4" />;
-  if (norm.includes("nmap")) return <Terminal className="w-4 h-4" />;
-  if (norm.includes("git")) return <FaGithub className="w-4 h-4" />;
-  if (norm.includes("vs code")) return <Terminal className="w-4 h-4" />;
-  if (norm.includes("figma")) return <FaFigma className="w-4 h-4" />;
-  if (norm.includes("python")) return <FaPython className="w-4 h-4" />;
-  if (norm.includes("c")) return <Code className="w-4 h-4" />;
-  if (norm.includes("javascript")) return <FaJs className="w-4 h-4" />;
-  if (norm.includes("fastapi")) return <SiFastapi className="w-4 h-4" />;
-  if (norm.includes("next.js") || norm.includes("nextjs")) return <SiNextdotjs className="w-4 h-4" />;
-  if (norm.includes("sql")) return <FaDatabase className="w-4 h-4" />;
-  if (norm.includes("postgresql")) return <SiPostgresql className="w-4 h-4" />;
-  if (norm.includes("tailwind")) return <SiTailwindcss className="w-4 h-4" />;
-  if (norm.includes("blockchain") || norm.includes("polygon")) return <SiPolygon className="w-4 h-4" />;
-  if (norm.includes("smart contracts") || norm.includes("solidity")) return <SiSolidity className="w-4 h-4" />;
-  if (norm.includes("ipfs")) return <SiIpfs className="w-4 h-4" />;
-  if (norm.includes("generative ai")) return <FaRobot className="w-4 h-4" />;
-  if (norm.includes("ai agents")) return <Cpu className="w-4 h-4" />;
-  return <Code className="w-4 h-4" />;
+  const n = name.toLowerCase();
+  if (n.includes("information security")) return <Lock className="w-3.5 h-3.5" />;
+  if (n.includes("cryptography")) return <SiGnuprivacyguard className="w-3.5 h-3.5" />;
+  if (n.includes("network")) return <FaNetworkWired className="w-3.5 h-3.5" />;
+  if (n.includes("abuseipdb")) return <FaShieldAlt className="w-3.5 h-3.5" />;
+  if (n.includes("alienvault")) return <Shield className="w-3.5 h-3.5" />;
+  if (n.includes("virustotal")) return <Bug className="w-3.5 h-3.5" />;
+  if (n.includes("wireshark")) return <SiWireshark className="w-3.5 h-3.5" />;
+  if (n.includes("nmap")) return <Terminal className="w-3.5 h-3.5" />;
+  if (n.includes("git")) return <FaGithub className="w-3.5 h-3.5" />;
+  if (n.includes("vs code")) return <Terminal className="w-3.5 h-3.5" />;
+  if (n.includes("figma")) return <FaFigma className="w-3.5 h-3.5" />;
+  if (n.includes("python")) return <FaPython className="w-3.5 h-3.5" />;
+  if (n.includes("javascript")) return <FaJs className="w-3.5 h-3.5" />;
+  if (n.includes("fastapi")) return <SiFastapi className="w-3.5 h-3.5" />;
+  if (n.includes("next")) return <SiNextdotjs className="w-3.5 h-3.5" />;
+  if (n.includes("postgresql")) return <SiPostgresql className="w-3.5 h-3.5" />;
+  if (n.includes("sql")) return <FaDatabase className="w-3.5 h-3.5" />;
+  if (n.includes("tailwind")) return <SiTailwindcss className="w-3.5 h-3.5" />;
+  if (n.includes("blockchain") || n.includes("polygon")) return <SiPolygon className="w-3.5 h-3.5" />;
+  if (n.includes("solidity") || n.includes("smart")) return <SiSolidity className="w-3.5 h-3.5" />;
+  if (n.includes("ipfs")) return <SiIpfs className="w-3.5 h-3.5" />;
+  if (n.includes("generative ai")) return <FaRobot className="w-3.5 h-3.5" />;
+  if (n.includes("ai agents")) return <Cpu className="w-3.5 h-3.5" />;
+  return <Code className="w-3.5 h-3.5" />;
 };
+
+// Fake stable timestamps per skill
+const fakeDates = ["Jan 12", "Feb  3", "Mar 17", "Apr  8", "May 22", "Jun  1", "Jul 30", "Aug 14", "Sep  5", "Oct 19", "Nov 11", "Dec 28"];
+const fakeSizes = [4096, 2048, 8192, 1024, 16384, 512, 3072, 6144, 2560, 4608];
+
+function getStableVal<T>(arr: T[], seed: string): T {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  return arr[h % arr.length];
+}
+
+type TerminalCardProps = {
+  cat: typeof CATEGORIES[number];
+  skills: SkillRecord[];
+  idx: number;
+};
+
+function TerminalCard({ cat, skills, idx }: TerminalCardProps) {
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(true);
+  const Icon = cat.icon;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: idx * 0.1, duration: 0.5, ease: "easeOut" }}
+      className={`bg-[#080c14] border ${cat.borderColor} rounded-lg overflow-hidden`}
+      style={{
+        boxShadow: `0 0 0 0px ${cat.glowColor}`,
+        transition: "box-shadow 0.3s ease",
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.boxShadow = `0 0 20px ${cat.glowColor}, inset 0 0 40px ${cat.glowColor.replace("0.15", "0.04")}`;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.boxShadow = `0 0 0px ${cat.glowColor}`;
+      }}
+    >
+      {/* Terminal title bar */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-cyber-gray/30 border-b border-cyber-gray/40">
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+            <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+            <span className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
+          </div>
+          <span className="font-mono text-xs text-cyber-text/30 ml-2">{cat.dir}</span>
+        </div>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className={`font-mono text-[10px] ${cat.color} opacity-50 hover:opacity-100 transition-opacity`}
+        >
+          {expanded ? "[-]" : "[+]"}
+        </button>
+      </div>
+
+      {/* ls -la header line */}
+      <div className="px-4 py-2.5 border-b border-cyber-gray/20">
+        <div className="flex items-center gap-2 font-mono text-xs text-cyber-text/40">
+          <span className={cat.color}>$</span>
+          <span>ls -la</span>
+          <span className={`${cat.color} opacity-60`}>{cat.dir}</span>
+        </div>
+        <div className="font-mono text-[10px] text-cyber-text/25 mt-1.5">
+          total {skills.length * 4 + 8} · {skills.length} items
+        </div>
+      </div>
+
+      {/* File rows */}
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 pt-3 space-y-1.5">
+              {skills.length === 0 ? (
+                <div className="font-mono text-xs text-cyber-text/20 italic py-2">
+                  — no entries —
+                </div>
+              ) : (
+                skills.map((skill) => {
+                  const date = getStableVal(fakeDates, skill.name);
+                  const size = getStableVal(fakeSizes, skill.id);
+                  const isHov = hovered === skill.id;
+                  return (
+                    <motion.div
+                      key={skill.id}
+                      onMouseEnter={() => setHovered(skill.id)}
+                      onMouseLeave={() => setHovered(null)}
+                      animate={{ backgroundColor: isHov ? "rgba(255,255,255,0.03)" : "transparent" }}
+                      className="flex items-center gap-3 font-mono text-xs rounded px-2 py-1 cursor-default group"
+                    >
+                      {/* Permissions */}
+                      <span className="text-cyber-text/20 hidden sm:block shrink-0 tracking-tight">
+                        -rwxr-x---
+                      </span>
+                      {/* Size */}
+                      <span className="text-cyber-text/25 w-8 text-right shrink-0 hidden md:block">
+                        {size}
+                      </span>
+                      {/* Date */}
+                      <span className="text-cyber-text/25 w-10 shrink-0 hidden lg:block">
+                        {date}
+                      </span>
+                      {/* Icon + Name */}
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <span className={`${cat.color} opacity-60 group-hover:opacity-100 transition-opacity shrink-0 flex items-center`}>
+                          {skill.logoUrl ? (
+                            <img
+                              src={skill.logoUrl}
+                              alt={skill.name}
+                              className="w-3.5 h-3.5 object-contain"
+                              onError={(e) => { e.currentTarget.style.display = "none"; }}
+                            />
+                          ) : (
+                            getSkillIcon(skill.name)
+                          )}
+                        </span>
+                        <span
+                          className={`${cat.color} transition-all duration-150 truncate ${
+                            isHov ? "opacity-100" : "opacity-70"
+                          }`}
+                        >
+                          {skill.name.toLowerCase().replace(/\s+/g, "_")}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                })
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Category footer */}
+      <div className={`px-4 py-2 border-t border-cyber-gray/20 flex items-center gap-2`}>
+        <Icon size={12} className={`${cat.color} opacity-50`} />
+        <span className={`font-mono text-[10px] ${cat.color} opacity-40 tracking-widest uppercase`}>
+          {cat.key}
+        </span>
+        {skills.length > 0 && (
+          <span className="ml-auto font-mono text-[10px] text-cyber-text/20">
+            {skills.length} file{skills.length !== 1 ? "s" : ""}
+          </span>
+        )}
+      </div>
+    </motion.div>
+  );
+}
 
 export default function Skills() {
   const [storedSkills, setStoredSkills] = useState<{ items: SkillRecord[]; hasStored: boolean }>({
@@ -85,67 +264,33 @@ export default function Skills() {
   return (
     <section className="relative py-24 px-6 md:px-24 z-10">
       <div className="w-full max-w-6xl mx-auto">
+
+        {/* Section header */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="mb-16"
+          className="mb-14"
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-mono text-white mb-2 flex items-center gap-4">
-            Skills_Dashboard
+          <div className="flex items-center gap-3 mb-3">
+            <span className="font-mono text-cyber-neon/50 text-sm">01</span>
+            <div className="h-px w-8 bg-cyber-neon/30" />
+            <span className="font-mono text-xs text-cyber-text/30 tracking-widest">CAPABILITIES</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold font-mono text-white tracking-tight">
+            Skills<span className="text-cyber-neon">_</span>
           </h2>
-          <div className="h-1 w-24 bg-gradient-to-r from-cyber-neon to-transparent"></div>
+          <p className="font-mono text-xs text-cyber-text/30 mt-2">
+            <span className="text-cyber-cyan/50">$</span> ls -la ~/skills/ <span className="text-cyber-text/20">—— {storedSkills.items.length} total</span>
+          </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((cat, idx) => {
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {CATEGORIES.map((cat, idx) => {
             const catSkills = storedSkills.items.filter(
-              (skill) => skill.category.toLowerCase() === cat.key.toLowerCase()
+              (s) => s.category.toLowerCase() === cat.key.toLowerCase()
             );
-
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1, duration: 0.5 }}
-                className="bg-cyber-dark border border-cyber-gray p-6 rounded-lg hover:border-cyber-cyan transition-colors group relative overflow-hidden flex flex-col"
-              >
-                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-cyber-cyan/10 to-transparent -mr-8 -mt-8 rounded-full transform group-hover:scale-150 transition-transform duration-500"></div>
-                <div className="mb-4">{cat.icon}</div>
-                <h3 className="text-xl font-bold text-white mb-4 font-mono">{cat.title}</h3>
-                
-                <ul className="space-y-3 flex-1">
-                  {catSkills.map((skill, i) => (
-                    <li key={i} className="flex items-center gap-3 text-cyber-text/80 text-sm group/item">
-                      <span className="text-cyber-cyan group-hover/item:text-cyber-neon transition-colors flex items-center justify-center">
-                        {skill.logoUrl ? (
-                          <img 
-                            src={skill.logoUrl} 
-                            alt={skill.name} 
-                            className="w-4 h-4 object-contain"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                              // If image fails, fallback to React Icon:
-                              const fallbackIcon = document.createElement('span');
-                              fallbackIcon.innerHTML = '💻';
-                              e.currentTarget.parentNode?.appendChild(fallbackIcon);
-                            }}
-                          />
-                        ) : (
-                          getSkillIcon(skill.name)
-                        )}
-                      </span>
-                      <span className="group-hover/item:text-white transition-colors">{skill.name}</span>
-                    </li>
-                  ))}
-                  {catSkills.length === 0 && (
-                    <li className="text-cyber-text/30 text-xs font-mono italic">No skills added</li>
-                  )}
-                </ul>
-              </motion.div>
-            );
+            return <TerminalCard key={cat.key} cat={cat} skills={catSkills} idx={idx} />;
           })}
         </div>
       </div>

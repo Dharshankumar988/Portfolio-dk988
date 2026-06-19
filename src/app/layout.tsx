@@ -3,6 +3,8 @@ import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import AdminTrigger from "@/components/AdminTrigger";
 import DatabaseHydrator from "@/components/DatabaseHydrator";
+import CyberCursor from "@/components/CyberCursor";
+import TopNav from "@/components/TopNav";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,6 +34,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-cyber-black text-cyber-text selection:bg-cyber-neon selection:text-black">
         <DatabaseHydrator />
         <div className="scanlines" />
+        <CyberCursor />
+        <TopNav />
         <AdminTrigger />
         {children}
       </body>
