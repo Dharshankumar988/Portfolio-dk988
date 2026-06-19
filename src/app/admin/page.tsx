@@ -526,7 +526,7 @@ export default function AdminDashboard() {
                         <option value="" disabled>Select Parent Bead</option>
                         <option value="career-goals">Career Goals (Main Section)</option>
                         <option value="education">Education (Main Section)</option>
-                        {educationBeadsList.filter(b => !b.parentId).map(b => (
+                        {educationBeadsList.filter(b => !b.parentId || b.parentId === "education" || b.parentId === "career-goals").map(b => (
                           <option key={b.id} value={b.id}>{b.heading}</option>
                         ))}
                       </select>
