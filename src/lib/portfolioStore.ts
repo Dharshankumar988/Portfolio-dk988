@@ -61,6 +61,7 @@ export type EducationBeadRecord = {
   content: string;
   color: string;
   parentId?: string | null;
+  fileUrl?: string;
 };
 
 export const defaultProjects: ProjectRecord[] = [];
@@ -258,6 +259,7 @@ const normalizeEducationBeads = (items: unknown[]): EducationBeadRecord[] => {
       content: record.content || "",
       color: record.color || "text-cyber-cyan",
       parentId: record.parentId || null,
+      fileUrl: record.fileUrl || "",
     });
   }
 

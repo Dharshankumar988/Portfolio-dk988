@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Mail, Phone } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mail, Phone, X, ExternalLink } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import {
   defaultProfile,
@@ -13,9 +13,53 @@ import {
   ProfileContent,
 } from "@/lib/portfolioStore";
 
+const BeadNode = ({ bead, allBeads, level = 0, onFileClick }: { bead: EducationBeadRecord, allBeads: EducationBeadRecord[], level?: number, onFileClick: (url: string) => void }) => {
+  const colorMap: Record<string, string> = {
+    "text-cyber-cyan": "bg-cyber-cyan shadow-[0_0_5px_rgba(0,240,255,0.8)]",
+    "text-cyber-neon": "bg-cyber-neon shadow-[0_0_5px_rgba(57,255,20,0.8)]",
+    "text-cyber-purple": "bg-cyber-purple shadow-[0_0_5px_rgba(188,19,254,0.8)]",
+  };
+  const dotClass = colorMap[bead.color] || "bg-cyber-cyan";
+  const textClass = bead.color || "text-cyber-text/80";
+  const children = allBeads.filter(b => b.parentId === bead.id);
+
+  return (
+    <div className={`relative space-y-2 mt-4 ${level > 0 ? "ml-6" : ""}`}>
+      {level > 0 && (
+        <div className="absolute -left-6 top-2.5 w-4 h-px bg-cyber-gray/40" />
+      )}
+      <div className="relative pl-6">
+        <div className={`absolute left-0 top-1.5 w-2 h-2 rounded-full ${dotClass} ${level > 0 ? "scale-75" : ""}`} />
+        <p className={`font-medium ${level > 0 ? "text-sm" : "text-base"} ${textClass}`}>
+          {bead.heading}
+        </p>
+        {bead.content && (
+          <p className="text-cyber-text/50 text-xs leading-relaxed mt-1">{bead.content}</p>
+        )}
+        {bead.fileUrl && (
+          <button
+            onClick={() => onFileClick(bead.fileUrl!)}
+            className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-cyber-dark border border-cyber-gray/50 hover:border-cyber-cyan hover:text-cyber-cyan text-cyber-text/70 rounded text-[10px] font-mono transition-colors"
+          >
+            <ExternalLink size={10} /> VIEW CERTIFICATE
+          </button>
+        )}
+      </div>
+      {children.length > 0 && (
+        <div className="relative border-l border-cyber-gray/20 ml-1 pl-1">
+          {children.map(child => (
+            <BeadNode key={child.id} bead={child} allBeads={allBeads} level={level + 1} onFileClick={onFileClick} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function About() {
   const [profile, setProfile] = useState<ProfileContent>(defaultProfile);
   const [educationBeads, setEducationBeads] = useState<EducationBeadRecord[]>([]);
+  const [viewFileUrl, setViewFileUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -38,8 +82,8 @@ export default function About() {
     profile.phone && { label: "Phone", value: profile.phone, href: `tel:${profile.phone}`, icon: Phone, color: "text-cyber-text/70 border-cyber-gray/50 hover:border-cyber-gray hover:bg-white/3" },
   ].filter(Boolean) as { label: string; value: string; href: string; icon: any; color: string }[];
 
-  const careerBeads = educationBeads.filter((b) => b.parentId === "career-goals");
-  const eduBeads = educationBeads.filter((b) => b.parentId !== "career-goals");
+  const careerBeadsRoot = educationBeads.filter((b) => b.parentId === "career-goals");
+  const eduBeadsRoot = educationBeads.filter((b) => b.parentId === "education" || !b.parentId);
 
   return (
     <section className="relative py-24 px-6 md:px-24 z-10" id="about">
@@ -123,26 +167,10 @@ export default function About() {
                       {profile.careerGoals}
                     </p>
                   )}
-                  {careerBeads.map((bead) => {
-                    const colorMap: Record<string, string> = {
-                      "text-cyber-cyan": "bg-cyber-cyan shadow-[0_0_5px_rgba(0,240,255,0.8)]",
-                      "text-cyber-neon": "bg-cyber-neon shadow-[0_0_5px_rgba(57,255,20,0.8)]",
-                      "text-cyber-purple": "bg-cyber-purple shadow-[0_0_5px_rgba(188,19,254,0.8)]",
-                    };
-                    const dotClass = colorMap[bead.color] || "bg-cyber-neon";
-                    const textClass = bead.color || "text-cyber-text/80";
-
-                    return (
-                      <div key={bead.id} className="relative pl-6 space-y-1">
-                        <div className={`absolute left-0 top-1.5 w-1.5 h-1.5 rounded-full ${dotClass}`} />
-                        <p className={`text-sm font-medium ${textClass}`}>{bead.heading}</p>
-                        {bead.content && (
-                          <p className="text-cyber-text/45 text-xs leading-relaxed">{bead.content}</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                  {!profile.careerGoals && careerBeads.length === 0 && (
+                  {careerBeadsRoot.map((bead) => (
+                    <BeadNode key={bead.id} bead={bead} allBeads={educationBeads} onFileClick={setViewFileUrl} />
+                  ))}
+                  {!profile.careerGoals && careerBeadsRoot.length === 0 && (
                     <p className="text-cyber-text/20 text-xs italic font-mono">Not set yet.</p>
                   )}
                 </div>
@@ -163,26 +191,10 @@ export default function About() {
                       {profile.education}
                     </p>
                   )}
-                  {eduBeads.map((bead) => {
-                    const colorMap: Record<string, string> = {
-                      "text-cyber-cyan": "bg-cyber-cyan shadow-[0_0_5px_rgba(0,240,255,0.8)]",
-                      "text-cyber-neon": "bg-cyber-neon shadow-[0_0_5px_rgba(57,255,20,0.8)]",
-                      "text-cyber-purple": "bg-cyber-purple shadow-[0_0_5px_rgba(188,19,254,0.8)]",
-                    };
-                    const dotClass = colorMap[bead.color] || "bg-cyber-cyan";
-                    const textClass = bead.color || "text-cyber-text/80";
-
-                    return (
-                      <div key={bead.id} className="relative pl-6 space-y-1">
-                        <div className={`absolute left-0 top-1.5 w-1.5 h-1.5 rounded-full ${dotClass}`} />
-                        <p className={`text-sm font-medium ${textClass}`}>{bead.heading}</p>
-                        {bead.content && (
-                          <p className="text-cyber-text/45 text-xs leading-relaxed">{bead.content}</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                  {!profile.education && eduBeads.length === 0 && (
+                  {eduBeadsRoot.map((bead) => (
+                    <BeadNode key={bead.id} bead={bead} allBeads={educationBeads} onFileClick={setViewFileUrl} />
+                  ))}
+                  {!profile.education && eduBeadsRoot.length === 0 && (
                     <p className="text-cyber-text/20 text-xs italic font-mono">Not set yet.</p>
                   )}
                 </div>
@@ -192,6 +204,43 @@ export default function About() {
           </div>
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {viewFileUrl && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setViewFileUrl(null)}
+          >
+            <div 
+              className="relative w-full max-w-4xl max-h-[90vh] bg-cyber-dark border border-cyber-gray rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.8)] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center p-4 border-b border-cyber-gray bg-cyber-black">
+                <h3 className="font-mono text-cyber-cyan font-bold">CERTIFICATE VIEWER</h3>
+                <button 
+                  onClick={() => setViewFileUrl(null)}
+                  className="text-cyber-text/50 hover:text-[#ff3366] transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="flex-1 bg-black/50 overflow-hidden relative min-h-[500px]">
+                {viewFileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? (
+                  <img src={viewFileUrl} alt="Certificate" className="w-full h-full object-contain" />
+                ) : (
+                  <iframe 
+                    src={`${viewFileUrl}#toolbar=0`} 
+                    className="w-full h-full border-none absolute inset-0"
+                  />
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

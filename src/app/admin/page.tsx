@@ -76,6 +76,7 @@ export default function AdminDashboard() {
   const [newBeadContent, setNewBeadContent] = useState("");
   const [newBeadColor, setNewBeadColor] = useState("text-cyber-cyan");
   const [newBeadParentId, setNewBeadParentId] = useState("");
+  const [newBeadFileUrl, setNewBeadFileUrl] = useState("");
   
   // Future Interests State
   const [interestInput, setInterestInput] = useState("");
@@ -543,6 +544,7 @@ export default function AdminDashboard() {
                           content: newBeadContent.trim(),
                           color: newBeadColor,
                           parentId: newBeadParentId && newBeadParentId !== "select" ? newBeadParentId : null,
+                          fileUrl: newBeadFileUrl || "",
                         };
                         const updated = [...educationBeadsList, newEntry];
                         setEducationBeadsList(updated);
@@ -550,6 +552,7 @@ export default function AdminDashboard() {
                         setNewBeadHeading("");
                         setNewBeadContent("");
                         setNewBeadParentId("");
+                        setNewBeadFileUrl("");
                         const ok = await saveToDB("save_education_beads", updated);
                         if (ok) alert("✅ Bead added!");
                       }}
@@ -564,6 +567,31 @@ export default function AdminDashboard() {
                     onChange={(e) => setNewBeadContent(e.target.value)}
                     className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none h-20"
                   />
+
+                  <label className="border-2 border-dashed border-cyber-gray hover:border-[#ff3366] bg-cyber-dark/50 rounded-lg p-4 flex flex-col items-center justify-center text-cyber-text/50 hover:text-[#ff3366] transition-colors cursor-pointer group relative overflow-hidden">
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="application/pdf, image/png, image/jpeg, image/webp"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                          const { publicUrl } = await uploadFile(file, "certs");
+                          setNewBeadFileUrl(publicUrl);
+                          alert("Certificate file uploaded!");
+                        } catch (error) {
+                          const message = error instanceof Error ? error.message : "Upload failed";
+                          alert("Upload failed: " + message);
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-[#ff3366]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <Upload size={20} className="mb-2" />
+                    <span className="font-mono text-xs">
+                      {newBeadFileUrl ? "CERTIFICATE UPLOADED (CLICK TO CHANGE)" : "ATTACH CERTIFICATE (OPTIONAL)"}
+                    </span>
+                  </label>
                   
                   <div className="mt-4 space-y-2">
                     <Reorder.Group axis="y" values={educationBeadsList} onReorder={(newOrder) => {
