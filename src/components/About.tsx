@@ -118,20 +118,31 @@ export default function About() {
                   </h3>
                 </div>
 
-                <div className="pl-5 border-l border-cyber-gray/40 space-y-3">
+                <div className="pl-5 border-l border-cyber-gray/40 space-y-4">
                   {profile.careerGoals && (
                     <p className="text-cyber-text/65 text-sm leading-relaxed whitespace-pre-line">
                       {profile.careerGoals}
                     </p>
                   )}
-                  {careerBeads.map((bead) => (
-                    <div key={bead.id} className="space-y-0.5">
-                      <p className="text-cyber-text/80 text-sm font-medium">{bead.heading}</p>
-                      {bead.content && (
-                        <p className="text-cyber-text/45 text-xs leading-relaxed">{bead.content}</p>
-                      )}
-                    </div>
-                  ))}
+                  {careerBeads.map((bead) => {
+                    const colorMap: Record<string, string> = {
+                      "text-cyber-cyan": "bg-cyber-cyan shadow-[0_0_5px_rgba(0,240,255,0.8)]",
+                      "text-cyber-neon": "bg-cyber-neon shadow-[0_0_5px_rgba(57,255,20,0.8)]",
+                      "text-cyber-purple": "bg-cyber-purple shadow-[0_0_5px_rgba(188,19,254,0.8)]",
+                    };
+                    const dotClass = colorMap[bead.color] || "bg-cyber-neon";
+                    const textClass = bead.color || "text-cyber-text/80";
+
+                    return (
+                      <div key={bead.id} className="relative pl-6 space-y-1">
+                        <div className={`absolute left-0 top-1.5 w-1.5 h-1.5 rounded-full ${dotClass}`} />
+                        <p className={`text-sm font-medium ${textClass}`}>{bead.heading}</p>
+                        {bead.content && (
+                          <p className="text-cyber-text/45 text-xs leading-relaxed">{bead.content}</p>
+                        )}
+                      </div>
+                    );
+                  })}
                   {!profile.careerGoals && careerBeads.length === 0 && (
                     <p className="text-cyber-text/20 text-xs italic font-mono">Not set yet.</p>
                   )}
@@ -147,7 +158,7 @@ export default function About() {
                   </h3>
                 </div>
 
-                <div className="pl-5 border-l border-cyber-gray/40 space-y-3">
+                <div className="pl-5 border-l border-cyber-gray/40 space-y-4">
                   {profile.education && (
                     <p className="text-cyber-text/65 text-sm leading-relaxed whitespace-pre-line">
                       {profile.education}
@@ -155,14 +166,17 @@ export default function About() {
                   )}
                   {eduBeads.map((bead) => {
                     const colorMap: Record<string, string> = {
-                      "text-cyber-cyan": "text-cyber-cyan",
-                      "text-cyber-neon": "text-cyber-neon",
-                      "text-cyber-purple": "text-cyber-purple",
+                      "text-cyber-cyan": "bg-cyber-cyan shadow-[0_0_5px_rgba(0,240,255,0.8)]",
+                      "text-cyber-neon": "bg-cyber-neon shadow-[0_0_5px_rgba(57,255,20,0.8)]",
+                      "text-cyber-purple": "bg-cyber-purple shadow-[0_0_5px_rgba(188,19,254,0.8)]",
                     };
-                    const headingColor = colorMap[bead.color] || "text-cyber-cyan";
+                    const dotClass = colorMap[bead.color] || "bg-cyber-cyan";
+                    const textClass = bead.color || "text-cyber-text/80";
+
                     return (
-                      <div key={bead.id} className="space-y-0.5">
-                        <p className={`text-sm font-medium ${headingColor}`}>{bead.heading}</p>
+                      <div key={bead.id} className="relative pl-6 space-y-1">
+                        <div className={`absolute left-0 top-1.5 w-1.5 h-1.5 rounded-full ${dotClass}`} />
+                        <p className={`text-sm font-medium ${textClass}`}>{bead.heading}</p>
                         {bead.content && (
                           <p className="text-cyber-text/45 text-xs leading-relaxed">{bead.content}</p>
                         )}
