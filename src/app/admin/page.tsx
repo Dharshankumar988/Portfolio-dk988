@@ -532,7 +532,39 @@ export default function AdminDashboard() {
                       </select>
                     )}
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <textarea
+                    placeholder="Bead Content Description"
+                    value={newBeadContent}
+                    onChange={(e) => setNewBeadContent(e.target.value)}
+                    className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none h-20"
+                  />
+
+                  <label className="border-2 border-dashed border-cyber-gray hover:border-[#ff3366] bg-cyber-dark/50 rounded-lg p-4 flex flex-col items-center justify-center text-cyber-text/50 hover:text-[#ff3366] transition-colors cursor-pointer group relative overflow-hidden">
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="application/pdf, image/png, image/jpeg, image/webp"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                          const { publicUrl } = await uploadFile(file, "certs");
+                          setNewBeadFileUrl(publicUrl);
+                          alert("Certificate file uploaded!");
+                        } catch (error) {
+                          const message = error instanceof Error ? error.message : "Upload failed";
+                          alert("Upload failed: " + message);
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-[#ff3366]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <Upload size={20} className="mb-2" />
+                    <span className="font-mono text-xs text-center">
+                      {newBeadFileUrl ? "CERTIFICATE UPLOADED (CLICK TO CHANGE)" : "ATTACH CERTIFICATE (OPTIONAL)"}
+                    </span>
+                  </label>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
                     <button
                       onClick={async () => {
                         if (!newBeadHeading.trim()) return;
@@ -561,37 +593,7 @@ export default function AdminDashboard() {
                       ADD BEAD
                     </button>
                   </div>
-                  <textarea
-                    placeholder="Bead Content Description"
-                    value={newBeadContent}
-                    onChange={(e) => setNewBeadContent(e.target.value)}
-                    className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none h-20"
-                  />
 
-                  <label className="border-2 border-dashed border-cyber-gray hover:border-[#ff3366] bg-cyber-dark/50 rounded-lg p-4 flex flex-col items-center justify-center text-cyber-text/50 hover:text-[#ff3366] transition-colors cursor-pointer group relative overflow-hidden">
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="application/pdf, image/png, image/jpeg, image/webp"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        try {
-                          const { publicUrl } = await uploadFile(file, "certs");
-                          setNewBeadFileUrl(publicUrl);
-                          alert("Certificate file uploaded!");
-                        } catch (error) {
-                          const message = error instanceof Error ? error.message : "Upload failed";
-                          alert("Upload failed: " + message);
-                        }
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-[#ff3366]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <Upload size={20} className="mb-2" />
-                    <span className="font-mono text-xs">
-                      {newBeadFileUrl ? "CERTIFICATE UPLOADED (CLICK TO CHANGE)" : "ATTACH CERTIFICATE (OPTIONAL)"}
-                    </span>
-                  </label>
                   
                   <div className="mt-4 space-y-2">
                     <Reorder.Group axis="y" values={educationBeadsList} onReorder={(newOrder) => {
