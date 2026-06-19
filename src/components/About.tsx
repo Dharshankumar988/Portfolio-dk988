@@ -65,6 +65,18 @@ export default function About() {
 
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (viewFileUrl) {
+      document.body.classList.add("cert-modal-open");
+    } else {
+      document.body.classList.remove("cert-modal-open");
+    }
+    return () => document.body.classList.remove("cert-modal-open");
+  }, [viewFileUrl]);
+
+  useEffect(() => {
     const handleUpdate = () => {
       setProfile(getStoredProfile());
       setEducationBeads(getStoredEducationBeads());

@@ -11,6 +11,7 @@ export default function CyberCursor() {
   const raf = useRef<number>(0);
 
   useEffect(() => {
+    document.documentElement.style.cursor = "none";
 
     const onMove = (e: MouseEvent) => {
       pos.current = { x: e.clientX, y: e.clientY };
@@ -36,6 +37,7 @@ export default function CyberCursor() {
     return () => {
       window.removeEventListener("mousemove", onMove);
       cancelAnimationFrame(raf.current);
+      document.documentElement.style.cursor = "";
     };
   }, []);
 
@@ -44,7 +46,7 @@ export default function CyberCursor() {
       {/* Dot — 4px, snaps instantly */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 z-[9999] pointer-events-none will-change-transform"
+        className="cyber-cursor-element fixed top-0 left-0 z-[9999] pointer-events-none will-change-transform"
         style={{ marginLeft: "-3px", marginTop: "-3px" }}
       >
         <div
@@ -57,7 +59,7 @@ export default function CyberCursor() {
       {/* Ring — 20px, lags behind */}
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 z-[9998] pointer-events-none will-change-transform"
+        className="cyber-cursor-element fixed top-0 left-0 z-[9998] pointer-events-none will-change-transform"
         style={{ marginLeft: "-14px", marginTop: "-14px" }}
       >
         <div

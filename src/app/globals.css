@@ -225,3 +225,13 @@ h1, h2, h3, h4, h5, h6 {
   0% { background-position: 0% 0%; }
   100% { background-position: 0% 100%; }
 }
+
+/* Disable cyber cursor and restore native cursor when modals are open */
+body.cert-modal-open,
+body.cert-modal-open * {
+  cursor: auto !important;
+}
+
+body.cert-modal-open .cyber-cursor-element {
+  display: none !important;
+}
