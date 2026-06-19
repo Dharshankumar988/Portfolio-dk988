@@ -161,7 +161,7 @@ export default function Skills() {
           viewport={{ once: true }}
           className="flex items-center gap-4 mb-14"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Skills</h2>
+          <h2 className="text-3xl md:text-4xl font-mono font-bold text-cyber-neon glow-text-neon uppercase tracking-widest">Skills_</h2>
           <div className="flex-1 h-px bg-cyber-gray/40 max-w-xs" />
         </motion.div>
 

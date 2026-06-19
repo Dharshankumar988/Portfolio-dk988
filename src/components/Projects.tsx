@@ -52,11 +52,17 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
       }}
     >
       {/* Editor top bar */}
-      <div className="flex items-center gap-0 bg-cyber-gray/20 border-b border-cyber-gray/40">
+      <div className="flex items-center gap-0 bg-[#0d1117] border-b border-cyber-gray/40 rounded-t-lg">
+        {/* Mac dots */}
+        <div className="flex items-center gap-1.5 px-4 pr-2">
+          <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+          <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+          <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
+        </div>
         {/* Tab */}
-        <div className="flex items-center gap-2 px-4 py-2.5 border-r border-cyber-gray/40 bg-[#080c14]">
-          <Circle size={8} className="text-cyber-neon fill-cyber-neon opacity-70" />
-          <span className="font-mono text-xs text-cyber-text/60">{fileName}</span>
+        <div className="flex items-center gap-2 px-4 py-2.5 border-x border-cyber-gray/40 bg-[#080c14] border-t-2 border-t-cyber-cyan shadow-[0_-1px_0_rgba(0,240,255,0.2)]">
+          <Circle size={8} className="text-cyber-cyan fill-cyber-cyan opacity-80" />
+          <span className="font-mono text-xs text-white/80">{fileName}</span>
         </div>
         {/* Spacer */}
         <div className="flex-1" />
@@ -102,16 +108,18 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
         <div className="flex-1 p-5 space-y-4">
           {/* Title as markdown h2 */}
           <div className="flex items-center gap-3">
-            <span className="font-mono text-cyber-purple text-sm font-bold">##</span>
-            <h3 className="font-mono text-lg font-bold text-white group-hover:text-cyber-neon transition-colors duration-300">
+            <span className="font-mono text-[#ff7b72] text-sm font-bold">##</span>
+            <h3 className="font-mono text-xl font-bold text-[#d2a8ff] group-hover:text-cyber-cyan transition-colors duration-300 tracking-wide">
               {project.title}
             </h3>
           </div>
 
           {/* Description as comment block */}
           {project.description && (
-            <div className="font-mono text-xs text-cyber-text/55 leading-relaxed pl-1 border-l border-cyber-gray/30">
-              {project.description}
+            <div className="font-mono text-[13px] text-[#8b949e] leading-relaxed pl-3 border-l-2 border-[#30363d] py-1 bg-[#0d1117]/50 rounded-r shadow-inner">
+              <span className="text-[#8b949e]/50 italic">/*</span><br/>
+              &nbsp;&nbsp;{project.description}<br/>
+              <span className="text-[#8b949e]/50 italic">*/</span>
             </div>
           )}
 
@@ -123,7 +131,7 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
                 {project.tech.map((t, i) => (
                   <span
                     key={i}
-                    className={`font-mono text-[10px] px-2 py-0.5 rounded border ${getTagColor(t)}`}
+                    className={`font-mono text-[11px] px-2.5 py-0.5 rounded-md border ${getTagColor(t)} shadow-sm`}
                   >
                     {t}
                   </span>
@@ -192,7 +200,7 @@ export default function Projects() {
           viewport={{ once: true }}
           className="flex items-center gap-4 mb-14"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Projects</h2>
+          <h2 className="text-3xl md:text-4xl font-mono font-bold text-cyber-neon glow-text-neon uppercase tracking-widest">Projects_</h2>
           <div className="flex-1 h-px bg-cyber-gray/40 max-w-xs" />
         </motion.div>
 
