@@ -231,13 +231,13 @@ export default function About() {
                     <X size={20} />
                   </button>
                 </div>
-                <div className="flex-1 bg-black/80 overflow-y-auto relative min-h-[500px] flex justify-center items-start p-4">
+                <div className={`flex-1 bg-black/80 relative flex justify-center items-start ${viewFileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? "overflow-y-auto p-4" : "overflow-hidden"}`}>
                   {viewFileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? (
                     <img src={viewFileUrl} alt="Certificate" className="max-w-full h-auto object-contain" />
                   ) : (
                     <iframe 
                       src={viewFileUrl} 
-                      className="w-full h-[80vh] min-h-[800px] border-none"
+                      className="w-full h-full border-none absolute inset-0"
                     />
                   )}
                 </div>

@@ -11,7 +11,6 @@ export default function CyberCursor() {
   const raf = useRef<number>(0);
 
   useEffect(() => {
-    document.documentElement.style.cursor = "none";
 
     const onMove = (e: MouseEvent) => {
       pos.current = { x: e.clientX, y: e.clientY };
@@ -37,7 +36,6 @@ export default function CyberCursor() {
     return () => {
       window.removeEventListener("mousemove", onMove);
       cancelAnimationFrame(raf.current);
-      document.documentElement.style.cursor = "";
     };
   }, []);
 
