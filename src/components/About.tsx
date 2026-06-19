@@ -1,6 +1,5 @@
-"use client";
-
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, X, ExternalLink } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
@@ -26,10 +25,10 @@ const BeadNode = ({ bead, allBeads, level = 0, onFileClick }: { bead: EducationB
   return (
     <div className={`relative space-y-2 mt-4 ${level > 0 ? "ml-6" : ""}`}>
       {level > 0 && (
-        <div className="absolute -left-6 top-2.5 w-4 h-px bg-cyber-gray/40" />
+        <div className="absolute -left-6 top-2.5 w-6 h-px bg-cyber-gray/40" />
       )}
-      <div className="relative pl-6">
-        <div className={`absolute left-0 top-1.5 w-2 h-2 rounded-full ${dotClass} ${level > 0 ? "scale-75" : ""}`} />
+      <div className={`relative ${level === 0 ? "pl-2" : "pl-6"}`}>
+        <div className={`absolute ${level === 0 ? "-left-[21px]" : "left-0"} top-1.5 w-2 h-2 rounded-full ${dotClass} ${level > 0 ? "scale-75" : ""}`} />
         <p className={`font-medium ${level > 0 ? "text-sm" : "text-base"} ${textClass}`}>
           {bead.heading}
         </p>
@@ -60,8 +59,10 @@ export default function About() {
   const [profile, setProfile] = useState<ProfileContent>(defaultProfile);
   const [educationBeads, setEducationBeads] = useState<EducationBeadRecord[]>([]);
   const [viewFileUrl, setViewFileUrl] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const handleUpdate = () => {
       setProfile(getStoredProfile());
       setEducationBeads(getStoredEducationBeads());
@@ -161,7 +162,7 @@ export default function About() {
                   </h3>
                 </div>
 
-                <div className="pl-5 border-l border-cyber-gray/40 space-y-4">
+                <div className="ml-[3px] pl-[17px] border-l border-cyber-gray/40 space-y-4">
                   {profile.careerGoals && (
                     <p className="text-cyber-text/65 text-sm leading-relaxed whitespace-pre-line">
                       {profile.careerGoals}
@@ -185,7 +186,7 @@ export default function About() {
                   </h3>
                 </div>
 
-                <div className="pl-5 border-l border-cyber-gray/40 space-y-4">
+                <div className="ml-[3px] pl-[17px] border-l border-cyber-gray/40 space-y-4">
                   {profile.education && (
                     <p className="text-cyber-text/65 text-sm leading-relaxed whitespace-pre-line">
                       {profile.education}
@@ -205,42 +206,45 @@ export default function About() {
         </motion.div>
       </div>
 
-      <AnimatePresence>
-        {viewFileUrl && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-            onClick={() => setViewFileUrl(null)}
-          >
-            <div 
-              className="relative w-full max-w-4xl max-h-[90vh] bg-cyber-dark border border-cyber-gray rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.8)] flex flex-col"
-              onClick={(e) => e.stopPropagation()}
+      {isMounted && createPortal(
+        <AnimatePresence>
+          {viewFileUrl && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+              onClick={() => setViewFileUrl(null)}
             >
-              <div className="flex justify-between items-center p-4 border-b border-cyber-gray bg-cyber-black">
-                <h3 className="font-mono text-cyber-cyan font-bold">CERTIFICATE VIEWER</h3>
-                <button 
-                  onClick={() => setViewFileUrl(null)}
-                  className="text-cyber-text/50 hover:text-[#ff3366] transition-colors"
-                >
-                  <X size={20} />
-                </button>
+              <div 
+                className="relative w-full max-w-4xl max-h-[90vh] bg-cyber-dark border border-cyber-gray rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.8)] flex flex-col"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-between items-center p-4 border-b border-cyber-gray bg-cyber-black">
+                  <h3 className="font-mono text-cyber-cyan font-bold">CERTIFICATE VIEWER</h3>
+                  <button 
+                    onClick={() => setViewFileUrl(null)}
+                    className="text-cyber-text/50 hover:text-[#ff3366] transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+                <div className="flex-1 bg-black/50 overflow-hidden relative min-h-[500px]">
+                  {viewFileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? (
+                    <img src={viewFileUrl} alt="Certificate" className="w-full h-full object-contain" />
+                  ) : (
+                    <iframe 
+                      src={`${viewFileUrl}#toolbar=0`} 
+                      className="w-full h-full border-none absolute inset-0"
+                    />
+                  )}
+                </div>
               </div>
-              <div className="flex-1 bg-black/50 overflow-hidden relative min-h-[500px]">
-                {viewFileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? (
-                  <img src={viewFileUrl} alt="Certificate" className="w-full h-full object-contain" />
-                ) : (
-                  <iframe 
-                    src={`${viewFileUrl}#toolbar=0`} 
-                    className="w-full h-full border-none absolute inset-0"
-                  />
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   );
 }

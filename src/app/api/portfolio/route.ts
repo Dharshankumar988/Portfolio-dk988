@@ -66,12 +66,12 @@ export async function GET() {
       let careerGoals = profile.careerGoals || "";
       let education = profile.education || "";
 
-      if (bio.includes("\n\n[meta:")) {
-        const metaStart = bio.indexOf("\n\n[meta:");
-        const metaEnd = bio.indexOf("]", metaStart);
-        if (metaEnd > metaStart + 8) {
+      if (bio.includes("\n\n[META_START]")) {
+        const metaStart = bio.indexOf("\n\n[META_START]");
+        const metaEnd = bio.lastIndexOf("[META_END]");
+        if (metaEnd > metaStart + 14) {
           try {
-            const metaStr = bio.substring(metaStart + 8, metaEnd);
+            const metaStr = bio.substring(metaStart + 14, metaEnd);
             const parsed = JSON.parse(metaStr);
             if (typeof parsed.phone === "string") phone = parsed.phone;
             if (typeof parsed.careerGoals === "string") careerGoals = parsed.careerGoals;
@@ -104,19 +104,36 @@ export async function GET() {
       educationBeads: (educationBeads || []).map((b) => {
         let content = b.content || "";
         let parentId = null;
-        if (content.startsWith("[parent:")) {
+        let fileUrl = "";
+        
+        if (content.startsWith("[BEAD_META:")) {
+          const metaEnd = content.indexOf("]META_END]");
+          if (metaEnd > 11) {
+            try {
+              const metaStr = content.substring(11, metaEnd);
+              const parsed = JSON.parse(metaStr);
+              if (parsed.parentId) parentId = parsed.parentId;
+              if (parsed.fileUrl) fileUrl = parsed.fileUrl;
+              content = content.substring(metaEnd + 10);
+            } catch(e) {
+              // fallback
+            }
+          }
+        } else if (content.startsWith("[parent:")) {
           const closeBracketIdx = content.indexOf("]");
           if (closeBracketIdx > 8) {
             parentId = content.substring(8, closeBracketIdx);
             content = content.substring(closeBracketIdx + 1);
           }
         }
+        
         return {
           id: b.id,
           heading: b.heading,
           content,
           color: b.color,
           parentId,
+          fileUrl,
         };
       }),
       projects: (projects || []).map((p) => ({
@@ -252,7 +269,7 @@ export async function POST(request: Request) {
           console.warn("⚠️ Full Profile upsert failed, retrying with graceful metadata encoding in bio. Error:", error.message);
           
           const meta = { phone, careerGoals, education, name, greeting, nameFontSize, taglineFontSize, email };
-          const encodedBio = `${bio || ""}\n\n[meta:${JSON.stringify(meta)}]`;
+          const encodedBio = `${bio || ""}\n\n[META_START]${JSON.stringify(meta)}[META_END]`;
           
           let retry = await supabase.from("Profile").upsert({
             ...payload,
@@ -393,14 +410,17 @@ export async function POST(request: Request) {
         if (delErr) throw delErr;
 
         if (beads.length > 0) {
-          const formatted = beads.map((bead: any, idx: number) => ({
-            id: bead.id,
-            heading: bead.heading,
-            content: bead.parentId ? `[parent:${bead.parentId}]${bead.content}` : bead.content,
-            color: bead.color,
-            order: idx,
-            updatedAt: new Date().toISOString(),
-          }));
+          const formatted = beads.map((bead: any, idx: number) => {
+            const meta = { parentId: bead.parentId, fileUrl: bead.fileUrl };
+            return {
+              id: bead.id,
+              heading: bead.heading,
+              content: `[BEAD_META:${JSON.stringify(meta)}]META_END]${bead.content}`,
+              color: bead.color,
+              order: idx,
+              updatedAt: new Date().toISOString(),
+            };
+          });
           const { error: insErr } = await supabase.from("EducationBead").insert(formatted);
           if (insErr) throw insErr;
         }
