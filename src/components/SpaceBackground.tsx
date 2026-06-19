@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 const SPACE_IMAGES = [
-  "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?q=80&w=2000&auto=format&fit=crop",
+  "/bg/1.jpg",
+  "/bg/2.jpg",
+  "/bg/3.jpg",
+  "/bg/4.jpg",
+  "/bg/5.jpg",
 ];
 
 export default function SpaceBackground() {

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Roboto_Mono, Space_Grotesk } from "next/font/google";
+import { Inter, Roboto_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
 import AdminTrigger from "@/components/AdminTrigger";
 import DatabaseHydrator from "@/components/DatabaseHydrator";
@@ -16,8 +16,8 @@ const robotoMono = Roboto_Mono({
   subsets: ["latin"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
   subsets: ["latin"],
 });
 
@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${robotoMono.variable} ${spaceGrotesk.variable} h-full antialiased dark`}
+      className={`${inter.variable} ${robotoMono.variable} ${orbitron.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-cyber-black text-cyber-text selection:bg-cyber-neon selection:text-black">
         <DatabaseHydrator />
