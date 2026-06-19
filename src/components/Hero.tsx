@@ -185,16 +185,7 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
-        animate={{ y: [0, 6, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-        onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
-      >
-        <span className="font-mono text-[10px] text-cyber-text/30 tracking-[0.3em]">SCROLL</span>
-        <ChevronDown size={16} className="text-cyber-cyan/40" />
-      </motion.div>
+
 
       {/* Contact Modal */}
       <AnimatePresence>

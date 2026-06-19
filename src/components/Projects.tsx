@@ -106,9 +106,8 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
 
         {/* Content */}
         <div className="flex-1 p-5 space-y-4">
-          {/* Title as markdown h2 */}
+          {/* Title */}
           <div className="flex items-center gap-3">
-            <span className="font-mono text-[#ff7b72] text-sm font-bold">##</span>
             <h3 className="font-mono text-xl font-bold text-[#d2a8ff] group-hover:text-cyber-cyan transition-colors duration-300 tracking-wide">
               {project.title}
             </h3>
