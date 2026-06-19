@@ -33,7 +33,7 @@ function ParticleField() {
 
 export default function BackgroundParticles() {
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
+    <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
       <Canvas camera={{ position: [0, 0, 1] }}>
         <ParticleField />
       </Canvas>

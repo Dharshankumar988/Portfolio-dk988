@@ -57,8 +57,6 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-24 z-10">
-      {/* Hex grid background layer */}
-      <div className="absolute inset-0 hex-pattern pointer-events-none" />
 
       <div className="w-full max-w-5xl mx-auto flex flex-col-reverse md:flex-row items-center gap-16">
         <div className="flex-1 space-y-8">
@@ -76,20 +74,25 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-5"
           >
-            {/* Name with glitch effect */}
+            {/* Name — clean gradient style */}
             <h1
-              className="font-bold tracking-tighter text-white glitch-text"
-              style={{ fontSize: `${(profile.nameFontSize || 5) * 0.5 + 1}rem`, lineHeight: 1.1 }}
+              className="font-bold tracking-tight leading-none"
+              style={{
+                fontSize: `${(profile.nameFontSize || 5) * 0.5 + 1}rem`,
+                lineHeight: 1.05,
+                background: "linear-gradient(135deg, #ffffff 40%, #00f0ff 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
             >
               {profile.name}
             </h1>
 
-            {/* Tagline with gradient */}
             <h2
-              className="font-mono text-cyber-text/80 tracking-wide"
+              className="font-mono text-cyber-text/60 tracking-wide"
               style={{ fontSize: `${(profile.taglineFontSize || 3) * 0.2 + 0.8}rem`, lineHeight: 1.2 }}
             >
-              <span className="text-cyber-cyan/50">// </span>
               {profile.tagline}
             </h2>
 
@@ -178,9 +181,7 @@ export default function Hero() {
             )}
           </div>
 
-          {/* Corner decorations */}
-          <div className="absolute top-4 right-4 font-mono text-[10px] text-cyber-neon/50 tracking-wider">SYS.OK</div>
-          <div className="absolute bottom-4 left-4 font-mono text-[10px] text-cyber-cyan/50 tracking-wider">ID:001</div>
+
         </motion.div>
       </div>
 

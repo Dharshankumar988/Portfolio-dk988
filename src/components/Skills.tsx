@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Wrench, Code, Cpu, Shield, Bug, Terminal } from "lucide-react";
 import {
@@ -16,47 +16,35 @@ import { getStoredSkills, PORTFOLIO_UPDATE_EVENT, SkillRecord } from "@/lib/port
 const CATEGORIES = [
   {
     key: "Security concepts",
-    dir: "~/skills/security/",
+    label: "Security",
     color: "text-cyber-neon",
-    borderColor: "border-cyber-neon/30",
-    glowColor: "rgba(57,255,20,0.15)",
+    accent: "border-cyber-neon/20",
+    dot: "bg-cyber-neon",
     icon: Lock,
-    perm: "drwxr-x---",
-    owner: "dharshan",
-    group: "cyber",
   },
   {
     key: "Tools",
-    dir: "~/skills/tools/",
+    label: "Tools",
     color: "text-cyber-cyan",
-    borderColor: "border-cyber-cyan/30",
-    glowColor: "rgba(0,240,255,0.15)",
+    accent: "border-cyber-cyan/20",
+    dot: "bg-cyber-cyan",
     icon: Wrench,
-    perm: "drwxr-x---",
-    owner: "dharshan",
-    group: "ops",
   },
   {
     key: "Programming/Web",
-    dir: "~/skills/dev/",
+    label: "Dev",
     color: "text-cyber-purple",
-    borderColor: "border-cyber-purple/30",
-    glowColor: "rgba(176,38,255,0.15)",
+    accent: "border-cyber-purple/20",
+    dot: "bg-cyber-purple",
     icon: Code,
-    perm: "drwxr-x---",
-    owner: "dharshan",
-    group: "dev",
   },
   {
     key: "Emerging Tech",
-    dir: "~/skills/emerging/",
+    label: "Emerging",
     color: "text-[#ff6b35]",
-    borderColor: "border-[#ff6b35]/30",
-    glowColor: "rgba(255,107,53,0.15)",
+    accent: "border-[#ff6b35]/20",
+    dot: "bg-[#ff6b35]",
     icon: Cpu,
-    perm: "drwxr-x---",
-    owner: "dharshan",
-    group: "r&d",
   },
 ];
 
@@ -71,7 +59,6 @@ const getSkillIcon = (name: string) => {
   if (n.includes("wireshark")) return <SiWireshark className="w-3.5 h-3.5" />;
   if (n.includes("nmap")) return <Terminal className="w-3.5 h-3.5" />;
   if (n.includes("git")) return <FaGithub className="w-3.5 h-3.5" />;
-  if (n.includes("vs code")) return <Terminal className="w-3.5 h-3.5" />;
   if (n.includes("figma")) return <FaFigma className="w-3.5 h-3.5" />;
   if (n.includes("python")) return <FaPython className="w-3.5 h-3.5" />;
   if (n.includes("javascript")) return <FaJs className="w-3.5 h-3.5" />;
@@ -88,156 +75,58 @@ const getSkillIcon = (name: string) => {
   return <Code className="w-3.5 h-3.5" />;
 };
 
-// Fake stable timestamps per skill
-const fakeDates = ["Jan 12", "Feb  3", "Mar 17", "Apr  8", "May 22", "Jun  1", "Jul 30", "Aug 14", "Sep  5", "Oct 19", "Nov 11", "Dec 28"];
-const fakeSizes = [4096, 2048, 8192, 1024, 16384, 512, 3072, 6144, 2560, 4608];
-
-function getStableVal<T>(arr: T[], seed: string): T {
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
-  return arr[h % arr.length];
-}
-
-type TerminalCardProps = {
+function CategoryPanel({
+  cat,
+  skills,
+  idx,
+}: {
   cat: typeof CATEGORIES[number];
   skills: SkillRecord[];
   idx: number;
-};
-
-function TerminalCard({ cat, skills, idx }: TerminalCardProps) {
-  const [hovered, setHovered] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState(true);
+}) {
   const Icon = cat.icon;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: idx * 0.1, duration: 0.5, ease: "easeOut" }}
-      className={`bg-[#080c14] border ${cat.borderColor} rounded-lg overflow-hidden`}
-      style={{
-        boxShadow: `0 0 0 0px ${cat.glowColor}`,
-        transition: "box-shadow 0.3s ease",
-      }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.boxShadow = `0 0 20px ${cat.glowColor}, inset 0 0 40px ${cat.glowColor.replace("0.15", "0.04")}`;
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.boxShadow = `0 0 0px ${cat.glowColor}`;
-      }}
+      transition={{ delay: idx * 0.08, duration: 0.45 }}
+      className={`bg-[#080c14] border ${cat.accent} rounded-xl overflow-hidden flex flex-col`}
     >
-      {/* Terminal title bar */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-cyber-gray/30 border-b border-cyber-gray/40">
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-            <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-            <span className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
-          </div>
-          <span className="font-mono text-xs text-cyber-text/30 ml-2">{cat.dir}</span>
-        </div>
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className={`font-mono text-[10px] ${cat.color} opacity-50 hover:opacity-100 transition-opacity`}
-        >
-          {expanded ? "[-]" : "[+]"}
-        </button>
+      {/* Header */}
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-cyber-gray/20">
+        <Icon size={15} className={cat.color} />
+        <span className={`font-mono text-sm font-semibold ${cat.color}`}>{cat.label}</span>
+        <span className="ml-auto font-mono text-xs text-cyber-text/25">{skills.length}</span>
       </div>
 
-      {/* ls -la header line */}
-      <div className="px-4 py-2.5 border-b border-cyber-gray/20">
-        <div className="flex items-center gap-2 font-mono text-xs text-cyber-text/40">
-          <span className={cat.color}>$</span>
-          <span>ls -la</span>
-          <span className={`${cat.color} opacity-60`}>{cat.dir}</span>
-        </div>
-        <div className="font-mono text-[10px] text-cyber-text/25 mt-1.5">
-          total {skills.length * 4 + 8} · {skills.length} items
-        </div>
-      </div>
-
-      {/* File rows */}
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 pb-4 pt-3 space-y-1.5">
-              {skills.length === 0 ? (
-                <div className="font-mono text-xs text-cyber-text/20 italic py-2">
-                  — no entries —
-                </div>
-              ) : (
-                skills.map((skill) => {
-                  const date = getStableVal(fakeDates, skill.name);
-                  const size = getStableVal(fakeSizes, skill.id);
-                  const isHov = hovered === skill.id;
-                  return (
-                    <motion.div
-                      key={skill.id}
-                      onMouseEnter={() => setHovered(skill.id)}
-                      onMouseLeave={() => setHovered(null)}
-                      animate={{ backgroundColor: isHov ? "rgba(255,255,255,0.03)" : "transparent" }}
-                      className="flex items-center gap-3 font-mono text-xs rounded px-2 py-1 cursor-default group"
-                    >
-                      {/* Permissions */}
-                      <span className="text-cyber-text/20 hidden sm:block shrink-0 tracking-tight">
-                        -rwxr-x---
-                      </span>
-                      {/* Size */}
-                      <span className="text-cyber-text/25 w-8 text-right shrink-0 hidden md:block">
-                        {size}
-                      </span>
-                      {/* Date */}
-                      <span className="text-cyber-text/25 w-10 shrink-0 hidden lg:block">
-                        {date}
-                      </span>
-                      {/* Icon + Name */}
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <span className={`${cat.color} opacity-60 group-hover:opacity-100 transition-opacity shrink-0 flex items-center`}>
-                          {skill.logoUrl ? (
-                            <img
-                              src={skill.logoUrl}
-                              alt={skill.name}
-                              className="w-3.5 h-3.5 object-contain"
-                              onError={(e) => { e.currentTarget.style.display = "none"; }}
-                            />
-                          ) : (
-                            getSkillIcon(skill.name)
-                          )}
-                        </span>
-                        <span
-                          className={`${cat.color} transition-all duration-150 truncate ${
-                            isHov ? "opacity-100" : "opacity-70"
-                          }`}
-                        >
-                          {skill.name.toLowerCase().replace(/\s+/g, "_")}
-                        </span>
-                      </div>
-                    </motion.div>
-                  );
-                })
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Category footer */}
-      <div className={`px-4 py-2 border-t border-cyber-gray/20 flex items-center gap-2`}>
-        <Icon size={12} className={`${cat.color} opacity-50`} />
-        <span className={`font-mono text-[10px] ${cat.color} opacity-40 tracking-widest uppercase`}>
-          {cat.key}
-        </span>
-        {skills.length > 0 && (
-          <span className="ml-auto font-mono text-[10px] text-cyber-text/20">
-            {skills.length} file{skills.length !== 1 ? "s" : ""}
-          </span>
+      {/* Skills list */}
+      <div className="px-5 py-4 flex-1">
+        {skills.length === 0 ? (
+          <p className="text-cyber-text/20 text-xs italic font-mono py-2">No skills added yet.</p>
+        ) : (
+          <ul className="space-y-2.5">
+            {skills.map((skill) => (
+              <li key={skill.id} className="flex items-center gap-3 group">
+                <span className={`${cat.color} opacity-50 group-hover:opacity-100 transition-opacity flex-shrink-0`}>
+                  {skill.logoUrl ? (
+                    <img
+                      src={skill.logoUrl}
+                      alt={skill.name}
+                      className="w-3.5 h-3.5 object-contain"
+                      onError={(e) => { e.currentTarget.style.display = "none"; }}
+                    />
+                  ) : (
+                    getSkillIcon(skill.name)
+                  )}
+                </span>
+                <span className="text-cyber-text/65 text-sm group-hover:text-cyber-text/90 transition-colors">
+                  {skill.name}
+                </span>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </motion.div>
@@ -267,22 +156,13 @@ export default function Skills() {
 
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -16 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="mb-14"
+          className="flex items-center gap-4 mb-14"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <span className="font-mono text-cyber-neon/50 text-sm">01</span>
-            <div className="h-px w-8 bg-cyber-neon/30" />
-            <span className="font-mono text-xs text-cyber-text/30 tracking-widest">CAPABILITIES</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold font-mono text-white tracking-tight">
-            Skills<span className="text-cyber-neon">_</span>
-          </h2>
-          <p className="font-mono text-xs text-cyber-text/30 mt-2">
-            <span className="text-cyber-cyan/50">$</span> ls -la ~/skills/ <span className="text-cyber-text/20">—— {storedSkills.items.length} total</span>
-          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Skills</h2>
+          <div className="flex-1 h-px bg-cyber-gray/40 max-w-xs" />
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -290,7 +170,7 @@ export default function Skills() {
             const catSkills = storedSkills.items.filter(
               (s) => s.category.toLowerCase() === cat.key.toLowerCase()
             );
-            return <TerminalCard key={cat.key} cat={cat} skills={catSkills} idx={idx} />;
+            return <CategoryPanel key={cat.key} cat={cat} skills={catSkills} idx={idx} />;
           })}
         </div>
       </div>

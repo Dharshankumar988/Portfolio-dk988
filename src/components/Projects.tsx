@@ -187,23 +187,13 @@ export default function Projects() {
 
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -16 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="mb-14"
+          className="flex items-center gap-4 mb-14"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <span className="font-mono text-cyber-cyan/50 text-sm">02</span>
-            <div className="h-px w-8 bg-cyber-cyan/30" />
-            <span className="font-mono text-xs text-cyber-text/30 tracking-widest">WORK</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold font-mono text-white tracking-tight">
-            Projects<span className="text-cyber-cyan">_</span>
-          </h2>
-          <p className="font-mono text-xs text-cyber-text/30 mt-2">
-            <span className="text-cyber-neon/50">$</span> cat ./projects/*.md{" "}
-            <span className="text-cyber-text/20">—— {projects.length} found</span>
-          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Projects</h2>
+          <div className="flex-1 h-px bg-cyber-gray/40 max-w-xs" />
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-6">
