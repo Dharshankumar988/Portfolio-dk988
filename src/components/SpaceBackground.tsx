@@ -10,15 +10,17 @@ const SPACE_IMAGES = [
 ];
 
 export default function SpaceBackground() {
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [isClient, setIsClient] = useState(false);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const startIdx = Math.floor(Math.random() * SPACE_IMAGES.length);
     setCurrentIndex(startIdx);
+    setIsClient(true);
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev !== null ? (prev + 1) % SPACE_IMAGES.length : startIdx));
+      setCurrentIndex((prev) => (prev + 1) % SPACE_IMAGES.length);
     }, 20000);
     return () => clearInterval(interval);
   }, []);
@@ -29,7 +31,7 @@ export default function SpaceBackground() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(60,20,100,0.4)_0%,transparent_60%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(10,50,90,0.5)_0%,transparent_60%)]" />
 
-      {SPACE_IMAGES.map((src, i) => {
+      {isClient && SPACE_IMAGES.map((src, i) => {
         if (failedImages.has(i)) return null;
 
         return (
