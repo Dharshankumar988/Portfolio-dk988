@@ -52,7 +52,7 @@ export default function ExtraAndFuture() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-[#080c14] border border-cyber-gray/50 p-8 rounded-lg relative overflow-hidden group hover:border-cyber-cyan/50 transition-colors"
+            className="bg-[#080c14] border border-cyber-gray/50 p-6 md:p-8 rounded-lg relative overflow-hidden group hover:border-cyber-cyan/50 transition-colors"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-cyber-cyan/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
             
@@ -108,7 +108,7 @@ export default function ExtraAndFuture() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-[#080c14] border border-cyber-gray/50 p-8 rounded-lg relative overflow-hidden group hover:border-[#ff6b35]/40 transition-colors"
+            className="bg-[#080c14] border border-cyber-gray/50 p-6 md:p-8 rounded-lg relative overflow-hidden group hover:border-[#ff6b35]/40 transition-colors"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff3366]/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
             

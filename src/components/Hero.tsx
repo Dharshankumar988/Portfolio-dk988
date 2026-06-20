@@ -58,7 +58,7 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-24 z-10">
 
-      <div className="w-full max-w-5xl mx-auto flex flex-col-reverse md:flex-row items-center gap-16">
+      <div className="w-full max-w-5xl mx-auto flex flex-col-reverse md:flex-row items-center gap-10 md:gap-16 pt-16 md:pt-0">
         <div className="flex-1 space-y-8">
           
           {/* Typewriter greeting line */}

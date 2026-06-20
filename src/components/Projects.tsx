@@ -60,9 +60,9 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
           <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
         </div>
         {/* Tab */}
-        <div className="flex items-center gap-2 px-4 py-2.5 border-x border-cyber-gray/40 bg-[#080c14] border-t-2 border-t-cyber-cyan shadow-[0_-1px_0_rgba(0,240,255,0.2)]">
-          <Circle size={8} className="text-cyber-cyan fill-cyber-cyan opacity-80" />
-          <span className="font-mono text-xs text-white/80">{fileName}</span>
+        <div className="flex items-center gap-2 px-3 md:px-4 py-2.5 border-x border-cyber-gray/40 bg-[#080c14] border-t-2 border-t-cyber-cyan shadow-[0_-1px_0_rgba(0,240,255,0.2)] max-w-[50%]">
+          <Circle size={8} className="text-cyber-cyan fill-cyber-cyan opacity-80 shrink-0" />
+          <span className="font-mono text-[10px] md:text-xs text-white/80 truncate">{fileName}</span>
         </div>
         {/* Spacer */}
         <div className="flex-1" />

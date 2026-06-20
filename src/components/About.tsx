@@ -124,7 +124,7 @@ export default function About() {
 
             {/* LEFT — bio card */}
             <div className="md:col-span-7">
-              <div className="bg-[#080c14] border border-cyber-gray/50 rounded-xl p-8 space-y-6">
+              <div className="bg-[#080c14] border border-cyber-gray/50 rounded-xl p-6 md:p-8 space-y-6">
                 {/* Bio */}
                 {profile.bio ? (
                   <div className="bg-[#0a0e17] rounded-lg border border-cyber-gray/40 overflow-hidden shadow-sm">

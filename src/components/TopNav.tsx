@@ -53,9 +53,9 @@ export default function TopNav() {
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
         >
-          <div className="flex items-center gap-1 bg-cyber-dark/80 backdrop-blur-md border border-cyber-gray/60 rounded-full px-3 py-2 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center gap-1 bg-cyber-dark/80 backdrop-blur-md border border-cyber-gray/60 rounded-full px-3 py-2 shadow-[0_0_30px_rgba(0,0,0,0.5)] max-w-[90vw] overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Live dot */}
-            <div className="flex items-center pr-3 border-r border-cyber-gray/40 mr-1">
+            <div className="flex items-center pr-3 border-r border-cyber-gray/40 mr-1 shrink-0">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyber-neon opacity-60" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyber-neon" />
@@ -68,7 +68,7 @@ export default function TopNav() {
                 <button
                   key={id}
                   onClick={() => scrollTo(id)}
-                  className={`relative px-3 py-1 font-mono text-xs tracking-wide rounded-full transition-all duration-200 ${
+                  className={`relative px-3 py-1 font-mono text-xs tracking-wide rounded-full transition-all duration-200 shrink-0 ${
                     isActive
                       ? "text-black"
                       : "text-cyber-text/50 hover:text-cyber-text"
