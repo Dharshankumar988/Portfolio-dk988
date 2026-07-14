@@ -141,10 +141,10 @@ export default function Assistant() {
               <AnimatePresence>
                 {showTooltip && (
                   <motion.div 
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    className="hidden sm:flex absolute right-full mr-4 top-1/2 -translate-y-1/2 w-40 bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue text-xs leading-relaxed px-3 py-2 rounded-2xl rounded-tr-none backdrop-blur-md shadow-[0_0_15px_rgba(0,195,255,0.3)] text-center"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="hidden sm:flex absolute top-full mt-4 right-0 w-40 bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue text-xs leading-relaxed px-3 py-2 rounded-2xl rounded-tr-none backdrop-blur-md shadow-[0_0_15px_rgba(0,195,255,0.3)] text-center pointer-events-none"
                   >
                     Ask me anything related to the portfolio !!
                   </motion.div>
@@ -179,7 +179,7 @@ export default function Assistant() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm sm:max-w-md h-[600px] max-h-[80vh] z-50 flex flex-col bg-black/80 backdrop-blur-xl border border-cyber-blue/30 shadow-[0_0_30px_rgba(0,195,255,0.15)] rounded-2xl overflow-hidden"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-lg md:max-w-xl lg:max-w-2xl h-[600px] max-h-[80vh] z-50 flex flex-col bg-black/80 backdrop-blur-xl border border-cyber-blue/30 shadow-[0_0_30px_rgba(0,195,255,0.15)] rounded-2xl overflow-hidden"
           >
             {/* Header */}
             <div className="flex flex-col border-b border-cyber-blue/20 bg-gradient-to-b from-blue-900/40 to-transparent p-4">

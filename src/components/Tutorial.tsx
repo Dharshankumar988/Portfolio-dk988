@@ -351,7 +351,10 @@ export default function Tutorial() {
             <div className="bg-cyber-dark border border-cyber-blue/50 rounded-2xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,195,255,0.25)] text-center relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyber-blue via-cyber-cyan to-cyber-neon" />
               <h2 className="text-3xl font-orbitron text-white mb-3">👋 Welcome!</h2>
-              <p className="text-gray-300 mb-5">Would you like a walkthrough of my portfolio?</p>
+              <p className="text-gray-300 mb-3">Would you like a walkthrough of my portfolio?</p>
+              <p className="text-red-500 font-bold text-sm mb-5 animate-pulse">
+                Highly recommend not going through at the tutorial and also do not use the terminal feature -- switch to destop view in your browser if your interested in using them !!
+              </p>
               <div className="text-xs text-cyber-blue font-mono mb-8 bg-cyber-blue/10 py-1.5 px-4 rounded-full inline-block shadow-[inset_0_0_10px_rgba(0,195,255,0.2)]">
                 Estimated time ≈30 seconds
               </div>

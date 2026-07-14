@@ -156,22 +156,22 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="w-56 h-56 md:w-80 md:h-80 relative group float-animation"
+          className="w-[65vw] h-[65vw] max-w-[280px] max-h-[280px] md:w-80 md:h-80 md:max-w-none md:max-h-none relative group float-animation shrink-0"
         >
           {/* Outer glow ring */}
           <div className="absolute inset-0 bg-cyber-neon rounded-full opacity-10 group-hover:opacity-25 blur-2xl transition-opacity duration-700" />
           {/* Spinning rings */}
-          <div className="absolute inset-1 border-2 border-cyber-neon/40 rounded-full animate-[spin_12s_linear_infinite]">
+          <div className="absolute inset-1 border-[1.5px] md:border-2 border-cyber-neon/40 rounded-full animate-[spin_12s_linear_infinite]">
             {/* Notch on ring */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyber-neon rounded-full shadow-[0_0_8px_rgba(57,255,20,1)]" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 md:w-3 md:h-3 bg-cyber-neon rounded-full shadow-[0_0_8px_rgba(57,255,20,1)]" />
           </div>
-          <div className="absolute inset-5 border border-cyber-cyan/30 rounded-full animate-[spin_20s_linear_infinite_reverse]">
-            <div className="absolute bottom-0 right-0 w-2 h-2 bg-cyber-cyan rounded-full shadow-[0_0_6px_rgba(0,240,255,1)]" />
+          <div className="absolute inset-3 md:inset-5 border border-cyber-cyan/30 rounded-full animate-[spin_20s_linear_infinite_reverse]">
+            <div className="absolute bottom-0 right-0 w-1.5 h-1.5 md:w-2 md:h-2 bg-cyber-cyan rounded-full shadow-[0_0_6px_rgba(0,240,255,1)]" />
           </div>
-          <div className="absolute inset-8 border border-cyber-purple/20 rounded-full animate-[spin_30s_linear_infinite]" />
+          <div className="absolute inset-5 md:inset-8 border border-cyber-purple/20 rounded-full animate-[spin_30s_linear_infinite]" />
           
           {/* Avatar image */}
-          <div className="absolute inset-10 bg-cyber-gray rounded-full overflow-hidden border border-cyber-gray/60 z-10 flex items-center justify-center scan-animate">
+          <div className="absolute inset-7 md:inset-10 bg-cyber-gray rounded-full overflow-hidden border border-cyber-gray/60 z-10 flex items-center justify-center scan-animate">
             {profile.avatarUrl && avatarVisible ? (
               <img
                 src={profile.avatarUrl}
@@ -180,7 +180,7 @@ export default function Hero() {
                 onError={() => setAvatarVisible(false)}
               />
             ) : (
-              <Terminal size={48} className="text-cyber-neon/50" />
+              <Terminal size={48} className="text-cyber-neon/50 md:w-12 md:h-12 w-8 h-8" />
             )}
           </div>
 
