@@ -64,17 +64,11 @@ export default function Assistant() {
   }, []);
 
   const handleQuickAction = (sec: { label: string; id: string }) => {
-    const userMsg: Message = { id: Date.now().toString() + "_u", role: "user", content: sec.label };
-    
-    let reply = `Redirecting to ${sec.label}...`;
     if (["resume", "github", "linkedin"].includes(sec.id)) {
-      reply = `Opening ${sec.label} in a new tab...`;
-    }
-    const sysMsg: Message = { id: Date.now().toString() + "_s", role: "assistant", content: reply };
-    
-    setMessages(prev => [...prev, userMsg, sysMsg]);
-    
-    if (["resume", "github", "linkedin"].includes(sec.id)) {
+      const userMsg: Message = { id: Date.now().toString() + "_u", role: "user", content: sec.label };
+      const sysMsg: Message = { id: Date.now().toString() + "_s", role: "assistant", content: `Opening ${sec.label} in a new tab...` };
+      setMessages(prev => [...prev, userMsg, sysMsg]);
+      
       const profile = getStoredProfile();
       let url = "";
       if (sec.id === "resume") url = profile.resumeUrl;
@@ -85,17 +79,15 @@ export default function Assistant() {
         setTimeout(() => window.open(url, "_blank"), 500);
       } else {
         setMessages(prev => [...prev, { id: Date.now().toString() + "_err", role: "assistant", content: `No ${sec.label} URL found.` }]);
-        return;
       }
-    } else {
+      
       setTimeout(() => {
-        eventBus.dispatch(EventTypes.SCROLL_TO_SECTION, { section: sec.id as PortfolioSection });
-      }, 300);
+        setIsOpen(false);
+      }, 1000);
+    } else {
+      // Send the query to the AI assistant
+      handleSend(sec.label);
     }
-    
-    setTimeout(() => {
-      setIsOpen(false);
-    }, 1000);
   };
 
   useEffect(() => {
@@ -152,7 +144,7 @@ export default function Assistant() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
-                    className="hidden sm:flex bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue text-sm px-4 py-2 rounded-2xl rounded-tr-none backdrop-blur-md shadow-[0_0_15px_rgba(0,195,255,0.3)] whitespace-nowrap"
+                    className="hidden sm:flex absolute right-full mr-4 top-1/2 -translate-y-1/2 w-40 bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue text-xs leading-relaxed px-3 py-2 rounded-2xl rounded-tr-none backdrop-blur-md shadow-[0_0_15px_rgba(0,195,255,0.3)] text-center"
                   >
                     Ask me anything related to the portfolio !!
                   </motion.div>
@@ -231,7 +223,7 @@ export default function Assistant() {
                       : "bg-gray-800/60 border border-gray-700/50 text-gray-200 rounded-bl-none"
                   }`}>
                     {msg.role === "assistant" ? (
-                      <div className="prose prose-invert prose-sm md:prose-base max-w-none prose-p:leading-relaxed prose-p:text-gray-300 prose-li:text-gray-300 prose-strong:text-white prose-headings:text-cyber-neon prose-a:text-cyber-blue prose-a:no-underline prose-a:break-all hover:prose-a:text-cyber-neon hover:prose-a:underline prose-pre:bg-black/60 prose-pre:border prose-pre:border-cyber-blue/30">
+                      <div className="prose prose-invert prose-sm md:prose-base max-w-none prose-p:leading-relaxed prose-p:text-gray-300 prose-li:text-gray-300 prose-strong:text-white prose-headings:text-cyber-neon prose-a:text-cyber-neon prose-a:font-semibold prose-a:underline prose-a:decoration-cyber-neon/50 prose-a:underline-offset-4 prose-a:break-all hover:prose-a:text-white hover:prose-a:decoration-white prose-pre:bg-black/60 prose-pre:border prose-pre:border-cyber-blue/30">
                         <ReactMarkdown 
                           remarkPlugins={[remarkGfm, remarkBreaks]}
                           components={{

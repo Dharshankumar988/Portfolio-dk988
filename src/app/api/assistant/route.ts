@@ -7,7 +7,7 @@ const INTENTS = {
   projects: ['project', 'work', 'portfolio', 'built', 'build', 'made', 'create', 'tech', 'stack', 'app'],
   skills: ['skill', 'technology', 'language', 'framework', 'tool', 'know', 'can do', 'proficient'],
   certificates: ['cert', 'course', 'achievement', 'credential', 'award'],
-  contact: ['contact', 'reach', 'email', 'github', 'linkedin', 'resume', 'cv', 'hire'],
+  contact: ['contact', 'reach', 'email', 'github', 'linkedin', 'resume', 'cv', 'hire', 'phone', 'number', 'call', 'mobile', 'whatsapp'],
 };
 
 function detectIntents(query: string) {
@@ -53,7 +53,31 @@ export async function POST(req: Request) {
       const { data: profiles } = await supabase.from("Profile").select("*").limit(1);
       if (profiles && profiles.length > 0) {
         const p = profiles[0];
-        contextParts.push(`[PROFILE] Name: ${p.name || 'Dharshan'}, Tagline: ${p.tagline}, Bio: ${p.bio}, Email: ${p.email}, GitHub: ${p.githubUrl}, LinkedIn: ${p.linkedinUrl}, Resume: ${p.resumeUrl}, Phone: ${p.phone}, Goals: ${p.careerGoals}, Education: ${p.education}`);
+        let bio = p.bio || "";
+        let phone = p.phone || "";
+        let careerGoals = p.careerGoals || "";
+        let education = p.education || "";
+        let email = p.email || "";
+
+        if (bio.includes("\n\n[META_START]")) {
+          const metaStart = bio.indexOf("\n\n[META_START]");
+          const metaEnd = bio.lastIndexOf("[META_END]");
+          if (metaEnd > metaStart + 14) {
+            try {
+              const metaStr = bio.substring(metaStart + 14, metaEnd);
+              const parsed = JSON.parse(metaStr);
+              if (typeof parsed.phone === "string") phone = parsed.phone;
+              if (typeof parsed.careerGoals === "string") careerGoals = parsed.careerGoals;
+              if (typeof parsed.education === "string") education = parsed.education;
+              if (typeof parsed.email === "string") email = parsed.email;
+              bio = bio.substring(0, metaStart); // Strip the meta block
+            } catch (e) {
+              console.error("Failed to parse bio metadata", e);
+            }
+          }
+        }
+
+        contextParts.push(`[PROFILE] Name: ${p.name || 'Dharshan'}, Tagline: ${p.tagline}, Bio: ${bio}, Email: ${email}, GitHub: ${p.githubUrl}, LinkedIn: ${p.linkedinUrl}, Resume: ${p.resumeUrl}, Phone: ${phone}, Goals: ${careerGoals}, Education: ${education}`);
       }
     }
 

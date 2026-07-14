@@ -54,6 +54,14 @@ export default function Hero() {
     setAvatarVisible(true);
   }, [profile.avatarUrl]);
 
+  useEffect(() => {
+    if (showContactModal) {
+      const handleScroll = () => setShowContactModal(false);
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [showContactModal]);
+
   const typedGreeting = useTypewriter(profile.greeting || "", 50);
 
   return (
