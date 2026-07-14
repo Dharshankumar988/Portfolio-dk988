@@ -16,11 +16,12 @@ export default function BinaryEncryptionText({ text, className, style }: Props) 
   const prefersReducedMotion = useReducedMotion();
 
   // Scroll tracking: trigger exactly when the subtitle nears the top edge.
-  // "start 15%" = When the top of the element is 15% from the top of the viewport.
-  // "start 0%" = When the top of the element hits the top edge.
+  // "start 25%" = When the top of the element is 25% from the top of the viewport.
+  // "start -10%" = When the top of the element goes slightly past the top edge.
+  // This gives the animation enough distance to fully play out before leaving screen.
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 15%", "start 0%"],
+    offset: ["start 25%", "start -10%"],
   });
 
   // Calculate random target indices based on text length to animate 1-2 characters
@@ -38,14 +39,21 @@ export default function BinaryEncryptionText({ text, className, style }: Props) 
     
     for (let w = 0; w < words.length; w++) {
       const word = words[w];
-      if (word.length > 2) { // Need at least 3 letters to comfortably skip the first and still have options
-        // pick a random char in the word, strictly > 0
+      // Pick a valid character in the word if it's long enough
+      if (word.length > 2) { 
         const charIdxInWord = 1 + Math.floor(Math.random() * (word.length - 1));
         validIndices.push(currentIdx + charIdxInWord);
+      } else if (word.length === 2) {
+        validIndices.push(currentIdx + 1);
       }
       currentIdx += word.length + 1; // +1 for the space
     }
     
+    // If no valid indices were found due to very short text, just pick the last character of the first word
+    if (validIndices.length === 0 && text.length > 0) {
+      validIndices.push(text.length - 1);
+    }
+
     // Pick 1 or 2 random indices from valid ones
     const numToPick = Math.random() > 0.3 && validIndices.length > 1 ? 2 : 1;
     const shuffled = validIndices.sort(() => 0.5 - Math.random());
@@ -141,7 +149,7 @@ function BinaryChar({
           opacity: particleOpacity,
           y: particleY,
           x: particleX,
-          fontSize: "0.2em", // approx 3-4px based on relative em sizing
+          fontSize: "0.25em", // approx 3-5px
         }}
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
       >
@@ -155,7 +163,7 @@ function BinaryChar({
           y: yOffset,
           x: xOffset,
         }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-white rounded-full pointer-events-none mix-blend-screen"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-white rounded-full pointer-events-none"
       />
     </span>
   );
