@@ -75,7 +75,7 @@ export async function GET() {
       adminTrigger,
       terminalPassword,
       profile: mappedProfile,
-      educationBeads: (educationBeads || []).map((b) => {
+      educationBeads: (educationBeads || []).map((b: any) => {
         let content = b.content || "";
         let parentId = null;
         let fileUrl = "";
@@ -110,7 +110,7 @@ export async function GET() {
           fileUrl,
         };
       }),
-      projects: (projects || []).map((p) => ({
+      projects: (projects || []).map((p: any) => ({
         id: p.id,
         title: p.title,
         description: p.description,
@@ -119,7 +119,7 @@ export async function GET() {
         liveUrl: p.url || "",
         imageUrl: p.image || "",
       })),
-      certificates: (certificates || []).map((c) => ({
+      certificates: (certificates || []).map((c: any) => ({
         id: c.id,
         name: c.title,
         issuer: c.issuer,
@@ -127,13 +127,13 @@ export async function GET() {
         fileUrl: c.url || "",
         filePath: c.url ? c.url.substring(c.url.indexOf("certs/")) : "",
       })),
-      skills: (skills || []).map((s) => ({
+      skills: (skills || []).map((s: any) => ({
         id: s.id,
         name: s.name,
         category: s.category || "Programming/Web",
         logoUrl: s.icon || "",
       })),
-      extracurriculars: (extracurriculars || []).map((e) => {
+      extracurriculars: (extracurriculars || []).map((e: any) => {
         let text = e.text || "";
         let fileUrl = e.url || "";
         
@@ -153,7 +153,7 @@ export async function GET() {
           filePath: fileUrl ? fileUrl.substring(fileUrl.indexOf("certs/")) : "",
         };
       }),
-      interests: (interests || []).map((i) => ({
+      interests: (interests || []).map((i: any) => ({
         id: i.id,
         name: i.name,
         logoUrl: i.logoUrl || "",
