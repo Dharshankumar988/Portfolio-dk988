@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Terminal, Download, Mail, Phone, ChevronDown } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { defaultProfile, getStoredProfile, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
+import BinaryEncryptionText from "./BinaryEncryptionText";
 
 function useTypewriter(text: string, speed = 45) {
   const [displayed, setDisplayed] = useState("");
@@ -94,7 +95,7 @@ export default function Hero() {
               className="font-mono text-cyber-text/60 tracking-wide"
               style={{ fontSize: `${(profile.taglineFontSize || 3) * 0.2 + 0.8}rem`, lineHeight: 1.2 }}
             >
-              {profile.tagline}
+              <BinaryEncryptionText text={profile.tagline} />
             </h2>
 
 
