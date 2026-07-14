@@ -134,15 +134,8 @@ export default function Tutorial() {
         </div>
       ),
       image: "/home page with Terminal and AI.png",
-      targetId: "terminal-toggle-container",
       mascotPos: { left: "20%", top: "50%", x: "-50%", y: "-50%" },
       dialogPos: { left: "50%", top: "50%", x: "-50%", y: "-50%" },
-      onEnter: () => {
-        const api = (window as unknown as { portfolioAPI: any }).portfolioAPI;
-        if (api) {
-          api.terminalClose();
-        }
-      },
       autoAdvanceMs: 6000,
     },
     {
@@ -150,30 +143,23 @@ export default function Tutorial() {
       mascot: "/exp2.png",
       title: "Seamless Navigation",
       message: (
-        <div className="space-y-2">
+        <div className="space-y-4">
           <p>You can use it to quickly navigate the portfolio, explore every section, and access information without searching through the page.</p>
           <p>Use your mouse, touch controls, keyboard shortcuts, or simply type commands directly.</p>
           {fakeTyping && (
-            <div className="mt-3 bg-black/80 border border-cyber-blue p-2 rounded text-cyber-neon font-mono text-xs shadow-[0_0_10px_rgba(0,240,255,0.2)]">
+            <div className="mt-4 bg-black/80 border border-cyber-neon p-3 rounded-lg text-cyber-neon font-mono text-xs shadow-[0_0_15px_rgba(57,255,20,0.15)]">
               <span className="text-gray-400">C:\\Users\\Guest&gt;</span> {fakeTyping}<span className="animate-pulse">_</span>
             </div>
           )}
         </div>
       ),
       image: "/help and info statements.png",
-      targetId: "terminal-window",
       mascotPos: { left: "80%", top: "50%", x: "-50%", y: "-50%" },
       dialogPos: { left: "30%", top: "50%", x: "-50%", y: "-50%" },
       onEnter: () => {
-        const api = (window as unknown as { portfolioAPI: any }).portfolioAPI;
-        if (api) {
-          api.terminalOpen(); 
-          setTimeout(() => {
-            simulateTyping("help", () => {
-              // Just simulate typing to demonstrate, no execution.
-            });
-          }, 600);
-        }
+        setTimeout(() => {
+          simulateTyping("help", () => {});
+        }, 600);
       },
       autoAdvanceMs: 6000,
     },
@@ -182,30 +168,23 @@ export default function Tutorial() {
       mascot: "/idle.png",
       title: "Project Explorer",
       message: (
-        <div className="space-y-2">
+        <div className="space-y-4">
           <p>You can easily browse through my projects right from the terminal.</p>
           <p>It provides a quick overview of each project's tech stack and features.</p>
           {fakeTyping && (
-            <div className="mt-3 bg-black/80 border border-cyber-blue p-2 rounded text-cyber-neon font-mono text-xs shadow-[0_0_10px_rgba(0,240,255,0.2)]">
+            <div className="mt-4 bg-black/80 border border-cyber-neon p-3 rounded-lg text-cyber-neon font-mono text-xs shadow-[0_0_15px_rgba(57,255,20,0.15)]">
               <span className="text-gray-400">C:\\Users\\Guest&gt;</span> {fakeTyping}<span className="animate-pulse">_</span>
             </div>
           )}
         </div>
       ),
       image: "/projects in info.png",
-      targetId: "terminal-window",
       mascotPos: { left: "80%", top: "50%", x: "-50%", y: "-50%" },
       dialogPos: { left: "30%", top: "50%", x: "-50%", y: "-50%" },
       onEnter: () => {
-        const api = (window as unknown as { portfolioAPI: any }).portfolioAPI;
-        if (api) {
-          api.terminalOpen(); 
-          setTimeout(() => {
-            simulateTyping("projects", () => {
-              // Just simulate typing to demonstrate, no execution.
-            });
-          }, 600);
-        }
+        setTimeout(() => {
+          simulateTyping("projects", () => {});
+        }, 600);
       },
       autoAdvanceMs: 6000,
     },
@@ -215,16 +194,8 @@ export default function Tutorial() {
       title: "AI Assistant",
       message: "You'll also notice this AI assistant icon floating on the right. It's always ready to help you.",
       image: "/home page with Terminal and AI.png", 
-      targetId: "assistant-toggle-container",
       mascotPos: { left: "75%", top: "50%", x: "-50%", y: "-50%" },
       dialogPos: { left: "30%", top: "50%", x: "-50%", y: "-50%" },
-      onEnter: () => {
-        const api = (window as unknown as { portfolioAPI: any }).portfolioAPI;
-        if (api) {
-          api.terminalClose();
-          api.closeAssistant();
-        }
-      },
       autoAdvanceMs: 5000,
     },
     {
@@ -233,15 +204,8 @@ export default function Tutorial() {
       title: "Chat Interface",
       message: "Need more details? Just click on me. I can answer questions about my portfolio, retrieve project information, documentation, certifications, skills, resume details, and everything stored in my portfolio database.",
       image: "/Assistant.png",
-      targetId: "assistant-window",
       mascotPos: { left: "80%", top: "50%", x: "-50%", y: "-50%" },
       dialogPos: { left: "30%", top: "50%", x: "-50%", y: "-50%" },
-      onEnter: () => {
-        const api = (window as unknown as { portfolioAPI: any }).portfolioAPI;
-        if (api) {
-          api.openAssistant();
-        }
-      },
       autoAdvanceMs: 7000,
     },
     {
@@ -250,17 +214,8 @@ export default function Tutorial() {
       title: "Global Navigation",
       message: "The navigation bar stays with you while you explore. You can quickly jump to any section of the portfolio from anywhere on the page.",
       image: "/home page with Terminal and AI.png",
-      targetId: "top-nav",
       mascotPos: { left: "50%", top: "220px", x: "-50%", y: "-50%" },
       dialogPos: { left: "50%", top: "45%", x: "-50%", y: "-50%" },
-      onEnter: () => {
-        const api = (window as unknown as { portfolioAPI: any }).portfolioAPI;
-        if (api) {
-          api.closeAssistant();
-        }
-        window.dispatchEvent(new Event("force-show-nav"));
-        window.scrollTo({ top: 100, behavior: "smooth" }); 
-      },
       autoAdvanceMs: 5000,
     }
   ];
@@ -496,20 +451,7 @@ export default function Tutorial() {
           </div>
         )}
       </AnimatePresence>
-      <AnimatePresence>
-        {tutorialPreference && tutorialState === "idle" && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            onClick={startTour}
-            style={{ cursor: "none" }}
-            className="fixed bottom-4 right-4 z-[9999] bg-cyber-dark/80 backdrop-blur-md border border-cyber-blue/50 text-cyber-blue px-3 py-2 rounded-full font-orbitron hover:bg-cyber-blue/20 hover:text-white transition-all shadow-[0_0_15px_rgba(0,195,255,0.2)] text-xs font-bold"
-          >
-            {tutorialPreference === "skip" ? "Tutorial" : "T"}
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {/* Removed the floating 'Tutorial' button at the bottom right as requested */}
     </>
   );
 }
