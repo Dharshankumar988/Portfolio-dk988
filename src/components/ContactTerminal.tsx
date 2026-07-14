@@ -5,6 +5,55 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { defaultProfile, getStoredAdminTrigger, getStoredProfile, getStoredTerminalPassword, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
 
+const ScanCommand = () => {
+  const [progress, setProgress] = useState(0);
+  const [ip, setIp] = useState("Scanning...");
+  const [complete, setComplete] = useState(false);
+
+  useEffect(() => {
+    fetch("https://api.ipify.org?format=json")
+      .then(r => r.json())
+      .then(d => setIp(d.ip))
+      .catch(() => setIp("192.168.1.104 (Fallback)"));
+
+    const interval = setInterval(() => {
+      setProgress(p => {
+        if (p >= 100) {
+          clearInterval(interval);
+          setComplete(true);
+          return 100;
+        }
+        return p + Math.random() * 15;
+      });
+    }, 300);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="mt-2 text-cyber-blue font-mono">
+      <div className="animate-pulse">[INITIALIZING SECURITY SCAN]</div>
+      <div className="flex items-center gap-2 mt-2">
+        <span>Target IP:</span>
+        <span className="text-cyber-neon font-bold">{ip}</span>
+      </div>
+      <div className="mt-2 w-full max-w-md bg-cyber-dark border border-cyber-neon/30 h-4 rounded overflow-hidden">
+        <div 
+          className="h-full bg-cyber-neon transition-all duration-300"
+          style={{ width: `${Math.min(100, progress)}%` }}
+        />
+      </div>
+      <div className="mt-1 text-xs">{Math.floor(Math.min(100, progress))}% Complete</div>
+      {complete && (
+        <div className="mt-3 text-cyber-neon border-l-2 border-cyber-neon pl-2">
+          [✓] PORT SCAN COMPLETE. NO VULNERABILITIES DETECTED.<br/>
+          [✓] CONNECTION SECURE. LOGGED.
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function ContactTerminal() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState<{ command?: string; response: React.ReactNode }[]>([]);
@@ -85,7 +134,7 @@ export default function ContactTerminal() {
         setOutput((prev) => [...prev, { response: <div className="text-cyber-text/50">password: ********</div> }, { response }]);
         setInput("");
         setLoginStep("idle");
-        localStorage.setItem("isAdmin", "true");
+        sessionStorage.setItem("isAdmin", "true");
         setTimeout(() => {
           router.push("/admin");
         }, 1500);
@@ -101,7 +150,17 @@ export default function ContactTerminal() {
     
     const lowerCmd = cmd.toLowerCase();
 
-    if (lowerCmd === "contact --show") {
+    const dispatchNavigation = (section: any) => {
+      import("@/lib/eventBus").then(({ eventBus, EventTypes }) => {
+        eventBus.dispatch(EventTypes.SCROLL_TO_SECTION, { section });
+        eventBus.dispatch(EventTypes.ASSISTANT_OPEN_SECTION, { section });
+      });
+    };
+
+    if (lowerCmd === "--grant --admin access" || lowerCmd === getStoredAdminTrigger().toLowerCase() || lowerCmd === "login") {
+      response = <div className="text-cyber-cyan mt-2">Enter Password:</div>;
+      setLoginStep("password");
+    } else if (lowerCmd === "contact --show" || lowerCmd === "contact") {
       const hasContact = Boolean(
         profile.email || profile.githubUrl || profile.linkedinUrl || profile.resumeUrl || profile.phone
       );
@@ -149,15 +208,44 @@ export default function ContactTerminal() {
       setOutput([]);
       setInput("");
       return;
-    } else if (lowerCmd === "login") {
-      response = <div className="text-cyber-cyan mt-2">Enter Password:</div>;
-      setLoginStep("password");
+    } else if (lowerCmd === "about" || lowerCmd === "projects" || lowerCmd === "skills" || lowerCmd === "certificates") {
+      response = <div className="text-cyber-neon mt-2">Opening {lowerCmd}...</div>;
+      dispatchNavigation(lowerCmd);
+    } else if (lowerCmd === "resume" || lowerCmd === "github" || lowerCmd === "linkedin") {
+      let url = "";
+      if (lowerCmd === "resume") url = profile.resumeUrl;
+      else if (lowerCmd === "github") url = profile.githubUrl;
+      else if (lowerCmd === "linkedin") url = profile.linkedinUrl;
+
+      if (url) {
+        response = (
+          <div className="mt-2 text-cyber-neon">
+            Opening {lowerCmd}... <a href={url} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">{url}</a>
+          </div>
+        );
+        window.open(url, "_blank");
+      } else {
+        response = <div className="text-red-400 mt-2">No {lowerCmd} URL configured.</div>;
+      }
+    } else if (lowerCmd === "scan") {
+      response = <ScanCommand />;
+    } else if (lowerCmd === "info") {
+      response = (
+        <div className="flex flex-col gap-1 mt-2">
+          <div className="mb-2 text-cyber-blue font-bold">Available Portfolio Sections:</div>
+          <div className="text-cyber-neon">about, skills, projects, certificates, resume, github, linkedin, contact</div>
+        </div>
+      );
     } else if (lowerCmd === "help") {
       response = (
-        <div className="mt-2 text-cyber-text/80">
-          <p>Available commands:</p>
+        <div className="mt-2 text-cyber-text/80 space-y-1">
+          <p className="text-white font-bold mb-2">Available commands:</p>
           <p className="text-cyber-neon">- contact --show : Display contact information</p>
-          <p className="text-cyber-neon">- login : Access Admin Space</p>
+          <p className="text-cyber-neon">- login : Access Admin Space (or use --grant --admin access)</p>
+          <p className="text-cyber-neon">- info : Show portfolio sections</p>
+          <p className="text-cyber-neon">- scan : Run security scan</p>
+          <p className="text-cyber-neon">- about, skills, projects, certificates : Navigate to section</p>
+          <p className="text-cyber-neon">- github, linkedin, resume : Open external links</p>
           <p className="text-cyber-neon">- clear : Clear terminal</p>
           <p className="text-cyber-neon">- exit : Close terminal</p>
         </div>

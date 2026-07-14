@@ -130,7 +130,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     // Check if user is authenticated via sessionStorage
-    if (localStorage.getItem("isAdmin") !== "true") {
+    if (sessionStorage.getItem("isAdmin") !== "true") {
       router.push("/");
       return;
     }

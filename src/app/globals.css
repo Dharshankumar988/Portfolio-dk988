@@ -226,6 +226,14 @@ h1, h2, h3, h4, h5, h6 {
   100% { background-position: 0% 100%; }
 }
 
+/* Force native cursor to be hidden globally (for CyberCursor) unless a modal is open */
+@media (pointer: fine) {
+  body:not(.cert-modal-open),
+  body:not(.cert-modal-open) * {
+    cursor: none !important;
+  }
+}
+
 /* Disable cyber cursor and restore native cursor when modals are open */
 body.cert-modal-open,
 body.cert-modal-open * {
@@ -235,3 +243,25 @@ body.cert-modal-open * {
 body.cert-modal-open .cyber-cursor-element {
   display: none !important;
 }
+
+/* Tutorial Spotlight System */
+body.tutorial-active::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 9998;
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+
+.spotlight-target {
+  position: relative !important;
+  z-index: 9999 !important;
+  box-shadow: 0 0 35px 8px rgba(0, 240, 255, 0.4) !important;
+  transform: scale(1.02) !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  border-radius: inherit;
+}
+

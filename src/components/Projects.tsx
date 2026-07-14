@@ -101,12 +101,12 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
             </h3>
           </div>
 
-          {/* Description as comment block */}
+          {/* Description */}
           {project.description && (
-            <div className="font-mono text-[13px] text-[#8b949e] leading-relaxed pl-3 border-l-2 border-[#30363d] py-1 bg-[#0d1117]/50 rounded-r shadow-inner">
-              <span className="text-[#8b949e]/50 italic">/*</span><br/>
-              &nbsp;&nbsp;{project.description}<br/>
-              <span className="text-[#8b949e]/50 italic">*/</span>
+            <div className="font-mono text-[14px] text-gray-300 leading-relaxed pl-4 border-l-2 border-cyber-cyan/50 py-3 bg-[#0d1117]/80 rounded-r shadow-sm">
+              <span className="text-cyber-cyan/40 italic mr-2">/*</span>
+              {project.description}
+              <span className="text-cyber-cyan/40 italic ml-2">*/</span>
             </div>
           )}
 
@@ -201,6 +201,28 @@ export default function Projects() {
             </div>
           )}
         </div>
+
+        {/* AI Assistant Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-16 flex justify-center"
+        >
+          <button
+            onClick={() => {
+              import("@/lib/eventBus").then(({ eventBus, EventTypes }) => {
+                eventBus.dispatch(EventTypes.ASSISTANT_SEND_QUERY, { query: "Tell me more about your projects and the technologies you used." });
+              });
+            }}
+            className="flex items-center gap-2 px-6 py-3 bg-cyber-cyan/10 hover:bg-cyber-cyan/20 border border-cyber-cyan/50 text-cyber-cyan rounded-full transition-all group"
+          >
+            <span className="font-mono text-sm">Ask Dharshan about his projects</span>
+            <div className="w-6 h-6 rounded-full bg-cyber-cyan/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span className="text-xs">🤖</span>
+            </div>
+          </button>
+        </motion.div>
       </div>
     </section>
   );

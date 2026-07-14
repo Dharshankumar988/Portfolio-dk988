@@ -8,56 +8,30 @@ export async function GET() {
   try {
     const supabase = getSupabaseAdmin() as any;
 
-    // 1. Fetch Profile
-    const { data: profiles } = await supabase
-      .from("Profile")
-      .select("*")
-      .limit(1) as { data: any[] | null };
-    const profile = profiles && profiles.length > 0 ? profiles[0] : null;
+    // Run all queries in parallel for much faster loading
+    const [
+      { data: profiles },
+      { data: admins },
+      { data: educationBeads },
+      { data: projects },
+      { data: certificates },
+      { data: skills },
+      { data: extracurriculars },
+      { data: interests }
+    ] = await Promise.all([
+      supabase.from("Profile").select("*").limit(1),
+      supabase.from("Admin").select("secretTrigger, terminalPassword").limit(1),
+      supabase.from("EducationBead").select("*").order("order", { ascending: true }),
+      supabase.from("Project").select("*").order("order", { ascending: true }),
+      supabase.from("Certificate").select("*").order("order", { ascending: true }),
+      supabase.from("Skill").select("*").order("order", { ascending: true }),
+      supabase.from("Extracurricular").select("*").order("order", { ascending: true }),
+      supabase.from("Interest").select("*").order("order", { ascending: true })
+    ]) as any[];
 
-    // 1b. Fetch Admin trigger and terminal password
-    const { data: admins } = await supabase
-      .from("Admin")
-      .select("secretTrigger, terminalPassword")
-      .limit(1) as { data: any[] | null };
+    const profile = profiles && profiles.length > 0 ? profiles[0] : null;
     const adminTrigger = admins && admins.length > 0 ? admins[0].secretTrigger : null;
     const terminalPassword = admins && admins.length > 0 ? admins[0].terminalPassword : null;
-    
-    // 1c. Fetch Education Beads
-    const { data: educationBeads } = await supabase
-      .from("EducationBead")
-      .select("*")
-      .order("order", { ascending: true }) as { data: any[] | null };
-
-    // 2. Fetch Projects (ordered)
-    const { data: projects } = await supabase
-      .from("Project")
-      .select("*")
-      .order("order", { ascending: true }) as { data: any[] | null };
-
-    // 3. Fetch Certificates (ordered)
-    const { data: certificates } = await supabase
-      .from("Certificate")
-      .select("*")
-      .order("order", { ascending: true }) as { data: any[] | null };
-
-    // 4. Fetch Skills (ordered)
-    const { data: skills } = await supabase
-      .from("Skill")
-      .select("*")
-      .order("order", { ascending: true }) as { data: any[] | null };
-
-    // 5. Fetch Extracurriculars (ordered)
-    const { data: extracurriculars } = await supabase
-      .from("Extracurricular")
-      .select("*")
-      .order("order", { ascending: true }) as { data: any[] | null };
-
-    // 6. Fetch Interests (ordered)
-    const { data: interests } = await supabase
-      .from("Interest")
-      .select("*")
-      .order("order", { ascending: true }) as { data: any[] | null };
 
     let mappedProfile = null;
     if (profile) {

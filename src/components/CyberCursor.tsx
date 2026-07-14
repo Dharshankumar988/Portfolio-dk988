@@ -46,7 +46,7 @@ export default function CyberCursor() {
       {/* Dot — 4px, snaps instantly */}
       <div
         ref={dotRef}
-        className="cyber-cursor-element fixed top-0 left-0 z-[9999] pointer-events-none will-change-transform"
+        className="cyber-cursor-element fixed top-0 left-0 z-[99999] pointer-events-none will-change-transform"
         style={{ marginLeft: "-3px", marginTop: "-3px" }}
       >
         <div
@@ -59,7 +59,7 @@ export default function CyberCursor() {
       {/* Ring — 20px, lags behind */}
       <div
         ref={ringRef}
-        className="cyber-cursor-element fixed top-0 left-0 z-[9998] pointer-events-none will-change-transform"
+        className="cyber-cursor-element fixed top-0 left-0 z-[99998] pointer-events-none will-change-transform"
         style={{ marginLeft: "-14px", marginTop: "-14px" }}
       >
         <div

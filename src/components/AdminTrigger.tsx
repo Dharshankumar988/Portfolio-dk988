@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Unlock, AlertTriangle } from "lucide-react";
+import { Lock, Unlock, AlertTriangle, Terminal } from "lucide-react";
 import { getStoredAdminTrigger, setStoredAdminTrigger, getStoredTerminalPassword, setStoredTerminalPassword, saveToDB } from "@/lib/portfolioStore";
 
 const MASTER_OVERRIDE_CODE = "shrav1410";
@@ -56,7 +56,7 @@ export default function AdminTrigger() {
         setAuthStatus("idle");
         setNewTrigger("");
         setNewPassword("");
-      }, 2000);
+      }, 800);
     } else {
       setAuthStatus("idle");
     }
@@ -101,12 +101,12 @@ export default function AdminTrigger() {
             ) : (
               <form onSubmit={handleUpdate} className="space-y-6 relative z-10">
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-cyber-gray" size={20} />
+                  <Terminal className="absolute left-3 top-1/2 -translate-y-1/2 text-cyber-gray" size={20} />
                   <input
-                    type="password"
+                    type="text"
                     value={newTrigger}
                     onChange={(e) => setNewTrigger(e.target.value)}
-                    placeholder="ENTER NEW ADMIN TRIGGER"
+                    placeholder="ENTER NEW TRIGGER WORD (e.g. override)"
                     className="w-full bg-black/50 border border-cyber-gray focus:border-[#ff3366] rounded p-3 pl-10 font-mono text-white outline-none transition-colors"
                     disabled={authStatus === "updating"}
                     autoFocus
@@ -119,7 +119,7 @@ export default function AdminTrigger() {
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="ENTER NEW LOGIN PASSWORD"
+                    placeholder="ENTER NEW SECURE PASSWORD"
                     className="w-full bg-black/50 border border-cyber-gray focus:border-[#ff3366] rounded p-3 pl-10 font-mono text-white outline-none transition-colors"
                     disabled={authStatus === "updating"}
                   />

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { eventBus, EventTypes } from "@/lib/eventBus";
 
 const LINKS = [
   { id: "hero",         label: "home" },
@@ -18,9 +19,21 @@ export default function TopNav() {
 
   // Show bar after scrolling past hero
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 80);
+    const onScroll = () => {
+      if (document.body.classList.contains("tutorial-active")) return;
+      setVisible(window.scrollY > 80);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    
+    const forceShow = () => {
+      setVisible(true);
+    };
+    window.addEventListener("force-show-nav", forceShow);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("force-show-nav", forceShow);
+    };
   }, []);
 
   // Track active section
@@ -43,10 +56,18 @@ export default function TopNav() {
   const scrollTo = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
+  useEffect(() => {
+    const unsub = eventBus.subscribe(EventTypes.SCROLL_TO_SECTION, ({ section }) => {
+      scrollTo(section);
+    });
+    return () => unsub();
+  }, []);
+
   return (
     <AnimatePresence>
       {visible && (
         <motion.nav
+          id="top-nav"
           initial={{ y: -60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -60, opacity: 0 }}

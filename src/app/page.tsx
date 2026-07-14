@@ -9,6 +9,9 @@ import ContactTerminal from "@/components/ContactTerminal";
 import StartupAnimation from "@/components/StartupAnimation";
 
 import SpaceBackground from "@/components/SpaceBackground";
+import Terminal from "@/components/Terminal";
+import Assistant from "@/components/Assistant";
+import Tutorial from "@/components/Tutorial";
 
 export default function Home() {
   return (
@@ -34,7 +37,11 @@ export default function Home() {
       <section id="extra">
         <ExtraAndFuture />
       </section>
+      <div id="contact" />
       <ContactTerminal />
+      <Terminal />
+      <Assistant />
+      <Tutorial />
     </main>
   );
 }
