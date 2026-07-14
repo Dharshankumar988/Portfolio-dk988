@@ -30,23 +30,33 @@ function CertCard({ cert, idx }: { cert: CertificateRecord; idx: number }) {
         transition: "box-shadow 0.3s ease",
       }}
     >
-      {/* Background image on hover */}
-      {cert.imageUrl && (
+      {/* Background preview on hover */}
+      {(cert.imageUrl || cert.fileUrl) && (
         <div
-          className="absolute inset-0 transition-opacity duration-500 pointer-events-none"
-          style={{ opacity: hovered ? 0.08 : 0 }}
+          className="absolute inset-0 transition-all duration-500 pointer-events-none z-0 rounded-lg overflow-hidden"
+          style={{ opacity: hovered ? 0.35 : 0 }}
         >
-          <img
-            src={cert.imageUrl}
-            alt={cert.name}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#080c14]/50 to-[#080c14]" />
+          {cert.imageUrl || (cert.fileUrl && cert.fileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) ? (
+            <img
+              src={cert.imageUrl || cert.fileUrl!}
+              alt={cert.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (cert.fileUrl && cert.fileUrl.endsWith('.pdf')) ? (
+            <div className="w-full h-full overflow-hidden relative">
+              <iframe 
+                src={`${cert.fileUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                className="w-full h-[150%] absolute top-0 left-0 border-none pointer-events-none"
+                title={cert.name}
+              />
+            </div>
+          ) : null}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080c14] via-[#080c14]/70 to-[#080c14]/30" />
         </div>
       )}
 
       {/* Top row */}
-      <div className="relative flex items-start justify-between gap-2">
+      <div className="relative z-10 flex items-start justify-between gap-2">
         <div className="p-2.5 bg-cyber-purple/10 border border-cyber-purple/20 rounded-lg">
           <Award size={20} className="text-cyber-purple" />
         </div>
@@ -65,7 +75,7 @@ function CertCard({ cert, idx }: { cert: CertificateRecord; idx: number }) {
       </div>
 
       {/* Body */}
-      <div className="relative flex-1">
+      <div className="relative z-10 flex-1">
         <h3 className={`font-mono text-sm font-bold leading-snug mb-2 transition-colors duration-300 ${hovered ? "text-cyber-neon" : "text-white"}`}>
           {cert.name}
         </h3>
@@ -78,7 +88,7 @@ function CertCard({ cert, idx }: { cert: CertificateRecord; idx: number }) {
       </div>
 
       {/* Bottom tag */}
-      <div className="relative flex items-center gap-2">
+      <div className="relative z-10 flex items-center gap-2">
         <span className="h-px flex-1 bg-cyber-gray/30" />
         <span className="font-mono text-[9px] text-cyber-purple/40 tracking-widest">VERIFIED</span>
         <span className="h-px flex-1 bg-cyber-gray/30" />
