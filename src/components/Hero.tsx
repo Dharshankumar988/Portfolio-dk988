@@ -65,7 +65,7 @@ export default function Hero() {
           {/* Typewriter greeting line */}
           <div className="font-mono text-sm md:text-base text-cyber-neon h-8 flex items-center gap-1">
             <span className="text-cyber-cyan opacity-70">▸</span>
-            <span className="ml-1">{typedGreeting}</span>
+            <span className="ml-1"><BinaryEncryptionText text={typedGreeting} /></span>
             <span className="cursor-blink text-cyber-neon ml-0.5">_</span>
           </div>
 

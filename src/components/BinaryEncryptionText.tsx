@@ -15,48 +15,31 @@ export default function BinaryEncryptionText({ text, className, style }: Props) 
   const containerRef = useRef<HTMLSpanElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  // Scroll tracking: trigger when subtitle crosses the exact middle of the screen (50%),
-  // and complete when it goes slightly off the top edge (-10%).
-  // This huge 60vh window guarantees the animation will fully execute and be seen.
+  // Scroll tracking: trigger during the last ~10% of Hero visibility.
+  // When the text container's top reaches 15% from the top of the viewport, 
+  // it animates until it reaches 0% (top of viewport).
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 50%", "start -10%"],
+    offset: ["start 15%", "start 0%"],
   });
 
-  // Calculate random target indices based on text length to animate 1-2 characters
+  // Calculate exactly ONE random target character from the text
   const activeIndices = useMemo(() => {
     if (!text) return [];
     const validIndices: number[] = [];
-    const words = text.split(" ");
-    let currentIdx = 0;
     
-    // Constraints:
-    // - Never first character of any word.
-    // - Max 1 character per word.
-    // - Total 1-2 characters max.
-    // - Never consecutive letters (inherent by max 1 per word).
-    
-    for (let w = 0; w < words.length; w++) {
-      const word = words[w];
-      // Pick a valid character in the word if it's long enough
-      if (word.length > 2) { 
-        const charIdxInWord = 1 + Math.floor(Math.random() * (word.length - 1));
-        validIndices.push(currentIdx + charIdxInWord);
-      } else if (word.length === 2) {
-        validIndices.push(currentIdx + 1);
+    // Collect all indices that are not spaces
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] !== " ") {
+        validIndices.push(i);
       }
-      currentIdx += word.length + 1; // +1 for the space
     }
     
-    // If no valid indices were found due to very short text, just pick the last character of the first word
-    if (validIndices.length === 0 && text.length > 0) {
-      validIndices.push(text.length - 1);
-    }
+    if (validIndices.length === 0) return [];
 
-    // Pick 1 or 2 random indices from valid ones
-    const numToPick = Math.random() > 0.3 && validIndices.length > 1 ? 2 : 1;
-    const shuffled = validIndices.sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, numToPick);
+    // Pick exactly one index
+    const randomIndex = validIndices[Math.floor(Math.random() * validIndices.length)];
+    return [randomIndex];
   }, [text]);
 
   if (!text) return null;
@@ -69,7 +52,6 @@ export default function BinaryEncryptionText({ text, className, style }: Props) 
       {text.split("").map((char, globalIndex) => {
         const isActive = activeIndices.includes(globalIndex);
         
-        // Render spaces normally to preserve word-breaking
         if (char === " ") {
           return <span key={globalIndex}> </span>;
         }
@@ -98,30 +80,25 @@ function BinaryChar({
 }) {
   const binaryVal = useRef(getRandomBinary()).current;
   
-  // Movement parameters mapped to requirements
-  // "Very slight random horizontal drift" -> -4px to 4px
-  const xOffset = useRef((Math.random() - 0.5) * 8).current; 
-  // "Travel distance: 10-20px upward" -> -10px to -20px
+  // Tiny horizontal drift: -2px to +2px
+  const xOffset = useRef((Math.random() - 0.5) * 4).current; 
+  // Gentle upward drift: -10px to -20px
   const yOffset = useRef(-10 - Math.random() * 10).current; 
 
-  // Opacity phases mapped to scroll progression
-  // 0% - 90%: unchanged. (Maps to 0-0.2 in our 15vh window)
-  
-  // 92% (progress 0.2): Original fades out, replacement fades in.
-  const originalOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.7, 1], [1, 0, 0, 1, 1]);
-  const replacementOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.7, 1], [0, 1, 1, 0, 0]);
+  // 0.0 - 0.4: Original character fades out, replacement fades in
+  const originalOpacity = useTransform(scrollYProgress, [0, 0.4, 0.45, 1], [1, 0, 1, 1]);
+  const replacementOpacity = useTransform(scrollYProgress, [0, 0.4, 0.45, 1], [0, 1, 0, 0]);
 
-  // 97% (progress 0.5-0.7): Particle detaches (fades in)
-  // Max opacity 0.40 to ensure it is visible even against dark backgrounds when multiplied by text color
-  const particleOpacity = useTransform(scrollYProgress, [0.5, 0.6, 0.9, 1], [0, 0.4, 0.4, 0]);
+  // 0.45 - 1.0: Detached particle fades in, drifts up, then fades out
+  // Max opacity: 0.12 - 0.20
+  const maxParticleOpacity = useRef(0.12 + Math.random() * 0.08).current;
+  const particleOpacity = useTransform(scrollYProgress, [0.45, 0.5, 0.8, 1], [0, maxParticleOpacity, maxParticleOpacity, 0]);
   
-  // 99% (progress 0.5-1.0): Drifting up and slightly horizontally
-  const particleY = useTransform(scrollYProgress, [0.5, 1], [0, yOffset]);
-  const particleX = useTransform(scrollYProgress, [0.5, 1], [0, xOffset]);
+  const particleY = useTransform(scrollYProgress, [0.45, 1], [0, yOffset]);
+  const particleX = useTransform(scrollYProgress, [0.45, 1], [0, xOffset]);
 
-  // 100% (progress 0.9-1.0): Absorbed (subtle flare).
-  // Flare opacity peaks very low to simulate 5% brightening
-  const flareOpacity = useTransform(scrollYProgress, [0.9, 0.95, 0.98, 1], [0, 0, 0.15, 0]);
+  // 0.9 - 1.0: Tiny white flare simulating existing particle brightness increase
+  const flareOpacity = useTransform(scrollYProgress, [0.9, 0.95, 1], [0, 0.5, 0]);
 
   if (!isActive) {
     return <span className="inline-block">{char}</span>;
@@ -148,21 +125,20 @@ function BinaryChar({
           opacity: particleOpacity,
           y: particleY,
           x: particleX,
-          fontSize: "0.35em", // approx 5-6px to guarantee visibility
         }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-[clamp(2.5px,0.5vw,5px)] leading-none drop-shadow-none"
       >
         {binaryVal}
       </motion.span>
       
-      {/* Tiny Flare (Simulated Background Particle) */}
+      {/* Tiny Flare (Simulated Background Particle - white, unstyled) */}
       <motion.div
         style={{
           opacity: flareOpacity,
           y: yOffset,
           x: xOffset,
         }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-white rounded-full pointer-events-none"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-white rounded-full pointer-events-none shadow-none"
       />
     </span>
   );
