@@ -132,12 +132,12 @@ CREATE TABLE "EducationBead" (
 -- =========================================================================
 
 -- Seed default Admin credentials
--- Username: admin | Secret Trigger: dk160106
+-- Username: admin | Secret Trigger: [HIDDEN]
 INSERT INTO "Admin" ("id", "username", "passwordHash", "secretTrigger", "terminalPassword") VALUES (
   'default-admin',
   'admin',
-  '$2b$10$O4eG0.XoH250b/vFsz0VjupUj2o8G1n6Y0hC4K9n1y6k/6P2V/8eW', -- hashed password for 'dk160106'
-  'dk160106',
+  '$2b$10$O4eG0.XoH250b/vFsz0VjupUj2o8G1n6Y0hC4K9n1y6k/6P2V/8eW', -- hashed password
+  'YOUR_SECRET_TRIGGER',
   'admin'
 );
 

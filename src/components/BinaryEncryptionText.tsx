@@ -57,36 +57,23 @@ export default function BinaryEncryptionText({ text, className, style }: Props) 
     return <span className={className} style={style}>{text}</span>;
   }
 
-  const words = text.split(" ");
-  let globalIndex = 0;
-
   return (
-    <span ref={containerRef} className={`inline-block relative ${className || ""}`} style={style}>
-      {words.map((word, wordIdx) => {
-        const result = (
-          <span key={wordIdx} className="inline-block whitespace-nowrap">
-            {word.split("").map((char, charIdx) => {
-              const currentGlobalIdx = globalIndex++;
-              const isActive = activeIndices.includes(currentGlobalIdx);
-              
-              return (
-                <BinaryChar
-                  key={currentGlobalIdx}
-                  char={char}
-                  isActive={isActive}
-                  scrollYProgress={scrollYProgress}
-                />
-              );
-            })}
-          </span>
-        );
-        // Add space back to global index tracker
-        globalIndex++;
+    <span ref={containerRef} className={className} style={style}>
+      {text.split("").map((char, globalIndex) => {
+        const isActive = activeIndices.includes(globalIndex);
+        
+        // Render spaces normally to preserve word-breaking
+        if (char === " ") {
+          return <span key={globalIndex}> </span>;
+        }
+
         return (
-          <React.Fragment key={`frag-${wordIdx}`}>
-            {result}
-            {wordIdx < words.length - 1 && <span> </span>}
-          </React.Fragment>
+          <BinaryChar
+            key={globalIndex}
+            char={char}
+            isActive={isActive}
+            scrollYProgress={scrollYProgress}
+          />
         );
       })}
     </span>
