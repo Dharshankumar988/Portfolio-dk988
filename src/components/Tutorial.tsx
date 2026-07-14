@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { preload } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { eventBus, EventTypes } from "@/lib/eventBus";
@@ -23,6 +24,17 @@ type TutorialStep = {
 const DOCKED_POS = { bottom: "20px", right: "20px" };
 
 export default function Tutorial() {
+  preload("/home page with Terminal and AI.png", { as: "image" });
+  preload("/help and info statements.png", { as: "image" });
+  preload("/projects in info.png", { as: "image" });
+  preload("/Assistant.png", { as: "image" });
+  preload("/wave.png", { as: "image" });
+  preload("/idle.png", { as: "image" });
+  preload("/left-point.png", { as: "image" });
+  preload("/exp2.png", { as: "image" });
+  preload("/right-point.png", { as: "image" });
+  preload("/up.png", { as: "image" });
+
   const [hasSeenTutorial, setHasSeenTutorial] = useState(false); 
   const [tutorialState, setTutorialState] = useState<"idle" | "prompt" | "active">("idle");
   const [tutorialPreference, setTutorialPreference] = useState<"yes" | "no" | "skip" | null>(null);
@@ -52,7 +64,7 @@ export default function Tutorial() {
             return prev;
           });
         }, 18000);
-      }, 3500);
+      }, 5000);
       return () => {
         clearTimeout(timer);
         clearTimeout(autoDismissTimer);
@@ -155,7 +167,7 @@ export default function Tutorial() {
       ),
       image: "/help and info statements.png",
       mascotPos: { left: "80%", top: "50%", x: "-50%", y: "-50%" },
-      dialogPos: { left: "30%", top: "50%", x: "-50%", y: "-50%" },
+      dialogPos: { left: "30%", top: "50%", x: 142.5, y: -190.8 },
       onEnter: () => {
         setTimeout(() => {
           simulateTyping("help", () => {});
@@ -451,7 +463,16 @@ export default function Tutorial() {
           </div>
         )}
       </AnimatePresence>
-      {/* Removed the floating 'Tutorial' button at the bottom right as requested */}
+      
+      {tutorialState === "idle" && (
+        <button
+          onClick={startTour}
+          style={{ cursor: "none" }}
+          className="fixed bottom-6 right-6 z-[9999] bg-cyber-dark/80 backdrop-blur-md border border-cyber-blue/50 text-cyber-blue px-4 py-2 rounded-full font-mono text-sm shadow-[0_0_15px_rgba(0,195,255,0.3)] hover:bg-cyber-blue/20 hover:shadow-[0_0_25px_rgba(0,195,255,0.5)] transition-all flex items-center gap-2"
+        >
+          Tutorial
+        </button>
+      )}
     </>
   );
 }
