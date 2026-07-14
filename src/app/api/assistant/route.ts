@@ -139,7 +139,7 @@ Make your responses highly readable and beautiful using Markdown formatting, emo
 Use **bold text** to highlight key names, tools, or concepts.
 For lists, use relevant emojis/symbols (like 🚀, 💻, 🔗, 📁, ✅, 🛡️, etc.) instead of plain bullet points, and add a blank line between list items so it doesn't look clumped.
 For projects, format them cleanly with their description on a new line, and tech stack clearly separated. 
-Use icons for links, e.g., 🐙 [Open GitHub](url) | 🌐 [Live Demo](url).
+CRITICAL: ALL links and URLs MUST be formatted as explicit Markdown links. Never output raw URLs. Use this format: 🐙 [GitHub](https://url) | 🌐 [LinkedIn](https://url) | 📧 [Email](mailto:email@address.com).
 Be creative with symbols to make the text visually engaging!
 
 === RETRIEVED CONTEXT ===

@@ -227,7 +227,7 @@ export default function Assistant() {
                         <ReactMarkdown 
                           remarkPlugins={[remarkGfm, remarkBreaks]}
                           components={{
-                            a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" />
+                            a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-cyber-neon font-semibold underline decoration-cyber-neon/50 underline-offset-4 break-all hover:text-white hover:decoration-white transition-colors" />
                           }}
                         >
                           {msg.content}

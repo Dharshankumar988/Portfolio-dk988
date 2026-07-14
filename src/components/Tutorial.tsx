@@ -51,7 +51,7 @@ export default function Tutorial() {
             }
             return prev;
           });
-        }, 7000);
+        }, 18000);
       }, 3500);
       return () => {
         clearTimeout(timer);
@@ -352,9 +352,13 @@ export default function Tutorial() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyber-blue via-cyber-cyan to-cyber-neon" />
               <h2 className="text-3xl font-orbitron text-white mb-3">👋 Welcome!</h2>
               <p className="text-gray-300 mb-3">Would you like a walkthrough of my portfolio?</p>
-              <p className="text-red-500 font-bold text-sm mb-5 animate-pulse">
-                Highly recommend not going through at the tutorial and also do not use the terminal feature -- switch to destop view in your browser if your interested in using them !!
-              </p>
+              <div className="text-red-500 font-bold text-xs sm:text-sm mb-5 text-left bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                <p className="mb-2 uppercase tracking-wide">NOTE : If you are using a mobile device</p>
+                <ol className="list-decimal pl-4 space-y-1">
+                  <li>Highly recommend not going through the tutorial and also do not use the terminal feature</li>
+                  <li>switch to destop view in your browser if your interested in using those feature!!</li>
+                </ol>
+              </div>
               <div className="text-xs text-cyber-blue font-mono mb-8 bg-cyber-blue/10 py-1.5 px-4 rounded-full inline-block shadow-[inset_0_0_10px_rgba(0,195,255,0.2)]">
                 Estimated time ≈30 seconds
               </div>
