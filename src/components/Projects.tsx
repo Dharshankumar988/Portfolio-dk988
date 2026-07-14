@@ -32,7 +32,6 @@ const getTagColor = (tag: string) => {
 
 function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) {
   const [hovered, setHovered] = useState(false);
-  const fileName = `${project.title.toLowerCase().replace(/\s+/g, "_")}.md`;
   const lineCount = project.description ? Math.max(4, Math.ceil(project.description.length / 60)) : 4;
 
   return (
@@ -52,31 +51,20 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
       }}
     >
       {/* Editor top bar */}
-      <div className="flex items-center gap-0 bg-[#0d1117] border-b border-cyber-gray/40 rounded-t-lg">
-        {/* Mac dots */}
-        <div className="flex items-center gap-1.5 px-4 pr-2">
-          <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-          <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-          <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
-        </div>
-        {/* Tab */}
-        <div className="flex items-center gap-2 px-3 md:px-4 py-2.5 border-x border-cyber-gray/40 bg-[#080c14] border-t-2 border-t-cyber-cyan shadow-[0_-1px_0_rgba(0,240,255,0.2)] max-w-[50%]">
-          <Circle size={8} className="text-cyber-cyan fill-cyber-cyan opacity-80 shrink-0" />
-          <span className="font-mono text-[10px] md:text-xs text-white/80 truncate">{fileName}</span>
-        </div>
+      <div className="flex items-center gap-0 bg-[#0d1117] border-b border-cyber-gray/40 rounded-t-lg py-1.5">
         {/* Spacer */}
         <div className="flex-1" />
         {/* Action buttons */}
-        <div className="flex items-center gap-1 px-3">
+        <div className="flex items-center gap-3 px-4">
           {project.githubUrl && (
             <a
               href={project.githubUrl}
               target="_blank"
               rel="noreferrer"
-              className="p-1.5 text-cyber-text/30 hover:text-cyber-neon transition-colors rounded"
+              className="p-1.5 text-cyber-text/60 hover:text-cyber-neon hover:bg-white/5 transition-colors rounded"
               onClick={(e) => e.stopPropagation()}
             >
-              <FaGithub size={14} />
+              <FaGithub size={20} />
             </a>
           )}
           {project.liveUrl && (
@@ -84,10 +72,10 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
               href={project.liveUrl}
               target="_blank"
               rel="noreferrer"
-              className="p-1.5 text-cyber-text/30 hover:text-cyber-cyan transition-colors rounded"
+              className="p-1.5 text-cyber-text/60 hover:text-cyber-cyan hover:bg-white/5 transition-colors rounded"
               onClick={(e) => e.stopPropagation()}
             >
-              <ExternalLink size={14} />
+              <ExternalLink size={20} />
             </a>
           )}
         </div>

@@ -50,29 +50,29 @@ const CATEGORIES = [
 
 const getSkillIcon = (name: string) => {
   const n = name.toLowerCase();
-  if (n.includes("information security")) return <Lock className="w-3.5 h-3.5" />;
-  if (n.includes("cryptography")) return <SiGnuprivacyguard className="w-3.5 h-3.5" />;
-  if (n.includes("network")) return <FaNetworkWired className="w-3.5 h-3.5" />;
-  if (n.includes("abuseipdb")) return <FaShieldAlt className="w-3.5 h-3.5" />;
-  if (n.includes("alienvault")) return <Shield className="w-3.5 h-3.5" />;
-  if (n.includes("virustotal")) return <Bug className="w-3.5 h-3.5" />;
-  if (n.includes("wireshark")) return <SiWireshark className="w-3.5 h-3.5" />;
-  if (n.includes("nmap")) return <Terminal className="w-3.5 h-3.5" />;
-  if (n.includes("git")) return <FaGithub className="w-3.5 h-3.5" />;
-  if (n.includes("figma")) return <FaFigma className="w-3.5 h-3.5" />;
-  if (n.includes("python")) return <FaPython className="w-3.5 h-3.5" />;
-  if (n.includes("javascript")) return <FaJs className="w-3.5 h-3.5" />;
-  if (n.includes("fastapi")) return <SiFastapi className="w-3.5 h-3.5" />;
-  if (n.includes("next")) return <SiNextdotjs className="w-3.5 h-3.5" />;
-  if (n.includes("postgresql")) return <SiPostgresql className="w-3.5 h-3.5" />;
-  if (n.includes("sql")) return <FaDatabase className="w-3.5 h-3.5" />;
-  if (n.includes("tailwind")) return <SiTailwindcss className="w-3.5 h-3.5" />;
-  if (n.includes("blockchain") || n.includes("polygon")) return <SiPolygon className="w-3.5 h-3.5" />;
-  if (n.includes("solidity") || n.includes("smart")) return <SiSolidity className="w-3.5 h-3.5" />;
-  if (n.includes("ipfs")) return <SiIpfs className="w-3.5 h-3.5" />;
-  if (n.includes("generative ai")) return <FaRobot className="w-3.5 h-3.5" />;
-  if (n.includes("ai agents")) return <Cpu className="w-3.5 h-3.5" />;
-  return <Code className="w-3.5 h-3.5" />;
+  if (n.includes("information security")) return <Lock className="w-5 h-5" />;
+  if (n.includes("cryptography")) return <SiGnuprivacyguard className="w-5 h-5" />;
+  if (n.includes("network")) return <FaNetworkWired className="w-5 h-5" />;
+  if (n.includes("abuseipdb")) return <FaShieldAlt className="w-5 h-5" />;
+  if (n.includes("alienvault")) return <Shield className="w-5 h-5" />;
+  if (n.includes("virustotal")) return <Bug className="w-5 h-5" />;
+  if (n.includes("wireshark")) return <SiWireshark className="w-5 h-5" />;
+  if (n.includes("nmap")) return <Terminal className="w-5 h-5" />;
+  if (n.includes("git")) return <FaGithub className="w-5 h-5" />;
+  if (n.includes("figma")) return <FaFigma className="w-5 h-5" />;
+  if (n.includes("python")) return <FaPython className="w-5 h-5" />;
+  if (n.includes("javascript")) return <FaJs className="w-5 h-5" />;
+  if (n.includes("fastapi")) return <SiFastapi className="w-5 h-5" />;
+  if (n.includes("next")) return <SiNextdotjs className="w-5 h-5" />;
+  if (n.includes("postgresql")) return <SiPostgresql className="w-5 h-5" />;
+  if (n.includes("sql")) return <FaDatabase className="w-5 h-5" />;
+  if (n.includes("tailwind")) return <SiTailwindcss className="w-5 h-5" />;
+  if (n.includes("blockchain") || n.includes("polygon")) return <SiPolygon className="w-5 h-5" />;
+  if (n.includes("solidity") || n.includes("smart")) return <SiSolidity className="w-5 h-5" />;
+  if (n.includes("ipfs")) return <SiIpfs className="w-5 h-5" />;
+  if (n.includes("generative ai")) return <FaRobot className="w-5 h-5" />;
+  if (n.includes("ai agents")) return <Cpu className="w-5 h-5" />;
+  return <Code className="w-5 h-5" />;
 };
 
 function CategoryPanel({
@@ -109,19 +109,19 @@ function CategoryPanel({
           <ul className="space-y-2.5">
             {skills.map((skill) => (
               <li key={skill.id} className="flex items-center gap-3 group">
-                <span className={`${cat.color} opacity-50 group-hover:opacity-100 transition-opacity flex-shrink-0`}>
+                <span className={`${cat.color} opacity-75 group-hover:opacity-100 transition-opacity flex-shrink-0`}>
                   {skill.logoUrl ? (
                     <img
                       src={skill.logoUrl}
                       alt={skill.name}
-                      className="w-3.5 h-3.5 object-contain"
+                      className="w-5 h-5 object-contain"
                       onError={(e) => { e.currentTarget.style.display = "none"; }}
                     />
                   ) : (
                     getSkillIcon(skill.name)
                   )}
                 </span>
-                <span className="text-cyber-text/65 text-sm group-hover:text-cyber-text/90 transition-colors">
+                <span className="text-cyber-text/80 text-base group-hover:text-white transition-colors">
                   {skill.name}
                 </span>
               </li>

@@ -45,9 +45,9 @@ const BeadNode = ({ bead, allBeads, level = 0, onFileClick }: { bead: EducationB
         {bead.fileUrl && (
           <button
             onClick={() => onFileClick(bead.fileUrl!)}
-            className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-cyber-dark border border-cyber-gray/50 hover:border-cyber-cyan hover:text-cyber-cyan text-cyber-text/70 rounded text-[10px] font-mono transition-colors"
+            className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-cyber-dark border border-cyber-cyan/30 hover:border-cyber-cyan hover:bg-cyber-cyan/10 hover:shadow-[0_0_10px_rgba(0,240,255,0.3)] text-cyber-cyan/90 rounded-md text-xs font-semibold tracking-wide transition-all"
           >
-            <ExternalLink size={10} /> VIEW CERTIFICATE
+            <ExternalLink size={14} /> VIEW CERTIFICATE
           </button>
         )}
       </div>
@@ -128,13 +128,7 @@ export default function About() {
                 {/* Bio */}
                 {profile.bio ? (
                   <div className="bg-[#0a0e17] rounded-lg border border-cyber-gray/40 overflow-hidden shadow-sm">
-                    <div className="flex items-center gap-2 px-4 py-2.5 border-b border-cyber-gray/30 bg-[#0d1117]">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
-                      <span className="ml-2 font-mono text-[10px] text-cyber-text/40">user.bio</span>
-                    </div>
-                    <div className="p-5 font-mono text-[13px] leading-relaxed text-[#c9d1d9] whitespace-pre-wrap">
+                    <div className="p-6 font-sans text-base leading-relaxed text-[#c9d1d9] whitespace-pre-wrap">
                       {profile.bio}
                     </div>
                   </div>
@@ -254,8 +248,8 @@ export default function About() {
                     <img src={viewFileUrl} alt="Certificate" className="max-w-full h-auto object-contain" />
                   ) : (
                     <iframe 
-                      src={viewFileUrl} 
-                      className="w-full h-full border-none absolute inset-0"
+                      src={viewFileUrl.endsWith('.pdf') ? `${viewFileUrl}#toolbar=0&navpanes=0&scrollbar=0` : viewFileUrl} 
+                      className="w-full h-full border-none absolute inset-0 rounded-b-xl"
                     />
                   )}
                 </div>
