@@ -15,13 +15,12 @@ export default function BinaryEncryptionText({ text, className, style }: Props) 
   const containerRef = useRef<HTMLSpanElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  // Scroll tracking: trigger exactly when the subtitle nears the top edge.
-  // "start 25%" = When the top of the element is 25% from the top of the viewport.
-  // "start -10%" = When the top of the element goes slightly past the top edge.
-  // This gives the animation enough distance to fully play out before leaving screen.
+  // Scroll tracking: trigger when subtitle crosses the exact middle of the screen (50%),
+  // and complete when it goes slightly off the top edge (-10%).
+  // This huge 60vh window guarantees the animation will fully execute and be seen.
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 25%", "start -10%"],
+    offset: ["start 50%", "start -10%"],
   });
 
   // Calculate random target indices based on text length to animate 1-2 characters
@@ -113,8 +112,8 @@ function BinaryChar({
   const replacementOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.7, 1], [0, 1, 1, 0, 0]);
 
   // 97% (progress 0.5-0.7): Particle detaches (fades in)
-  // Max opacity 0.10 - 0.22 as requested. We use 0.18
-  const particleOpacity = useTransform(scrollYProgress, [0.5, 0.6, 0.9, 1], [0, 0.18, 0.18, 0]);
+  // Max opacity 0.40 to ensure it is visible even against dark backgrounds when multiplied by text color
+  const particleOpacity = useTransform(scrollYProgress, [0.5, 0.6, 0.9, 1], [0, 0.4, 0.4, 0]);
   
   // 99% (progress 0.5-1.0): Drifting up and slightly horizontally
   const particleY = useTransform(scrollYProgress, [0.5, 1], [0, yOffset]);
@@ -149,7 +148,7 @@ function BinaryChar({
           opacity: particleOpacity,
           y: particleY,
           x: particleX,
-          fontSize: "0.25em", // approx 3-5px
+          fontSize: "0.35em", // approx 5-6px to guarantee visibility
         }}
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
       >
