@@ -119,14 +119,33 @@ export async function GET() {
         liveUrl: p.url || "",
         imageUrl: p.image || "",
       })),
-      certificates: (certificates || []).map((c: any) => ({
-        id: c.id,
-        name: c.title,
-        issuer: c.issuer,
-        imageUrl: c.image || "",
-        fileUrl: c.url || "",
-        filePath: c.url ? c.url.substring(c.url.indexOf("certs/")) : "",
-      })),
+      certificates: (certificates || []).map((c: any) => {
+        let issuer = c.issuer || "";
+        let iconType: "badge" | "star" = c.iconType === "star" || c.icon_type === "star" ? "star" : "badge";
+        
+        if (issuer.startsWith("[META:")) {
+          const metaEnd = issuer.indexOf("]META_END]");
+          if (metaEnd > 6) {
+            try {
+              const parsed = JSON.parse(issuer.substring(6, metaEnd));
+              if (parsed.iconType === "star" || parsed.iconType === "badge") {
+                iconType = parsed.iconType;
+              }
+              issuer = issuer.substring(metaEnd + 10);
+            } catch (e) {}
+          }
+        }
+
+        return {
+          id: c.id,
+          name: c.title,
+          issuer,
+          imageUrl: c.image || "",
+          fileUrl: c.url || "",
+          filePath: c.url ? c.url.substring(c.url.indexOf("certs/")) : "",
+          iconType,
+        };
+      }),
       skills: (skills || []).map((s: any) => ({
         id: s.id,
         name: s.name,
@@ -287,15 +306,20 @@ export async function POST(request: Request) {
         if (delErr) throw delErr;
 
         if (certs.length > 0) {
-          const formatted = certs.map((cert: any, idx: number) => ({
-            id: cert.id,
-            title: cert.name,
-            issuer: cert.issuer,
-            url: cert.fileUrl || null,
-            image: cert.imageUrl || null,
-            order: idx,
-            updatedAt: new Date().toISOString(),
-          }));
+          const formatted = certs.map((cert: any, idx: number) => {
+            const issuerStr = cert.iconType === "star"
+              ? `[META:${JSON.stringify({ iconType: cert.iconType })}]META_END]${cert.issuer || ""}`
+              : (cert.issuer || "");
+            return {
+              id: cert.id,
+              title: cert.name,
+              issuer: issuerStr,
+              url: cert.fileUrl || null,
+              image: cert.imageUrl || null,
+              order: idx,
+              updatedAt: new Date().toISOString(),
+            };
+          });
           const { error: insErr } = await supabase.from("Certificate").insert(formatted);
           if (insErr) throw insErr;
         }
@@ -407,8 +431,9 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error("POST /api/portfolio error:", error);
-    return NextResponse.json({ error: "Failed to save portfolio data" }, { status: 500 });
+    const msg = error?.message || error?.details || "Failed to save portfolio data";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

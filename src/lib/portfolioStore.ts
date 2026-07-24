@@ -53,6 +53,7 @@ export type CertificateRecord = {
   imageUrl?: string;
   fileUrl?: string;
   filePath?: string;
+  iconType?: "badge" | "star";
 };
 
 export type EducationBeadRecord = {
@@ -175,13 +176,31 @@ const normalizeCertificates = (items: unknown[]): CertificateRecord[] => {
     if (!item || typeof item !== "object") return [];
     const record = item as Partial<CertificateRecord>;
     if (typeof record.name !== "string") return [];
+
+    let issuer = record.issuer || "Verified Vault";
+    let iconType: "badge" | "star" = record.iconType === "star" ? "star" : "badge";
+
+    if (issuer.startsWith("[META:")) {
+      const metaEnd = issuer.indexOf("]META_END]");
+      if (metaEnd > 6) {
+        try {
+          const parsed = JSON.parse(issuer.substring(6, metaEnd));
+          if (parsed.iconType === "star" || parsed.iconType === "badge") {
+            iconType = parsed.iconType;
+          }
+          issuer = issuer.substring(metaEnd + 10);
+        } catch (e) {}
+      }
+    }
+
     normalized.push({
       id: record.id || record.name.toLowerCase().replace(/\s+/g, "-"),
       name: record.name,
-      issuer: record.issuer || "Verified Vault",
+      issuer,
       imageUrl: record.imageUrl || "",
       fileUrl: record.fileUrl || record.imageUrl || "",
       filePath: record.filePath || "",
+      iconType,
     });
   }
 

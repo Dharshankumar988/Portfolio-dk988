@@ -40,8 +40,35 @@ export default function Tutorial() {
   const [tutorialPreference, setTutorialPreference] = useState<"yes" | "no" | "skip" | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [fakeTyping, setFakeTyping] = useState("");
+  const [isStartupDone, setIsStartupDone] = useState(false);
   
   const typingInterval = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const checkStartup = () => {
+      if (typeof window !== "undefined" && sessionStorage.getItem("portfolio_startup_done")) {
+        setIsStartupDone(true);
+        return true;
+      }
+      return false;
+    };
+
+    if (checkStartup()) return;
+
+    const handleStartupFinished = () => {
+      setIsStartupDone(true);
+    };
+
+    window.addEventListener("portfolio_startup_finished", handleStartupFinished);
+    const interval = setInterval(() => {
+      if (checkStartup()) clearInterval(interval);
+    }, 200);
+
+    return () => {
+      window.removeEventListener("portfolio_startup_finished", handleStartupFinished);
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     const status = localStorage.getItem("portfolioTutorialStatus") as "yes" | "no" | "skip" | null;
@@ -49,7 +76,7 @@ export default function Tutorial() {
       setTutorialPreference(status);
       setHasSeenTutorial(true);
       setTutorialState("idle");
-    } else {
+    } else if (isStartupDone) {
       setHasSeenTutorial(false);
       let autoDismissTimer: NodeJS.Timeout;
       const timer = setTimeout(() => {
@@ -70,7 +97,7 @@ export default function Tutorial() {
         clearTimeout(autoDismissTimer);
       };
     }
-  }, []);
+  }, [isStartupDone]);
 
   const completeTutorial = () => {
     localStorage.setItem("portfolioTutorialSeen", "true");
@@ -219,16 +246,6 @@ export default function Tutorial() {
       mascotPos: { left: "80%", top: "50%", x: "-50%", y: "-50%" },
       dialogPos: { left: "30%", top: "50%", x: "-50%", y: "-50%" },
       autoAdvanceMs: 7000,
-    },
-    {
-      id: 8,
-      mascot: "/up.png",
-      title: "Global Navigation",
-      message: "The navigation bar stays with you while you explore. You can quickly jump to any section of the portfolio from anywhere on the page.",
-      image: "/home page with Terminal and AI.png",
-      mascotPos: { left: "50%", top: "220px", x: "-50%", y: "-50%" },
-      dialogPos: { left: "50%", top: "45%", x: "-50%", y: "-50%" },
-      autoAdvanceMs: 5000,
     }
   ];
 
@@ -308,7 +325,7 @@ export default function Tutorial() {
   return (
     <>
       <AnimatePresence>
-        {tutorialState === "prompt" && (
+        {tutorialState === "prompt" && isStartupDone && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -464,7 +481,7 @@ export default function Tutorial() {
         )}
       </AnimatePresence>
       
-      {tutorialState === "idle" && (
+      {tutorialState === "idle" && isStartupDone && (
         <button
           onClick={startTour}
           style={{ cursor: "none" }}

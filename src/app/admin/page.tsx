@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FolderGit2, FileBadge, User, Settings, Database, Server, Upload, Plus, Lock, GraduationCap, Compass, Cpu, FileText } from "lucide-react";
+import { FolderGit2, FileBadge, User, Settings, Database, Server, Upload, Plus, Lock, GraduationCap, Compass, Cpu, FileText, Award, Star } from "lucide-react";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -124,6 +124,7 @@ export default function AdminDashboard() {
     imageUrl: "",
     fileUrl: "",
     filePath: "",
+    iconType: "badge",
   });
 
   const router = useRouter();
@@ -1009,6 +1010,35 @@ export default function AdminDashboard() {
                     className="bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-cyber-purple outline-none"
                   />
                 </div>
+
+                {/* Icon Selection */}
+                <div className="flex items-center gap-3 mb-4 bg-cyber-dark/60 border border-cyber-gray/40 p-3 rounded-lg">
+                  <span className="font-mono text-xs text-cyber-text/70">Card Icon Highlight:</span>
+                  <button
+                    type="button"
+                    onClick={() => setNewCert((prev) => ({ ...prev, iconType: "badge" }))}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded font-mono text-xs border transition-all ${
+                      newCert.iconType !== "star"
+                        ? "bg-cyber-purple/20 border-cyber-purple text-white shadow-[0_0_10px_rgba(189,0,255,0.2)] font-bold"
+                        : "bg-cyber-dark border-cyber-gray/50 text-cyber-text/50 hover:text-white"
+                    }`}
+                  >
+                    <Award size={14} className="text-cyber-purple" />
+                    Badge (Default)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewCert((prev) => ({ ...prev, iconType: "star" }))}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded font-mono text-xs border transition-all ${
+                      newCert.iconType === "star"
+                        ? "bg-amber-500/20 border-amber-400 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.3)] font-bold"
+                        : "bg-cyber-dark border-cyber-gray/50 text-cyber-text/50 hover:text-white"
+                    }`}
+                  >
+                    <Star size={14} className="text-amber-400 fill-amber-400" />
+                    Star Highlight
+                  </button>
+                </div>
                 
                 <label className="border-2 border-dashed border-cyber-gray hover:border-cyber-purple bg-cyber-dark/50 rounded-lg p-8 flex flex-col items-center justify-center text-cyber-text/50 hover:text-cyber-purple transition-colors cursor-pointer mb-4 group relative overflow-hidden min-h-[160px]">
                   <input 
@@ -1085,6 +1115,7 @@ export default function AdminDashboard() {
                         imageUrl: newCert.imageUrl || "",
                         fileUrl: newCert.fileUrl || newCert.imageUrl || "",
                         filePath: newCert.filePath || "",
+                        iconType: newCert.iconType || "badge",
                       };
                       const updated = [newEntry, ...existingCerts];
                       setExistingCerts(updated);
@@ -1096,6 +1127,7 @@ export default function AdminDashboard() {
                         imageUrl: "",
                         fileUrl: "",
                         filePath: "",
+                        iconType: "badge",
                       });
                       const ok = await saveToDB("save_certificates", updated);
                       if (ok) alert("✅ Certificate saved to database!");
@@ -1114,8 +1146,11 @@ export default function AdminDashboard() {
               }} className="space-y-3">
                 {existingCerts.map((cert) => {
                   const isEditing = editingCertId === cert.id;
+                  const isStar = cert.iconType === "star";
                   return (
-                    <Reorder.Item key={cert.id} value={cert} className="flex justify-between items-center bg-cyber-black border border-cyber-gray p-4 rounded hover:border-cyber-purple transition-colors cursor-grab active:cursor-grabbing">
+                    <Reorder.Item key={cert.id} value={cert} className={`flex justify-between items-center bg-cyber-black border p-4 rounded transition-colors cursor-grab active:cursor-grabbing ${
+                      isStar ? "border-amber-500/40 hover:border-amber-400" : "border-cyber-gray hover:border-cyber-purple"
+                    }`}>
                       {isEditing && editingCertDraft ? (
                         <div className="flex-1 space-y-2 mr-2">
                           <input
@@ -1133,11 +1168,38 @@ export default function AdminDashboard() {
                             className="w-full bg-cyber-dark border border-cyber-purple p-2 rounded text-white font-mono text-xs outline-none"
                             placeholder="Issuer"
                           />
+                          <div className="flex items-center gap-2 pt-1">
+                            <span className="font-mono text-[10px] text-cyber-text/60">Icon:</span>
+                            <button
+                              type="button"
+                              onClick={() => setEditingCertDraft({ ...editingCertDraft, iconType: "badge" })}
+                              className={`px-2.5 py-1 rounded font-mono text-[10px] border transition-colors flex items-center gap-1 ${
+                                editingCertDraft.iconType !== "star"
+                                  ? "bg-cyber-purple/20 border-cyber-purple text-white"
+                                  : "bg-cyber-dark border-cyber-gray text-cyber-text/50"
+                              }`}
+                            >
+                              <Award size={12} /> Badge
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingCertDraft({ ...editingCertDraft, iconType: "star" })}
+                              className={`px-2.5 py-1 rounded font-mono text-[10px] border transition-colors flex items-center gap-1 ${
+                                editingCertDraft.iconType === "star"
+                                  ? "bg-amber-500/20 border-amber-400 text-amber-300"
+                                  : "bg-cyber-dark border-cyber-gray text-cyber-text/50"
+                              }`}
+                            >
+                              <Star size={12} className="fill-amber-400 text-amber-400" /> Star
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         <div className="flex items-center gap-3 flex-1 pr-2 min-w-0">
-                          {/* Thumbnail preview */}
-                          <div className="w-12 h-12 rounded bg-white/5 border border-cyber-purple/30 overflow-hidden flex items-center justify-center flex-shrink-0">
+                          {/* Thumbnail / Icon preview */}
+                          <div className={`w-12 h-12 rounded border overflow-hidden flex items-center justify-center flex-shrink-0 relative ${
+                            isStar ? "bg-amber-500/10 border-amber-500/40" : "bg-white/5 border-cyber-purple/30"
+                          }`}>
                             {cert.imageUrl ? (
                               <img src={cert.imageUrl} alt={cert.name} className="w-full h-full object-cover" />
                             ) : cert.fileUrl ? (
@@ -1145,7 +1207,11 @@ export default function AdminDashboard() {
                                 PDF
                               </div>
                             ) : (
-                              <FileBadge className="text-cyber-purple" size={20} />
+                              isStar ? (
+                                <Star className="text-amber-400 fill-amber-400" size={20} />
+                              ) : (
+                                <FileBadge className="text-cyber-purple" size={20} />
+                              )
                             )}
                           </div>
                           
@@ -1154,16 +1220,56 @@ export default function AdminDashboard() {
                               href={cert.fileUrl || cert.imageUrl} 
                               target="_blank" 
                               rel="noreferrer" 
-                              className="font-mono text-sm text-cyber-purple hover:text-white hover:underline truncate block font-bold cursor-pointer"
+                              className={`font-mono text-sm hover:underline truncate block font-bold cursor-pointer ${
+                                isStar ? "text-amber-300 hover:text-amber-100" : "text-cyber-purple hover:text-white"
+                              }`}
                               title="Click to view certificate"
                             >
                               {cert.name}
                             </a>
-                            <div className="font-mono text-[10px] text-cyber-text/60 truncate">ISSUER: {cert.issuer}</div>
+                            <div className="font-mono text-[10px] text-cyber-text/60 truncate flex items-center gap-2">
+                              <span>ISSUER: {cert.issuer}</span>
+                              {isStar && (
+                                <span className="text-[9px] font-bold text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/30">
+                                  ⭐ STARRED
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )}
-                      <div className="flex gap-2 flex-shrink-0">
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {/* Quick Toggle Star / Badge button */}
+                        {!isEditing && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              const nextType = cert.iconType === "star" ? "badge" : "star";
+                              const updated = existingCerts.map((item) =>
+                                item.id === cert.id ? { ...item, iconType: nextType as "badge" | "star" } : item
+                              );
+                              setExistingCerts(updated);
+                              setStoredCertificates(updated);
+                              await saveToDB("save_certificates", updated);
+                            }}
+                            title={`Click to switch to ${isStar ? "Badge" : "Star Highlight"}`}
+                            className={`font-mono text-xs border px-2.5 py-1 rounded transition-all flex items-center gap-1.5 ${
+                              isStar
+                                ? "text-amber-400 border-amber-400/60 bg-amber-400/10 hover:bg-amber-400/25 shadow-[0_0_8px_rgba(245,158,11,0.2)]"
+                                : "text-cyber-purple border-cyber-purple/50 bg-cyber-purple/10 hover:bg-cyber-purple/25"
+                            }`}
+                          >
+                            {isStar ? (
+                              <>
+                                <Star size={13} className="fill-amber-400 text-amber-400" /> STAR
+                              </>
+                            ) : (
+                              <>
+                                <Award size={13} /> BADGE
+                              </>
+                            )}
+                          </button>
+                        )}
                         {isEditing ? (
                           <>
                             <button
@@ -1175,6 +1281,7 @@ export default function AdminDashboard() {
                                         ...editingCertDraft,
                                         name: editingCertDraft.name.trim(),
                                         issuer: editingCertDraft.issuer.trim() || "Verified Vault",
+                                        iconType: editingCertDraft.iconType || "badge",
                                       }
                                     : item
                                 );

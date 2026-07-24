@@ -52,6 +52,9 @@ export default function StartupAnimation() {
           setTimeout(() => {
             setIsDone(true);
             sessionStorage.setItem("portfolio_startup_done", "true");
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(new Event("portfolio_startup_finished"));
+            }
           }, 380);
         }, 320);
       }
