@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FolderGit2, ExternalLink, GitBranch, Circle } from "lucide-react";
+import { FolderGit2, ExternalLink, GitBranch, Circle, AlertTriangle } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { defaultProjects, getStoredProjects, PORTFOLIO_UPDATE_EVENT, ProjectRecord } from "@/lib/portfolioStore";
 
@@ -185,9 +185,26 @@ export default function Projects() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex items-center gap-4 mb-14"
+          className="flex items-center gap-4 mb-6"
         >
           <h2 className="text-3xl md:text-4xl font-mono font-bold text-cyber-neon glow-text-neon uppercase tracking-widest">Projects_</h2>
+        </motion.div>
+
+        {/* Database Notice Callout */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
+          className="mb-10 p-4 md:p-5 rounded-lg bg-[#080c14] border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.06)] relative overflow-hidden flex items-start gap-3.5"
+        >
+          <div className="p-2 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0 mt-0.5">
+            <AlertTriangle size={18} />
+          </div>
+          <div className="font-mono text-xs md:text-sm text-gray-300 leading-relaxed">
+            <span className="text-amber-400 font-bold tracking-wide mr-1.5 uppercase">Note:</span>
+            All of the deployed projects on this portfolio currently have their backend databases inactive due to free-tier hosting limitations. As a result, features that depend on the database may not function as intended. However, the complete source code, including the full backend implementation, database integration, and project documentation, is available in the corresponding GitHub repositories for anyone interested in reviewing the projects in detail. You may contact me if you&apos;re further interested in any project.
+          </div>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-6">
