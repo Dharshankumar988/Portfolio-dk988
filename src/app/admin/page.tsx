@@ -425,12 +425,11 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Tagline"
+                  <textarea
+                    placeholder="Tagline (Use Enter / Newlines for multiple lines)"
                     value={profileTagline}
                     onChange={(e) => setProfileTagline(e.target.value)}
-                    className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none"
+                    className="w-full bg-cyber-dark border border-cyber-gray p-3 rounded text-white font-mono text-sm focus:border-[#ff3366] outline-none h-24"
                   />
                   <button
                     onClick={saveProfile}

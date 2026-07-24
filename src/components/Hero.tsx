@@ -100,10 +100,21 @@ export default function Hero() {
             </h1>
 
             <h2
-              className="font-mono text-cyber-text/60 tracking-wide"
-              style={{ fontSize: `${(profile.taglineFontSize || 3) * 0.2 + 0.8}rem`, lineHeight: 1.2 }}
+              className="font-mono text-cyber-text/60 tracking-wide space-y-1.5"
+              style={{ fontSize: `${(profile.taglineFontSize || 3) * 0.2 + 0.8}rem`, lineHeight: 1.35 }}
             >
-              {profile.tagline}
+              {profile.tagline ? (
+                (profile.tagline.includes("\n")
+                  ? profile.tagline.split("\n")
+                  : profile.tagline.includes("|")
+                    ? profile.tagline.split(/(?<=\|)\s*/).filter(Boolean)
+                    : [profile.tagline]
+                ).map((line, idx) => (
+                  <span key={idx} className="block">
+                    {line}
+                  </span>
+                ))
+              ) : null}
             </h2>
 
 
