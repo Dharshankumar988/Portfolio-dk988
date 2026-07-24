@@ -106,14 +106,7 @@ function CertCard({ cert, idx }: { cert: CertificateRecord; idx: number }) {
         </div>
       </div>
 
-      {/* Bottom tag */}
-      <div className="relative z-10 flex items-center gap-2">
-        <span className="h-px flex-1 bg-cyber-gray/30" />
-        <span className={`font-mono text-[9px] tracking-widest ${isStar ? "text-amber-400/80 font-semibold" : "text-cyber-purple/40"}`}>
-          VERIFIED
-        </span>
-        <span className="h-px flex-1 bg-cyber-gray/30" />
-      </div>
+
 
       {/* Corner accent */}
       <div
