@@ -110,7 +110,7 @@ export async function POST(req: Request) {
     if (intents.includes('certificates')) {
       const { data: certs } = await supabase.from("Certificate").select("*").order("order", { ascending: true });
       if (certs && certs.length > 0) {
-        const certStr = certs.map((c: any) => `- ${c.title} by ${c.issuer} (URL: ${c.url})`).join('\n');
+        const certStr = certs.map((c: any) => `- Title: ${c.title}, Issuer: ${c.issuer}, URL: ${c.url}`).join('\n');
         contextParts.push(`[CERTIFICATES]\n${certStr}`);
       }
     }
@@ -137,9 +137,10 @@ Structure your sentences clearly with short paragraphs.
 Use double line breaks (\n\n) between different sections or topics to create breathing room and improve readability.
 Make your responses highly readable and beautiful using Markdown formatting, emojis, and symbols.
 Use **bold text** to highlight key names, tools, or concepts.
-For lists, use relevant emojis/symbols (like 🚀, 💻, 🔗, 📁, ✅, 🛡️, etc.) instead of plain bullet points, and add a blank line between list items so it doesn't look clumped.
+For lists, use relevant emojis/symbols (like 🚀, 💻, 🔗, 📁, ✅, 🛡️, 📜, etc.) instead of plain bullet points, and add a blank line between list items so it doesn't look clumped.
 For projects, format them cleanly with their description on a new line, and tech stack clearly separated. 
 CRITICAL: ALL links and URLs MUST be formatted as explicit Markdown links. Never output raw URLs. Use this format: 🐙 [GitHub](https://url) | 🌐 [LinkedIn](https://url) | 📧 [Email](mailto:email@address.com).
+For certificates, ALWAYS format them as a markdown link using the certificate TITLE as the clickable text, followed by the issuer, like this: 📜 [Certificate Title](URL) by Issuer. NEVER output a raw URL, and NEVER link just the issuer name.
 Be creative with symbols to make the text visually engaging!
 
 === RETRIEVED CONTEXT ===
