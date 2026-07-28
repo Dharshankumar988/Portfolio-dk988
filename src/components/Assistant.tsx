@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, X, Bot, User } from "lucide-react";
+import { Send, X, Bot, User, MessageCircle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import { eventBus, EventTypes, PortfolioSection } from "@/lib/eventBus";
 import { getStoredProfile } from "@/lib/portfolioStore";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 type Message = {
   id: string;
@@ -39,6 +40,7 @@ export default function Assistant() {
   const [isLoading, setIsLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const unsubOpen = eventBus.subscribe(EventTypes.OPEN_ASSISTANT, () => setIsOpen(true));
@@ -122,6 +124,162 @@ export default function Assistant() {
     }
   };
 
+  /* ═══════════════════════════════════════════════
+   *  MOBILE: Full-screen chat with FAB trigger
+   * ═══════════════════════════════════════════════ */
+  if (isMobile) {
+    return (
+      <>
+        {/* Floating Action Button */}
+        <AnimatePresence>
+          {!isOpen && (
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsOpen(true)}
+              className="fixed z-50 flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-cyber-cyan/30 to-cyber-neon/20 border border-cyber-cyan/50 backdrop-blur-md shadow-[0_0_25px_rgba(0,240,255,0.3)]"
+              style={{
+                bottom: "calc(72px + env(safe-area-inset-bottom, 0px))",
+                right: "16px",
+              }}
+              aria-label="Open chat"
+            >
+              <div className="absolute inset-0 rounded-full bg-cyber-cyan/20 animate-ping opacity-30" />
+              <img
+                src="/AI_icon.png"
+                alt="AI"
+                className="w-8 h-8 object-contain relative z-10 drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              />
+              <Bot size={24} className="text-cyber-cyan absolute z-[5] hidden [.fallback-icon_&]:block" />
+            </motion.button>
+          )}
+        </AnimatePresence>
+
+        {/* Full-screen Chat Panel */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 280 }}
+              className="fixed inset-0 z-[60] flex flex-col bg-cyber-black"
+            >
+              {/* Header */}
+              <div className="flex flex-col border-b border-cyber-gray/30 bg-gradient-to-b from-cyber-dark to-cyber-black shrink-0">
+                <div className="flex items-center justify-between px-4 pt-3 pb-2"
+                     style={{ paddingTop: "max(12px, env(safe-area-inset-top, 12px))" }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border border-cyber-cyan/50 flex items-center justify-center bg-black/50 shrink-0">
+                      <img src="/AI_icon.png" alt="Bot" className="w-8 h-8 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
+                      <Bot size={20} className="text-cyber-cyan absolute -z-10" />
+                    </div>
+                    <div>
+                      <h3 className="font-mono text-cyber-cyan text-[13px] sm:text-base font-bold leading-tight">Hi👋 Nice to meet you .</h3>
+                      <p className="text-[10px] sm:text-[11px] text-cyber-text/40">I am Dharshan Kumar B</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 text-cyber-text/50 hover:text-white transition-colors rounded-full hover:bg-cyber-gray/30 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    aria-label="Close chat"
+                  >
+                    <X size={22} />
+                  </button>
+                </div>
+
+                {/* Quick Sections — horizontal scroll */}
+                <div className="flex gap-2 px-4 pb-3 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  {SECTIONS.map((sec) => (
+                    <button
+                      key={sec.id}
+                      onClick={() => handleQuickAction(sec)}
+                      className="text-xs px-3 py-1.5 rounded-full bg-cyber-cyan/10 border border-cyber-cyan/25 text-cyber-cyan hover:bg-cyber-cyan/20 transition-colors shrink-0 min-h-[32px]"
+                    >
+                      {sec.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+                {messages.map((msg) => (
+                  <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                    <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
+                      msg.role === "user"
+                        ? "bg-cyber-cyan/15 border border-cyber-cyan/25 text-white rounded-br-sm"
+                        : "bg-cyber-gray/40 border border-cyber-gray/30 text-gray-200 rounded-bl-sm"
+                    }`}>
+                      {msg.role === "assistant" ? (
+                        <div className="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-p:text-gray-300 prose-li:text-gray-300 prose-strong:text-white prose-headings:text-cyber-neon prose-a:text-cyber-neon prose-a:font-semibold prose-a:underline prose-a:decoration-cyber-neon/50 prose-a:underline-offset-4 prose-a:break-all hover:prose-a:text-white hover:prose-a:decoration-white prose-pre:bg-black/60 prose-pre:border prose-pre:border-cyber-blue/30">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm, remarkBreaks]}
+                            components={{
+                              a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-cyber-neon font-semibold underline decoration-cyber-neon/50 underline-offset-4 break-all hover:text-white hover:decoration-white transition-colors" />
+                            }}
+                          >
+                            {msg.content}
+                          </ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-cyber-gray/40 border border-cyber-gray/30 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-cyber-cyan/50 animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <div className="w-2 h-2 rounded-full bg-cyber-cyan/50 animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <div className="w-2 h-2 rounded-full bg-cyber-cyan/50 animate-bounce" style={{ animationDelay: "300ms" }} />
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input Area */}
+              <div
+                className="shrink-0 px-4 py-3 border-t border-cyber-gray/30 bg-cyber-dark/80"
+                style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom, 12px))" }}
+              >
+                <form
+                  onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+                  className="relative flex items-center gap-2"
+                >
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Ask a question..."
+                    className="flex-1 bg-cyber-gray/40 border border-cyber-gray/50 focus:border-cyber-cyan/50 rounded-xl py-3 pl-4 pr-4 text-sm text-white placeholder-gray-500 outline-none transition-colors min-h-[48px]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!input.trim() || isLoading}
+                    className="p-3 bg-cyber-cyan/20 border border-cyber-cyan/40 text-cyber-cyan disabled:text-gray-600 disabled:bg-transparent disabled:border-cyber-gray/30 hover:bg-cyber-cyan/30 transition-colors rounded-xl min-w-[48px] min-h-[48px] flex items-center justify-center shrink-0"
+                    aria-label="Send message"
+                  >
+                    <Send size={20} />
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </>
+    );
+  }
+
+  /* ═══════════════════════════════════════════════
+   *  DESKTOP: Original assistant (unchanged)
+   * ═══════════════════════════════════════════════ */
   return (
     <>
       {/* Trigger Mascot */}
@@ -190,8 +348,8 @@ export default function Assistant() {
                     <Bot size={20} className="text-cyber-blue absolute -z-10" />
                   </div>
                   <div>
-                    <h3 className="font-orbitron text-cyber-blue text-lg leading-tight">Hi !👋</h3>
-                    <p className="text-xs text-gray-400">Ask me anything about my portfolio</p>
+                    <h3 className="font-orbitron text-cyber-blue text-sm sm:text-lg leading-tight">Hi👋 Nice to meet you .</h3>
+                    <p className="text-xs text-gray-400">I am Dharshan Kumar B</p>
                   </div>
                 </div>
                 <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors p-1">

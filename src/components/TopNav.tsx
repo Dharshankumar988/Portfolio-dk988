@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { eventBus, EventTypes } from "@/lib/eventBus";
+import { useIsMobile } from "@/utils/useIsMobile";
+import { Home, User, Wrench, FolderGit2, Award, Sparkles } from "lucide-react";
 
 const LINKS = [
   { id: "hero",         label: "home" },
@@ -13,9 +15,19 @@ const LINKS = [
   { id: "extra",        label: "extra" },
 ];
 
+const MOBILE_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  hero: Home,
+  about: User,
+  skills: Wrench,
+  projects: FolderGit2,
+  certificates: Award,
+  extra: Sparkles,
+};
+
 export default function TopNav() {
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState("hero");
+  const isMobile = useIsMobile();
 
   // Show bar after scrolling past hero
   useEffect(() => {
@@ -63,6 +75,54 @@ export default function TopNav() {
     return () => unsub();
   }, []);
 
+  /* ─── Mobile: fixed bottom glassmorphism dock ─── */
+  if (isMobile) {
+    return (
+      <nav
+        id="top-nav"
+        className="fixed bottom-0 left-0 right-0 z-50 pointer-events-auto"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
+        <div className="flex items-center justify-around bg-cyber-dark/80 backdrop-blur-xl border-t border-cyber-gray/40 px-1 py-2 shadow-[0_-4px_30px_rgba(0,0,0,0.6)]">
+          {LINKS.map(({ id, label }) => {
+            const isActive = active === id;
+            const Icon = MOBILE_ICONS[id] || Home;
+            return (
+              <button
+                key={id}
+                onClick={() => scrollTo(id)}
+                className="relative flex flex-col items-center gap-0.5 px-2 py-1 min-w-[48px] min-h-[44px] justify-center transition-colors"
+                aria-label={label}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="mobile-nav-pill"
+                    className="absolute inset-0 bg-cyber-neon/10 rounded-xl"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                  />
+                )}
+                <Icon
+                  size={20}
+                  className={`relative z-10 transition-colors duration-200 ${
+                    isActive ? "text-cyber-neon drop-shadow-[0_0_6px_rgba(57,255,20,0.8)]" : "text-cyber-text/40"
+                  }`}
+                />
+                <span
+                  className={`relative z-10 font-mono text-[9px] tracking-wider uppercase transition-colors duration-200 ${
+                    isActive ? "text-cyber-neon" : "text-cyber-text/30"
+                  }`}
+                >
+                  {label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+    );
+  }
+
+  /* ─── Desktop: original floating pill nav (unchanged) ─── */
   return (
     <AnimatePresence>
       {visible && (

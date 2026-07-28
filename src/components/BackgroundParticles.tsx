@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Points, PointMaterial } from "@react-three/drei";
 import * as random from "maath/random/dist/maath-random.esm";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 function ParticleField() {
   const ref = useRef<any>(null);
@@ -32,6 +33,10 @@ function ParticleField() {
 }
 
 export default function BackgroundParticles() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) return null;
+
   return (
     <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
       <Canvas camera={{ position: [0, 0, 1] }}>

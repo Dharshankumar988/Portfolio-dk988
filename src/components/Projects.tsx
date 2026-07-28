@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FolderGit2, ExternalLink, GitBranch, Circle, AlertTriangle } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+import { useIsMobile } from "@/utils/useIsMobile";
 import { defaultProjects, getStoredProjects, PORTFOLIO_UPDATE_EVENT, ProjectRecord } from "@/lib/portfolioStore";
 
 // Color per tech tag
@@ -31,6 +32,7 @@ const getTagColor = (tag: string) => {
 };
 
 function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) {
+  const isMobile = useIsMobile();
   const [hovered, setHovered] = useState(false);
   const lineCount = project.description ? Math.max(4, Math.ceil(project.description.length / 60)) : 4;
 
@@ -64,7 +66,7 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
               className="p-1.5 text-cyber-text/60 hover:text-cyber-neon hover:bg-white/5 transition-colors rounded"
               onClick={(e) => e.stopPropagation()}
             >
-              <FaGithub size={20} />
+              <FaGithub size={isMobile ? 24 : 20} />
             </a>
           )}
           {project.liveUrl && (
@@ -75,7 +77,7 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
               className="p-1.5 text-cyber-text/60 hover:text-cyber-cyan hover:bg-white/5 transition-colors rounded"
               onClick={(e) => e.stopPropagation()}
             >
-              <ExternalLink size={20} />
+              <ExternalLink size={isMobile ? 24 : 20} />
             </a>
           )}
         </div>
@@ -84,6 +86,7 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
       {/* Code body */}
       <div className="flex">
         {/* Line numbers */}
+        {!isMobile && (
         <div className="flex flex-col items-end pr-3 pl-4 py-5 border-r border-cyber-gray/20 select-none">
           {Array.from({ length: lineCount + 2 }, (_, i) => (
             <span key={i} className="font-mono text-[10px] text-cyber-text/15 leading-[1.7rem]">
@@ -91,6 +94,7 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
             </span>
           ))}
         </div>
+        )}
 
         {/* Content */}
         <div className="flex-1 p-5 space-y-4">
@@ -130,6 +134,7 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
       </div>
 
       {/* Status bar (VS Code style) */}
+      {!isMobile && (
       <div className="flex items-center justify-between px-4 py-1.5 bg-cyber-gray/15 border-t border-cyber-gray/30">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-cyber-text/25 font-mono text-[10px]">
@@ -142,6 +147,7 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
           {lineCount + 2} lines
         </span>
       </div>
+      )}
 
       {/* Hover scan effect */}
       <AnimatePresence>
@@ -163,6 +169,7 @@ function ProjectCard({ project, idx }: { project: ProjectRecord; idx: number }) 
 }
 
 export default function Projects() {
+  const isMobile = useIsMobile();
   const [projects, setProjects] = useState<ProjectRecord[]>(defaultProjects);
 
   useEffect(() => {

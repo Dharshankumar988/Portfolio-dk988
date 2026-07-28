@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Terminal as TerminalIcon, X, Maximize2, Minimize2, Lock } from "lucide-react";
 import { eventBus, EventTypes, PortfolioSection } from "@/lib/eventBus";
 import { getStoredProfile, getStoredAdminTrigger, getStoredTerminalPassword, getStoredProjects, getStoredCertificates, getStoredSkills } from "@/lib/portfolioStore";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 type MenuOption = { label: string; desc?: string; action: () => void };
 
@@ -97,6 +98,7 @@ export default function Terminal() {
   
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Open/Close listeners
@@ -355,6 +357,8 @@ export default function Terminal() {
       setSuggestions([]);
     }
   };
+
+  if (isMobile) return null;
 
   return (
     <>

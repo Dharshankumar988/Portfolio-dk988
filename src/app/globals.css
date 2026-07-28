@@ -265,3 +265,60 @@ body.tutorial-active::after {
   border-radius: inherit;
 }
 
+/* ═══════════════════════════════════════════════
+   MOBILE-SPECIFIC OPTIMIZATIONS (≤ 768px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Hide CRT scanlines on mobile for performance */
+  .scanlines {
+    display: none !important;
+  }
+
+  /* Reduce glow intensities for battery life */
+  .glow-text-neon {
+    text-shadow: 0 0 5px rgba(57, 255, 20, 0.4);
+  }
+  .glow-text-cyan {
+    text-shadow: 0 0 5px rgba(0, 240, 255, 0.4);
+  }
+  .glow-box-neon {
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.15);
+  }
+  .glow-box-cyan {
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.15);
+  }
+
+  /* Reduce section heading spacing */
+  .section-heading {
+    margin-bottom: 32px;
+  }
+
+  /* Smoother scrolling */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Bottom nav safe-area spacing for main content */
+  main {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Disable floating animation on mobile for performance */
+  .float-animation {
+    animation: none;
+  }
+
+  /* Disable the scan-animate pseudo element on mobile */
+  .scan-animate::after {
+    display: none;
+  }
+
+  /* Reduce cyber-corner decoration sizes */
+  .cyber-corner::before,
+  .cyber-corner::after {
+    width: 10px;
+    height: 10px;
+  }
+}
+

@@ -9,6 +9,7 @@ import {
   getStoredCertificates,
   PORTFOLIO_UPDATE_EVENT,
 } from "@/lib/portfolioStore";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 function CertCard({ cert, idx }: { cert: CertificateRecord; idx: number }) {
   const [hovered, setHovered] = useState(false);
@@ -137,6 +138,7 @@ function CertCard({ cert, idx }: { cert: CertificateRecord; idx: number }) {
 }
 
 export default function Certificates() {
+  const isMobile = useIsMobile();
   const [certs, setCerts] = useState<CertificateRecord[]>(defaultCertificates);
 
   useEffect(() => {
@@ -167,7 +169,7 @@ export default function Certificates() {
           <h2 className="text-3xl md:text-4xl font-mono font-bold text-cyber-neon glow-text-neon uppercase tracking-widest">Certificates_</h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {certs.map((cert, idx) => (
             <CertCard key={cert.id} cert={cert} idx={idx} />
           ))}

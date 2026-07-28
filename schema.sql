@@ -201,3 +201,12 @@ INSERT INTO "Interest" ("id", "name", "logoUrl", "domain", "order") VALUES
 ('kubernetes-secops', 'Kubernetes SecOps', 'https://logo.clearbit.com/kubernetes.io', 'kubernetes.io', 2),
 ('docker-security', 'Docker Security', 'https://logo.clearbit.com/docker.com', 'docker.com', 3),
 ('deep-learning', 'Deep Learning', 'https://logo.clearbit.com/tensorflow.org', 'tensorflow.org', 4);
+
+
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  message TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_chat_messages_created_at ON chat_messages(created_at);

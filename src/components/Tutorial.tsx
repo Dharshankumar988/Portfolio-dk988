@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { preload } from "react-dom";
+import { useIsMobile } from "@/utils/useIsMobile";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { eventBus, EventTypes } from "@/lib/eventBus";
@@ -37,12 +38,13 @@ export default function Tutorial() {
 
   const [hasSeenTutorial, setHasSeenTutorial] = useState(false); 
   const [tutorialState, setTutorialState] = useState<"idle" | "prompt" | "active">("idle");
-  const [tutorialPreference, setTutorialPreference] = useState<"yes" | "no" | "skip" | null>(null);
+  const [tutorialPreference, setTutorialPreference] = useState<"yes" | "no" | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [fakeTyping, setFakeTyping] = useState("");
   const [isStartupDone, setIsStartupDone] = useState(false);
   
   const typingInterval = useRef<NodeJS.Timeout | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const checkStartup = () => {
@@ -71,7 +73,7 @@ export default function Tutorial() {
   }, []);
 
   useEffect(() => {
-    const status = localStorage.getItem("portfolioTutorialStatus") as "yes" | "no" | "skip" | null;
+    const status = localStorage.getItem("portfolioTutorialStatus") as "yes" | "no" | null;
     if (status) {
       setTutorialPreference(status);
       setHasSeenTutorial(true);
@@ -84,13 +86,13 @@ export default function Tutorial() {
         autoDismissTimer = setTimeout(() => {
           setTutorialState((prev) => {
             if (prev === "prompt") {
-              localStorage.setItem("portfolioTutorialStatus", "skip");
-              setTutorialPreference("skip");
+              localStorage.setItem("portfolioTutorialStatus", "no");
+              setTutorialPreference("no");
               return "idle";
             }
             return prev;
           });
-        }, 18000);
+        }, 28000);
       }, 5000);
       return () => {
         clearTimeout(timer);
@@ -297,7 +299,7 @@ export default function Tutorial() {
     }
   };
 
-  const handleChoice = (choice: "yes" | "no" | "skip") => {
+  const handleChoice = (choice: "yes" | "no") => {
     localStorage.setItem("portfolioTutorialStatus", choice);
     setTutorialPreference(choice);
     setHasSeenTutorial(true);
@@ -321,6 +323,7 @@ export default function Tutorial() {
   };
 
   // removed early return to allow floating button to render
+  if (isMobile) return null;
 
   return (
     <>
@@ -336,13 +339,7 @@ export default function Tutorial() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyber-blue via-cyber-cyan to-cyber-neon" />
               <h2 className="text-3xl font-orbitron text-white mb-3">👋 Welcome!</h2>
               <p className="text-gray-300 mb-3">Would you like a walkthrough of my portfolio?</p>
-              <div className="text-red-500 font-bold text-xs sm:text-sm mb-5 text-left bg-red-500/10 p-3 rounded-lg border border-red-500/20">
-                <p className="mb-2 uppercase tracking-wide">NOTE : If you are using a mobile device</p>
-                <ol className="list-decimal pl-4 space-y-1">
-                  <li>Highly recommend not going through the tutorial and also do not use the terminal feature</li>
-                  <li>switch to destop view in your browser if your interested in using those feature!!</li>
-                </ol>
-              </div>
+
               <div className="text-xs text-cyber-blue font-mono mb-8 bg-cyber-blue/10 py-1.5 px-4 rounded-full inline-block shadow-[inset_0_0_10px_rgba(0,195,255,0.2)]">
                 Estimated time ≈30 seconds
               </div>
@@ -354,20 +351,13 @@ export default function Tutorial() {
                 >
                   Yes
                 </button>
-                <div className="flex gap-3">
+                <div className="flex gap-3 mt-3">
                   <button 
                     onClick={() => handleChoice("no")}
                     style={{ cursor: "none" }}
-                    className="flex-1 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 rounded-xl font-mono transition-all duration-300"
+                    className="w-full py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 rounded-xl font-mono transition-all duration-300"
                   >
                     No
-                  </button>
-                  <button 
-                    onClick={() => handleChoice("skip")}
-                    style={{ cursor: "none" }}
-                    className="flex-1 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 rounded-xl font-mono transition-all duration-300"
-                  >
-                    Skip
                   </button>
                 </div>
               </div>

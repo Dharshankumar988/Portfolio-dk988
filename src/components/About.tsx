@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, X, ExternalLink } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { useIsMobile } from "@/utils/useIsMobile";
 import {
   defaultProfile,
   getStoredProfile,
@@ -64,6 +65,7 @@ const BeadNode = ({ bead, allBeads, level = 0, onFileClick }: { bead: EducationB
 };
 
 export default function About() {
+  const isMobile = useIsMobile();
   const [profile, setProfile] = useState<ProfileContent>(defaultProfile);
   const [educationBeads, setEducationBeads] = useState<EducationBeadRecord[]>([]);
   const [viewFileUrl, setViewFileUrl] = useState<string | null>(null);
@@ -153,7 +155,7 @@ export default function About() {
                         href={href}
                         target="_blank"
                         rel="noreferrer"
-                        className={`flex items-center gap-2 px-3 py-1.5 border rounded-lg font-mono text-xs transition-all duration-200 ${color}`}
+                        className={`flex items-center gap-2 px-3 py-1.5 min-h-[44px] md:min-h-0 border rounded-lg font-mono text-xs transition-all duration-200 ${color}`}
                       >
                         <Icon size={12} />
                         {value}

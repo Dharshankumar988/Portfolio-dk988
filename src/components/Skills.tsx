@@ -11,6 +11,7 @@ import {
   SiWireshark, SiPostgresql, SiNextdotjs, SiFastapi,
   SiIpfs, SiGnuprivacyguard, SiSolidity, SiTailwindcss, SiPolygon,
 } from "react-icons/si";
+import { useIsMobile } from "@/utils/useIsMobile";
 import { getStoredSkills, PORTFOLIO_UPDATE_EVENT, SkillRecord } from "@/lib/portfolioStore";
 
 const CATEGORIES = [
@@ -84,6 +85,7 @@ function CategoryPanel({
   skills: SkillRecord[];
   idx: number;
 }) {
+  const isMobile = useIsMobile();
   const Icon = cat.icon;
 
   return (
@@ -106,7 +108,7 @@ function CategoryPanel({
         {skills.length === 0 ? (
           <p className="text-cyber-text/20 text-xs italic font-mono py-2">No skills added yet.</p>
         ) : (
-          <ul className="space-y-2.5">
+          <ul className="space-y-1.5 md:space-y-2.5">
             {skills.map((skill) => (
               <li key={skill.id} className="flex items-center gap-3 group">
                 <span className={`${cat.color} opacity-75 group-hover:opacity-100 transition-opacity flex-shrink-0`}>
@@ -121,7 +123,7 @@ function CategoryPanel({
                     getSkillIcon(skill.name)
                   )}
                 </span>
-                <span className="text-cyber-text/80 text-base group-hover:text-white transition-colors">
+                <span className="text-cyber-text/80 text-sm md:text-base group-hover:text-white transition-colors">
                   {skill.name}
                 </span>
               </li>
@@ -134,6 +136,7 @@ function CategoryPanel({
 }
 
 export default function Skills() {
+  const isMobile = useIsMobile();
   const [storedSkills, setStoredSkills] = useState<{ items: SkillRecord[]; hasStored: boolean }>({
     items: [],
     hasStored: false,
@@ -164,7 +167,7 @@ export default function Skills() {
           <h2 className="text-3xl md:text-4xl font-mono font-bold text-cyber-neon glow-text-neon uppercase tracking-widest">Skills_</h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
           {CATEGORIES.map((cat, idx) => {
             const catSkills = storedSkills.items.filter(
               (s) => s.category.toLowerCase() === cat.key.toLowerCase()

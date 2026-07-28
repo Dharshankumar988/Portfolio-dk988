@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 const SECTIONS = [
   { id: "hero", label: "Home" },
@@ -16,6 +17,7 @@ const SECTIONS = [
 export default function NavDots() {
   const [active, setActive] = useState("hero");
   const [hovered, setHovered] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -38,6 +40,8 @@ export default function NavDots() {
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
+
+  if (isMobile) return null;
 
   return (
     <div className="fixed right-6 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-4 items-end">

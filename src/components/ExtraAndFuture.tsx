@@ -12,8 +12,10 @@ import {
   InterestRecord,
   PORTFOLIO_UPDATE_EVENT,
 } from "@/lib/portfolioStore";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 export default function ExtraAndFuture() {
+  const isMobile = useIsMobile();
   const [extracurriculars, setExtracurriculars] = useState<ExtracurricularRecord[]>(defaultExtracurriculars);
   const [futureInterests, setFutureInterests] = useState<InterestRecord[]>(defaultInterests);
 
@@ -45,7 +47,7 @@ export default function ExtraAndFuture() {
           <h2 className="text-3xl md:text-4xl font-mono font-bold text-cyber-neon glow-text-neon uppercase tracking-widest">Extra_</h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
           
           {/* Extracurriculars */}
           <motion.div

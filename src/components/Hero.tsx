@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Terminal, Download, Mail, Phone, ChevronDown } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { defaultProfile, getStoredProfile, PORTFOLIO_UPDATE_EVENT, ProfileContent } from "@/lib/portfolioStore";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 function useTypewriter(text: string, speed = 45) {
   const [displayed, setDisplayed] = useState("");
@@ -30,6 +31,7 @@ export default function Hero() {
   const [avatarVisible, setAvatarVisible] = useState(true);
   const [showContactModal, setShowContactModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleCopyPhone = () => {
     if (profile.phone) {
@@ -88,7 +90,9 @@ export default function Hero() {
               className="font-bold tracking-tighter leading-none"
               style={{
                 fontFamily: "var(--font-orbitron), sans-serif",
-                fontSize: `${(profile.nameFontSize || 5) * 0.5 + 1}rem`,
+                fontSize: isMobile
+                  ? `clamp(1.5rem, 8vw, 2.5rem)`
+                  : `${(profile.nameFontSize || 5) * 0.5 + 1}rem`,
                 lineHeight: 1.05,
                 background: "linear-gradient(135deg, #ffffff 40%, #00f0ff 100%)",
                 WebkitBackgroundClip: "text",
@@ -120,13 +124,13 @@ export default function Hero() {
 
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 pt-4">
+            <div className={`flex pt-4 ${isMobile ? "flex-col gap-3 w-full" : "flex-wrap gap-4"}`}>
               {profile.resumeUrl ? (
                 <a
                   href={profile.resumeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 bg-cyber-neon/10 border border-cyber-neon text-cyber-neon hover:bg-cyber-neon hover:text-black transition-all font-mono text-sm rounded cyber-corner neon-border-hover group"
+                  className={`flex items-center justify-center gap-2 px-6 py-3 bg-cyber-neon/10 border border-cyber-neon text-cyber-neon hover:bg-cyber-neon hover:text-black transition-all font-mono text-sm rounded cyber-corner neon-border-hover group ${isMobile ? "w-full min-h-[48px]" : ""}`}
                 >
                   <Download size={16} className="group-hover:animate-bounce" />
                   Download Resume
@@ -144,7 +148,7 @@ export default function Hero() {
               {profile.email || profile.githubUrl || profile.linkedinUrl || profile.phone ? (
                 <button
                   onClick={() => setShowContactModal(true)}
-                  className="flex items-center gap-2 px-6 py-3 border border-cyber-cyan/60 text-cyber-cyan hover:bg-cyber-cyan/10 hover:border-cyber-cyan transition-all font-mono text-sm rounded glow-box-cyan"
+                  className={`flex items-center justify-center gap-2 px-6 py-3 border border-cyber-cyan/60 text-cyber-cyan hover:bg-cyber-cyan/10 hover:border-cyber-cyan transition-all font-mono text-sm rounded glow-box-cyan ${isMobile ? "w-full min-h-[48px]" : ""}`}
                 >
                   <Mail size={16} />
                   Contact

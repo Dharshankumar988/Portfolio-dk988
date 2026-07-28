@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 export default function SpaceBackground() {
   const [isClient, setIsClient] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setIsClient(true);
@@ -27,6 +29,7 @@ export default function SpaceBackground() {
             src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=2560&auto=format&fit=crop"
             alt="Deep Space"
             className="w-full h-full object-cover animate-[panSpace_60s_linear_infinite]"
+            style={isMobile ? { animationPlayState: 'paused' } : undefined}
           />
         </motion.div>
       )}

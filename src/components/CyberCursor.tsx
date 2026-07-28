@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 export default function CyberCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
@@ -9,8 +10,11 @@ export default function CyberCursor() {
   const pos = useRef({ x: -100, y: -100 });
   const ring = useRef({ x: -100, y: -100 });
   const raf = useRef<number>(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
+    if (isMobile) return;
+
     document.documentElement.style.cursor = "none";
 
     const onMove = (e: MouseEvent) => {
@@ -39,7 +43,9 @@ export default function CyberCursor() {
       cancelAnimationFrame(raf.current);
       document.documentElement.style.cursor = "";
     };
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) return null;
 
   return (
     <>
