@@ -46,6 +46,12 @@ export async function POST(req: Request) {
 
     const intents = detectIntents(message);
     const supabase = getSupabaseAdmin() as any;
+
+    try {
+      await supabase.from("chat_messages").insert([{ message }]);
+    } catch (dbError) {
+      console.error("Failed to record chat message:", dbError);
+    }
     let contextParts: string[] = [];
 
     // Retrieve context based on intents
