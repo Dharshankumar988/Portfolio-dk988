@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Terminal, Download, Mail, Phone, ChevronDown } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
@@ -31,6 +32,7 @@ export default function Hero() {
   const [avatarVisible, setAvatarVisible] = useState(true);
   const [showContactModal, setShowContactModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const isMobile = useIsMobile();
 
   const handleCopyPhone = () => {
@@ -40,6 +42,10 @@ export default function Hero() {
       setTimeout(() => setCopied(false), 2000);
     }
   };
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleUpdate = () => setProfile(getStoredProfile());
@@ -58,9 +64,10 @@ export default function Hero() {
 
   useEffect(() => {
     if (showContactModal) {
-      const handleScroll = () => setShowContactModal(false);
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      return () => window.removeEventListener("scroll", handleScroll);
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "auto";
+      };
     }
   }, [showContactModal]);
 
@@ -206,67 +213,70 @@ export default function Hero() {
 
 
       {/* Contact Modal */}
-      <AnimatePresence>
-        {showContactModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm">
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.92, opacity: 0, y: 20 }}
-              className="bg-cyber-dark border border-cyber-cyan/60 p-8 rounded-lg max-w-sm w-full shadow-[0_0_40px_rgba(0,240,255,0.12)] flex flex-col gap-4 relative cyber-corner"
+      {isMounted && createPortal(
+        <AnimatePresence>
+          {showContactModal && (
+            <div 
+              className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setShowContactModal(false);
+                }
+              }}
             >
-              <button
-                onClick={() => setShowContactModal(false)}
-                className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center text-cyber-text/40 hover:text-white hover:bg-cyber-gray rounded transition-colors font-mono text-sm"
+              <motion.div
+                initial={{ scale: 0.92, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.92, opacity: 0, y: 20 }}
+                className="bg-cyber-dark border border-cyber-cyan/60 p-8 rounded-lg max-w-sm w-full shadow-[0_0_40px_rgba(0,240,255,0.12)] flex flex-col gap-4 relative cyber-corner"
               >
-                ✕
-              </button>
-              <div className="mb-2">
-                <h3 className="text-xl font-bold font-mono text-cyber-cyan tracking-wider">CONTACT_LINKS</h3>
-                <div className="h-px bg-gradient-to-r from-cyber-cyan/60 to-transparent mt-3" />
-              </div>
-              
-              {profile.email && (
-                <a href={`mailto:${profile.email}`} className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-cyan/50 hover:bg-cyber-cyan/5 transition-all rounded text-cyber-text group">
-                  <Mail className="text-cyber-cyan group-hover:scale-110 transition-transform shrink-0" size={22} />
-                  <span className="font-mono text-sm break-all">{profile.email}</span>
-                </a>
-              )}
-
-              {profile.githubUrl && (
-                <a href={profile.githubUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-purple/50 hover:bg-cyber-purple/5 transition-all rounded text-cyber-text group">
-                  <FaGithub className="text-cyber-purple group-hover:scale-110 transition-transform shrink-0" size={22} />
-                  <span className="font-mono text-sm break-all">GitHub Profile</span>
-                </a>
-              )}
-
-              {profile.linkedinUrl && (
-                <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10 transition-all rounded text-cyber-text group">
-                  <FaLinkedin className="text-[#0A66C2] group-hover:scale-110 transition-transform shrink-0" size={22} />
-                  <span className="font-mono text-sm break-all">LinkedIn Profile</span>
-                </a>
-              )}
-
-              {profile.phone && (
-                <button onClick={handleCopyPhone} className="flex items-center justify-between p-3 border border-cyber-gray hover:border-cyber-neon/50 hover:bg-cyber-neon/5 transition-all rounded text-cyber-text group w-full text-left">
-                  <div className="flex items-center gap-4">
-                    <Phone className="text-cyber-neon group-hover:scale-110 transition-transform shrink-0" size={22} />
-                    <span className="font-mono text-sm">{profile.phone}</span>
-                  </div>
-                  <span className="text-xs font-mono text-cyber-neon shrink-0 ml-2">{copied ? "✓ Copied" : "Copy"}</span>
+                <button
+                  onClick={() => setShowContactModal(false)}
+                  className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center text-cyber-text/40 hover:text-white hover:bg-cyber-gray rounded transition-colors font-mono text-sm"
+                >
+                  ✕
                 </button>
-              )}
+                <div className="mb-2">
+                  <h3 className="text-xl font-bold font-mono text-cyber-cyan tracking-wider">CONTACT_LINKS</h3>
+                  <div className="h-px bg-gradient-to-r from-cyber-cyan/60 to-transparent mt-3" />
+                </div>
+                
+                {profile.email && (
+                  <a href={`mailto:${profile.email}`} className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-cyan/50 hover:bg-cyber-cyan/5 transition-all rounded text-cyber-text group">
+                    <Mail className="text-cyber-cyan group-hover:scale-110 transition-transform shrink-0" size={22} />
+                    <span className="font-mono text-sm break-all">{profile.email}</span>
+                  </a>
+                )}
 
-              <button
-                onClick={() => setShowContactModal(false)}
-                className="mt-2 px-4 py-2 bg-cyber-gray/20 hover:bg-cyber-gray/50 text-white/70 hover:text-white font-mono text-sm rounded transition-all border border-transparent hover:border-cyber-gray/40"
-              >
-                Close
-              </button>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+                {profile.githubUrl && (
+                  <a href={profile.githubUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-cyber-purple/50 hover:bg-cyber-purple/5 transition-all rounded text-cyber-text group">
+                    <FaGithub className="text-cyber-purple group-hover:scale-110 transition-transform shrink-0" size={22} />
+                    <span className="font-mono text-sm break-all">GitHub Profile</span>
+                  </a>
+                )}
+
+                {profile.linkedinUrl && (
+                  <a href={profile.linkedinUrl} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 border border-cyber-gray hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10 transition-all rounded text-cyber-text group">
+                    <FaLinkedin className="text-[#0A66C2] group-hover:scale-110 transition-transform shrink-0" size={22} />
+                    <span className="font-mono text-sm break-all">LinkedIn Profile</span>
+                  </a>
+                )}
+
+                {profile.phone && (
+                  <button onClick={handleCopyPhone} className="flex items-center justify-between p-3 border border-cyber-gray hover:border-cyber-neon/50 hover:bg-cyber-neon/5 transition-all rounded text-cyber-text group w-full text-left">
+                    <div className="flex items-center gap-4">
+                      <Phone className="text-cyber-neon group-hover:scale-110 transition-transform shrink-0" size={22} />
+                      <span className="font-mono text-sm">{profile.phone}</span>
+                    </div>
+                    <span className="text-xs font-mono text-cyber-neon shrink-0 ml-2">{copied ? "✓ Copied" : "Copy"}</span>
+                  </button>
+                )}
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   );
 }
