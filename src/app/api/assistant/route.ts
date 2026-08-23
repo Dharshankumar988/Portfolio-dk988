@@ -162,13 +162,13 @@ ${contextString}
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'openai/gpt-oss-20b',
+        model: 'qwen/qwen3.6-27b',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: message }
         ],
         temperature: 0.2,
-        max_tokens: 4096
+        max_tokens: 2048
       })
     });
 

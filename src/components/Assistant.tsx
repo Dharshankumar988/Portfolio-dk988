@@ -118,7 +118,7 @@ export default function Assistant() {
         throw new Error(data.error || "Failed to fetch");
       }
     } catch (error) {
-      setMessages((prev) => [...prev, { id: Date.now().toString(), role: "assistant", content: "I'm sorry, I'm having trouble connecting to my brain right now. Please try again later." }]);
+      setMessages((prev) => [...prev, { id: Date.now().toString(), role: "assistant", content: "I am not too sure about this. Please contact me so we can discuss it!" }]);
     } finally {
       setIsLoading(false);
     }
