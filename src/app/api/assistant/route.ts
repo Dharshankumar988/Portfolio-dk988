@@ -175,7 +175,10 @@ ${contextString}
       throw new Error(data.error?.message || 'Failed to fetch from Groq');
     }
 
-    const reply = data.choices[0]?.message?.content || "";
+    let reply = data.choices[0]?.message?.content || "";
+    
+    // Remove <think>...</think> blocks which are outputted by reasoning models like Qwen
+    reply = reply.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
     
     return NextResponse.json({ reply });
 
