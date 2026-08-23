@@ -160,7 +160,7 @@ ${contextString}
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'qwen/qwen3.6-27b',
+        model: 'openai/gpt-oss-20b',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: message }
@@ -177,8 +177,8 @@ ${contextString}
 
     let reply = data.choices[0]?.message?.content || "";
     
-    // Remove <think>...</think> blocks which are outputted by reasoning models like Qwen
-    reply = reply.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    // Remove <think>...</think> blocks even if the closing tag is missing
+    reply = reply.replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, '').trim();
     
     return NextResponse.json({ reply });
 
